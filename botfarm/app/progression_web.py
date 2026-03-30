@@ -386,6 +386,9 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
             goal_created_at = getattr(goal, "created_at", None)
             baseline_gp = getattr(goal, "baseline_gp", None)
 
+        # Prefer quest points tracked on the progress object.
+        quest_points = int(getattr(progress, "quest_points", 0) or 0)
+
         rows.append(
             {
                 "account": account,
@@ -393,6 +396,7 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
                 "goal_name": goal_name,
                 "goal_created_at": goal_created_at,
                 "baseline_gp": baseline_gp,
+                "quest_points": quest_points,
                 "overall": float(overall or 0.0),
             }
         )

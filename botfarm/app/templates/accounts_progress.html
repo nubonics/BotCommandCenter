@@ -21,7 +21,8 @@
     <table class="table">
       <thead>
         <tr>
-          <th>Account</th>
+          <th>RSN</th>
+          <th style="text-align:right;">QP</th>
           <th>Active goal</th>
           <th>Goal created</th>
           <th>Baseline GP</th>
@@ -33,7 +34,10 @@
         {% for r in rows %}
           <tr>
             <td>
-              <a href="/accounts/{{ r.account.id }}">{{ r.account.label }}</a>
+              <a href="/accounts/{{ r.account.id }}">{{ r.account.rsn or r.account.label }}</a>
+            </td>
+            <td style="text-align:right; font-variant-numeric: tabular-nums;">
+              {{ r.quest_points or 0 }}
             </td>
             <td>
               {% if r.goal %}
