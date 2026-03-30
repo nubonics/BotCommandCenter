@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -74,9 +75,18 @@ async def lifespan(_: FastAPI):
 
     # Background watchdog: tails bot log files and kills osclient.exe when a
     # "stuck in withdraw loop" pattern is detected.
+    win_user = os.environ.get("USERNAME")
+    userprofile = os.environ.get("USERPROFILE")
+    if userprofile and "\\" in userprofile:
+        try:
+            win_user = userprofile.split("\\")[-1] or win_user
+        except Exception:
+            pass
+    win_user = win_user or "nubonix"
+
     cfg = WatchdogConfig(
-        logs_dir=Path(r"C:\Users\nubonix\Botting Hub\Client\Logs\Script"),
-        pattern="sara*.txt",
+        logs_dir=Path(rf"C:\Users\{win_user}\Botting Hub\Client\Logs\Script"),
+        pattern="*@*.txt",
         kill_osclient=True,
         terminate_sandbox=True,
     )

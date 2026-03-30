@@ -52,6 +52,23 @@ def _win_to_wsl_path(win_path: str) -> Path:
     return Path(f"/mnt/{drive}/{rest}")
 
 
+def _default_windows_user() -> str:
+    # Prefer the Windows username when running under WSL.
+    # In WSL, USERNAME is often preserved; USERPROFILE is even more reliable.
+    up = os.environ.get("USERPROFILE")
+    if up and "\\" in up:
+        # C:\Users\<name>
+        parts = up.split("\\")
+        if parts:
+            return parts[-1] or parts[-2] if len(parts) > 1 else parts[-1]
+    return os.environ.get("USERNAME") or "nubonix"
+
+
+def _default_logs_dir() -> str:
+    user = _default_windows_user()
+    return rf"C:\Users\{user}\Botting Hub\Client\Logs\Script"
+
+
 def _parse_log_ts(line: str) -> datetime | None:
     m = LOG_TS_RE.match(line.rstrip("\n"))
     if not m:
@@ -449,7 +466,7 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
         filters.append((s, max(1, mn)))
 
     # Runtime from logs.
-    logs_dir = (request.query_params.get("logs_dir") or r"C:\Users\nubonix\Botting Hub\Client\Logs\Script").strip()
+    logs_dir = (request.query_params.get("logs_dir") or _default_logs_dir()).strip()
     max_gap_raw = (request.query_params.get("max_gap_seconds") or "300").strip()
     try:
         max_gap_seconds = int(max_gap_raw)
