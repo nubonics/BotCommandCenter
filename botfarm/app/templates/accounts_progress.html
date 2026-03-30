@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="header-row">
+    <h1>Account Progress</h1>
+    <div>
+      <a href="/accounts"><button type="button" class="secondary">Back to Accounts</button></a>
+    </div>
+  </div>
+
+  {% if message %}
+    <div class="flash">{{ message }}</div>
+  {% endif %}
+
+  <div class="card">
+    <div><strong>Accounts with active goal:</strong> {{ active_count }}</div>
+    <div><strong>Average overall completion:</strong> {{ "%.2f"|format(avg_overall) }}</div>
+  </div>
+
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Account</th>
+          <th>Active goal</th>
+          <th>Goal created</th>
+          <th>Baseline GP</th>
+          <th style="text-align:right;">Overall completion</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+          <tr>
+            <td>
+              <a href="/accounts/{{ r.account.id }}">{{ r.account.label }}</a>
+            </td>
+            <td>
+              {% if r.goal %}
+                {{ r.goal_name or "(unnamed)" }}
+              {% else %}
+                <span class="muted">No active goal</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if r.goal_created_at %}
+                {{ r.goal_created_at }}
+              {% else %}
+                <span class="muted">-</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if r.baseline_gp is not none %}
+                {{ r.baseline_gp|gp }}
+              {% else %}
+                <span class="muted">-</span>
+              {% endif %}
+            </td>
+            <td style="text-align:right; font-variant-numeric: tabular-nums;">
+              {{ "%.2f"|format(r.overall) }}
+            </td>
+            <td style="text-align:right;">
+              <a href="/accounts/{{ r.account.id }}/progress"><button type="button" class="secondary">View</button></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

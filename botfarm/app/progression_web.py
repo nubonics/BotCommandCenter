@@ -359,6 +359,65 @@ def progress_page(request: Request, account_id: int, session: Session = Depends(
     )
 
 
+@router.get("/accounts/progress", response_class=HTMLResponse)
+def progress_all_accounts_page(request: Request, session: Session = Depends(get_session)):
+    """Aggregate progress page for all accounts.
+
+    Computes the same "overall completion" score shown on the per-account page,
+    for each account that has an active goal.
+    """
+    templates = get_templates(request)
+
+    accounts = session.scalars(select(Account).order_by(Account.label)).all()
+
+    rows: list[dict[str, object]] = []
+    for account in accounts:
+        progress = _get_or_create_progress(session, account.id)
+        goal = _get_active_goal(session, account.id)
+
+        overall = 0.0
+        goal_name = None
+        goal_created_at = None
+        baseline_gp = None
+
+        if goal:
+            _rows, overall = _compute_progress_rows(progress, goal)
+            goal_name = getattr(goal, "name", None)
+            goal_created_at = getattr(goal, "created_at", None)
+            baseline_gp = getattr(goal, "baseline_gp", None)
+
+        rows.append(
+            {
+                "account": account,
+                "goal": goal,
+                "goal_name": goal_name,
+                "goal_created_at": goal_created_at,
+                "baseline_gp": baseline_gp,
+                "overall": float(overall or 0.0),
+            }
+        )
+
+    # Highest completion first, then name.
+    rows.sort(key=lambda r: (-float(r.get("overall") or 0.0), str(getattr(r["account"], "label", "")).lower()))
+
+    active_count = sum(1 for r in rows if r.get("goal") is not None)
+    avg_overall = 0.0
+    if active_count:
+        avg_overall = sum(float(r.get("overall") or 0.0) for r in rows if r.get("goal") is not None) / active_count
+
+    return templates.TemplateResponse(
+        request,
+        "accounts_progress.html",
+        {
+            "request": request,
+            "rows": rows,
+            "active_count": active_count,
+            "avg_overall": avg_overall,
+            "message": request.query_params.get("message"),
+        },
+    )
+
+
 @router.get("/accounts/{account_id}/progress/simulate", response_class=HTMLResponse)
 def simulate_progress_plan(request: Request, account_id: int, session: Session = Depends(get_session)):
     templates = get_templates(request)
