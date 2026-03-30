@@ -946,9 +946,8 @@ def mount(app, prefix: str = "/wall"):
     - static files at {prefix}/static
     - all routes under {prefix}
     """
-    # Mount static so templates referencing /static/* work when hosted under /wall.
-    # (The original wall UI uses absolute /static/... paths.)
-    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="wall_static")
+    # Mount static assets under the wall prefix.
+    app.mount(f"{prefix}/static", StaticFiles(directory=STATIC_DIR), name="wall_static")
     app.include_router(router, prefix=prefix)
 
 
