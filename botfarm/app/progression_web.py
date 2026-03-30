@@ -499,18 +499,28 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
         # Runtime (hours) from a per-account action log.
         runtime_hours = 0.0
         log_path = None
-        if account.rs_email:
-            candidate = f"sara{account.rs_email}.txt"
-            # Some environments may have 'sara*.txt' with or without separators.
-            candidates = [
-                logs_dir_path / candidate,
-                logs_dir_path / f"sara_{account.rs_email}.txt",
-                logs_dir_path / f"{account.rs_email}.txt",
+        if account.rs_email and "@" in account.rs_email:
+            # Prefer the convention: <anything><email>.txt, e.g.
+            #   sarahernandez1628+she69@gmail.com.txt
+            # Also supports prefixes like sara<email>.txt.
+            email = account.rs_email.strip()
+            patterns = [
+                f"*{email}.txt",
             ]
-            for p in candidates:
-                if p.exists():
-                    log_path = p
-                    break
+
+            matches: list[Path] = []
+            for pat in patterns:
+                try:
+                    matches.extend(list(logs_dir_path.glob(pat)))
+                except Exception:
+                    pass
+
+            # If multiple, pick most recently modified.
+            matches = [p for p in matches if p.is_file()]
+            if matches:
+                matches.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+                log_path = matches[0]
+
             if log_path is not None:
                 runtime_hours = _runtime_hours_from_log(log_path, max_gap_seconds=max_gap_seconds)
 
