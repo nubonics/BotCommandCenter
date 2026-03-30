@@ -504,9 +504,9 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
             #   sarahernandez1628+she69@gmail.com.txt
             # Also supports prefixes like sara<email>.txt.
             email = account.rs_email.strip()
-            patterns = [
-                f"*{email}.txt",
-            ]
+            # Prefer matching any prefix and any domain convention (e.g. *@*.txt)
+            # by anchoring on the exact email string.
+            patterns = [f"*{email}.txt"]
 
             matches: list[Path] = []
             for pat in patterns:

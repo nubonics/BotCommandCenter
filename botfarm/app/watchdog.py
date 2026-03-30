@@ -19,7 +19,7 @@ SANDBOX_PATH_RE = re.compile(r"C:\\Sandbox\\([^\\]+)\\", re.IGNORECASE)
 @dataclass
 class WatchdogConfig:
     logs_dir: Path
-    pattern: str = "*@gmail.com.txt"
+    pattern: str = "*@*.txt"
 
     window_seconds: int = 180
     threshold_none_arrays: int = 6
