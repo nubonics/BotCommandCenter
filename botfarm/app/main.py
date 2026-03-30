@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Form, HTTPException, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import or_, select
@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 from .planner import router as planner_router
 from .progression_web import router as progression_router
 from .osclient_wall.app import mount as mount_osclient_wall
-from .watchdog import WatchdogConfig, watchdog_loop
+from .watchdog import WATCHDOG_STATUS, WatchdogConfig, watchdog_loop
 from . import models  # noqa: F401
 from .database import create_db_and_tables, get_session
 from .models import Account, Item, MoneyMaker, MoneyMakerComponent
@@ -102,6 +102,46 @@ app.include_router(progression_router)
 
 # OSClient Wall (dashboard)
 mount_osclient_wall(app, prefix="/wall")
+
+
+@app.get("/watchdog", response_class=HTMLResponse)
+def watchdog_page(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "watchdog.html",
+        {
+            "request": request,
+            "status": WATCHDOG_STATUS,
+        },
+    )
+
+
+@app.get("/watchdog/status")
+def watchdog_status_json():
+    return JSONResponse(
+        {
+            "running": WATCHDOG_STATUS.running,
+            "logs_dir": WATCHDOG_STATUS.logs_dir,
+            "pattern": WATCHDOG_STATUS.pattern,
+            "poll_interval": WATCHDOG_STATUS.poll_interval,
+            "threshold_none_arrays": WATCHDOG_STATUS.threshold_none_arrays,
+            "threshold_withdraws": WATCHDOG_STATUS.threshold_withdraws,
+            "cooldown_seconds": WATCHDOG_STATUS.cooldown_seconds,
+            "files": [
+                {
+                    "path": f.path,
+                    "inferred_pid": f.inferred_pid,
+                    "inferred_sandbox": f.inferred_sandbox,
+                    "window_seconds": f.window_seconds,
+                    "none_arrays": f.none_arrays,
+                    "withdraws": f.withdraws,
+                    "last_action_at": f.last_action_at,
+                    "last_action": f.last_action,
+                }
+                for f in (WATCHDOG_STATUS.files or [])
+            ],
+        }
+    )
 
 
 

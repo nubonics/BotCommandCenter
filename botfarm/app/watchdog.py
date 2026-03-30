@@ -36,6 +36,33 @@ class WatchdogConfig:
     taskkill_exe: str = r"C:\Windows\System32\taskkill.exe"
 
 
+@dataclass
+class FileWatchStatus:
+    path: str
+    inferred_pid: int | None = None
+    inferred_sandbox: str | None = None
+    window_seconds: int = 0
+    none_arrays: int = 0
+    withdraws: int = 0
+    last_action_at: str | None = None
+    last_action: str | None = None
+
+
+@dataclass
+class WatchdogStatus:
+    running: bool = False
+    logs_dir: str = ""
+    pattern: str = ""
+    poll_interval: float = 0.0
+    threshold_none_arrays: int = 0
+    threshold_withdraws: int = 0
+    cooldown_seconds: int = 0
+    files: list[FileWatchStatus] = None  # type: ignore[assignment]
+
+
+WATCHDOG_STATUS = WatchdogStatus(files=[])
+
+
 def _parse_ts(line: str) -> Optional[tuple[datetime, str]]:
     m = TS_RE.match(line.rstrip("\n"))
     if not m:
@@ -95,6 +122,7 @@ class TailState:
         self.pos = 0
         self.recent: list[tuple[datetime, str]] = []
         self.last_action_at: datetime = datetime.min
+        self.last_action: str | None = None
         self.inferred_sandbox: str | None = None
         self.inferred_pid: int | None = None
 
@@ -155,6 +183,14 @@ class TailState:
 async def watchdog_loop(cfg: WatchdogConfig) -> None:
     tails: dict[Path, TailState] = {}
 
+    WATCHDOG_STATUS.running = True
+    WATCHDOG_STATUS.logs_dir = str(cfg.logs_dir)
+    WATCHDOG_STATUS.pattern = cfg.pattern
+    WATCHDOG_STATUS.poll_interval = cfg.poll_interval
+    WATCHDOG_STATUS.threshold_none_arrays = cfg.threshold_none_arrays
+    WATCHDOG_STATUS.threshold_withdraws = cfg.threshold_withdraws
+    WATCHDOG_STATUS.cooldown_seconds = cfg.cooldown_seconds
+
     while True:
         # Discover files
         for p in cfg.logs_dir.glob(cfg.pattern):
@@ -209,9 +245,40 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
                 # Kill only the malfunctioning instance if we have its PID.
                 if cfg.kill_osclient and state.inferred_pid is not None:
                     _kill_pid(cfg, state.inferred_pid)
+                    state_last_action = f"killed pid {state.inferred_pid}"
+                else:
+                    state_last_action = None
 
                 # Terminate Sandboxie sandbox if we can infer it from the log.
                 if cfg.terminate_sandbox and state.inferred_sandbox:
                     _terminate_sandbox(cfg, state.inferred_sandbox)
+                    if state_last_action:
+                        state_last_action += f"; terminated sandbox {state.inferred_sandbox}"
+                    else:
+                        state_last_action = f"terminated sandbox {state.inferred_sandbox}"
+
+                if state_last_action:
+                    # store on state for UI
+                    state.last_action = state_last_action
+
+            # Update exported status snapshot (cheap; list is small).
+            statuses: list[FileWatchStatus] = []
+            for st in tails.values():
+                last_at = None
+                if st.last_action_at != datetime.min:
+                    last_at = st.last_action_at.isoformat(sep=" ", timespec="seconds")
+                statuses.append(
+                    FileWatchStatus(
+                        path=str(st.path),
+                        inferred_pid=st.inferred_pid,
+                        inferred_sandbox=st.inferred_sandbox,
+                        window_seconds=cfg.window_seconds,
+                        none_arrays=sum(1 for _, m in st.recent if NONE_ARRAY_RE.search(m)),
+                        withdraws=sum(1 for _, m in st.recent if WITHDRAW_RE.search(m)),
+                        last_action_at=last_at,
+                        last_action=getattr(st, "last_action", None),
+                    )
+                )
+            WATCHDOG_STATUS.files = sorted(statuses, key=lambda s: s.path)
 
         await asyncio.sleep(cfg.poll_interval)

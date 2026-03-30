@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Watchdog</h2>
+
+<p>
+  <strong>Status:</strong>
+  {% if status.running %}Running{% else %}Not running{% endif %}
+</p>
+
+<ul>
+  <li><strong>Logs dir:</strong> {{ status.logs_dir }}</li>
+  <li><strong>Pattern:</strong> {{ status.pattern }}</li>
+  <li><strong>Poll interval:</strong> {{ status.poll_interval }}s</li>
+  <li><strong>Window:</strong> {{ status.files[0].window_seconds if status.files and status.files[0] else "?" }}s</li>
+  <li><strong>Thresholds:</strong> none_arrays ≥ {{ status.threshold_none_arrays }}, withdraws ≥ {{ status.threshold_withdraws }}</li>
+  <li><strong>Cooldown:</strong> {{ status.cooldown_seconds }}s</li>
+</ul>
+
+<h3>Files</h3>
+
+<div class="card">
+  <p style="margin-top:0;">
+    Tip: JSON view at <a href="/watchdog/status">/watchdog/status</a>
+  </p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Log</th>
+        <th>PID</th>
+        <th>Sandbox</th>
+        <th>None arrays</th>
+        <th>Withdraws</th>
+        <th>Last action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in (status.files or []) %}
+      <tr>
+        <td style="max-width:520px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ f.path }}">{{ f.path }}</td>
+        <td>{{ f.inferred_pid or "-" }}</td>
+        <td>{{ f.inferred_sandbox or "-" }}</td>
+        <td>{{ f.none_arrays }}</td>
+        <td>{{ f.withdraws }}</td>
+        <td>
+          {% if f.last_action %}
+            {{ f.last_action_at or "" }} — {{ f.last_action }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
+
