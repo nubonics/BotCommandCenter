@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>{{ account.label }}</h2>
+        <p>Created {{ account.created_at }} · Updated {{ account.updated_at }}</p>
+    </div>
+    <div class="actions">
+        <a href="/accounts/{{ account.id }}/progress"><button type="button" class="secondary">Progress</button></a>
+        <a href="/accounts/{{ account.id }}/edit"><button type="button" class="secondary">Edit</button></a>
+        <form action="/accounts/{{ account.id }}/delete" method="post" onsubmit="return confirm('Delete this account?');">
+            <button type="submit" class="danger">Delete</button>
+        </form>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Email</h3>
+        <dl>
+            <dt>Email Address</dt>
+            <dd>{{ account.email_address or "-" }}</dd>
+
+            <dt>Email Password</dt>
+            <dd>
+                {% if account.email_password %}
+                <div class="secret-box">
+                    <span>{{ account.email_password | mask_secret }}</span>
+                    <button type="button" class="secondary tiny-btn" onclick="toggleSecret('email-password')">Reveal</button>
+                    <span id="email-password" class="secret mono">{{ account.email_password }}</span>
+                </div>
+                {% else %}
+                -
+                {% endif %}
+            </dd>
+        </dl>
+    </div>
+
+    <div class="card">
+        <h3>RuneScape</h3>
+        <dl>
+            <dt>RS Email / Login</dt>
+            <dd>{{ account.rs_email or "-" }}</dd>
+
+            <dt>RS Password</dt>
+            <dd>
+                {% if account.rs_password %}
+                <div class="secret-box">
+                    <span>{{ account.rs_password | mask_secret }}</span>
+                    <button type="button" class="secondary tiny-btn" onclick="toggleSecret('rs-password')">Reveal</button>
+                    <span id="rs-password" class="secret mono">{{ account.rs_password }}</span>
+                </div>
+                {% else %}
+                -
+                {% endif %}
+            </dd>
+
+            <dt>RSN</dt>
+            <dd>{{ account.rsn or "-" }}</dd>
+
+            <dt>Banned</dt>
+            <dd>{% if account.banned %}Yes{% else %}No{% endif %}</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Proxy</h3>
+        <dl>
+            <dt>Proxy IP</dt>
+            <dd>{{ account.proxy_ip or "-" }}</dd>
+
+            <dt>Proxy Port</dt>
+            <dd>{{ account.proxy_port or "-" }}</dd>
+
+            <dt>Proxy Username</dt>
+            <dd>{{ account.proxy_username or "-" }}</dd>
+
+            <dt>Proxy Password</dt>
+            <dd>
+                {% if account.proxy_password %}
+                <div class="secret-box">
+                    <span>{{ account.proxy_password | mask_secret }}</span>
+                    <button type="button" class="secondary tiny-btn" onclick="toggleSecret('proxy-password')">Reveal</button>
+                    <span id="proxy-password" class="secret mono">{{ account.proxy_password }}</span>
+                </div>
+                {% else %}
+                -
+                {% endif %}
+            </dd>
+        </dl>
+    </div>
+
+    <div class="card">
+        <h3>Botting Hub Info</h3>
+        <dl>
+            <dt>Config ID</dt>
+            <dd>{{ account.botting_hub_config_id or "-" }}</dd>
+
+            <dt>Account ID</dt>
+            <dd>{{ account.botting_hub_account_id or "-" }}</dd>
+
+            <dt>Proxy ID</dt>
+            <dd>{{ account.botting_hub_proxy_id or "-" }}</dd>
+
+            <dt>Status</dt>
+            <dd>{{ account.status or "-" }}</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Notes</h3>
+    <p style="white-space: pre-line;">{{ account.notes or "No notes yet." }}</p>
+</div>
+
+{% endblock %}

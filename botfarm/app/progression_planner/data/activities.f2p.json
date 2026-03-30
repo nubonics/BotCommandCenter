@@ -1,0 +1,958 @@
+[
+  {
+    "id": "f2p_combat_cows_melee",
+    "name": "F2P Combat - Cows (melee)",
+    "category": "combat",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "attack": 8000,
+      "strength": 9000,
+      "defence": 7000,
+      "hitpoints": 3000
+    },
+    "gp_per_hour": 2000,
+    "requirements": {
+      "min_levels": {
+        "attack": 1
+      }
+    },
+    "notes": "AFK-ish early melee. Placeholder rates."
+  },
+  {
+    "id": "f2p_combat_frogs_ranged",
+    "name": "F2P Combat - Low-level ranged (safe spot)",
+    "category": "combat",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "ranged": 12000,
+      "hitpoints": 2500
+    },
+    "gp_per_hour": -1500,
+    "requirements": {
+      "min_levels": {
+        "ranged": 1
+      }
+    },
+    "notes": "AFK-ish ranged; ammo cost. Placeholder rates."
+  },
+  {
+    "id": "f2p_magic_strike_spam",
+    "name": "F2P Magic - Strike spells (AFK-ish)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 14000
+    },
+    "gp_per_hour": -12000,
+    "requirements": {
+      "min_levels": {
+        "magic": 1
+      }
+    },
+    "notes": "Very low intensity early magic. Placeholder."
+  },
+  {
+    "id": "f2p_magic_alch",
+    "name": "F2P Magic - High Alchemy",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 75000
+    },
+    "gp_per_hour": -25000,
+    "requirements": {
+      "min_levels": {
+        "magic": 55
+      }
+    },
+    "notes": "AFK-ish magic; profit depends on item. Placeholder."
+  },
+  {
+    "id": "f2p_prayer_bones",
+    "name": "F2P Prayer - Bury bones",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "prayer": 6000
+    },
+    "gp_per_hour": -5000,
+    "requirements": {
+      "min_levels": {
+        "prayer": 1
+      }
+    },
+    "notes": "Slow but simple. Placeholder."
+  },
+  {
+    "id": "f2p_cooking_fish",
+    "name": "F2P Cooking - Fish",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 110000
+    },
+    "gp_per_hour": -15000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 1
+      }
+    },
+    "notes": "AFK-ish cooking. Placeholder."
+  },
+  {
+    "id": "f2p_firemaking_logs",
+    "name": "F2P Firemaking - Logs",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "firemaking": 140000
+    },
+    "gp_per_hour": -40000,
+    "requirements": {
+      "min_levels": {
+        "firemaking": 1
+      }
+    },
+    "notes": "Fast-ish, clicky. Placeholder."
+  },
+  {
+    "id": "f2p_woodcutting_trees",
+    "name": "F2P Woodcutting - Trees (AFK)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "woodcutting": 12000
+    },
+    "gp_per_hour": 0,
+    "requirements": {
+      "min_levels": {
+        "woodcutting": 1
+      }
+    },
+    "notes": "Early AFK woodcutting. Placeholder."
+  },
+  {
+    "id": "f2p_woodcutting_willows",
+    "name": "F2P Woodcutting - Willows (AFK)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "woodcutting": 30000
+    },
+    "gp_per_hour": 2000,
+    "requirements": {
+      "min_levels": {
+        "woodcutting": 30
+      }
+    },
+    "notes": "Classic AFK willows. Placeholder."
+  },
+  {
+    "id": "f2p_crafting_leather",
+    "name": "F2P Crafting - Leather (early)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 22000
+    },
+    "gp_per_hour": -30000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 1
+      }
+    },
+    "notes": "AFK-ish. Placeholder."
+  },
+  {
+    "id": "f2p_thieving_pickpocket",
+    "name": "F2P Thieving - Pickpocketing",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "thieving": 22000
+    },
+    "gp_per_hour": 5000,
+    "requirements": {
+      "min_levels": {
+        "thieving": 1
+      }
+    },
+    "notes": "Simple early thieving. Placeholder."
+  },
+  {
+    "id": "f2p_magic_tele_varrock",
+    "name": "F2P Magic - Teleport: Varrock",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 24000
+    },
+    "gp_per_hour": -12000,
+    "requirements": {
+      "min_levels": {
+        "magic": 25
+      }
+    },
+    "notes": "Casts/hour varies; placeholder rune cost + xp/hr."
+  },
+  {
+    "id": "f2p_magic_tele_lumbridge",
+    "name": "F2P Magic - Teleport: Lumbridge",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 28000
+    },
+    "gp_per_hour": -14000,
+    "requirements": {
+      "min_levels": {
+        "magic": 31
+      }
+    },
+    "notes": "Casts/hour varies; placeholder rune cost + xp/hr."
+  },
+  {
+    "id": "f2p_magic_tele_falador",
+    "name": "F2P Magic - Teleport: Falador",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 32000
+    },
+    "gp_per_hour": -16000,
+    "requirements": {
+      "min_levels": {
+        "magic": 37
+      }
+    },
+    "notes": "Casts/hour varies; placeholder rune cost + xp/hr."
+  },
+  {
+    "id": "f2p_mining_copper",
+    "name": "F2P Mining - Copper",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "mining": 9000
+    },
+    "gp_per_hour": 2000,
+    "requirements": {
+      "min_levels": {
+        "mining": 1
+      }
+    },
+    "notes": "AFK-ish. Placeholder."
+  },
+  {
+    "id": "f2p_mining_tin",
+    "name": "F2P Mining - Tin",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "mining": 9000
+    },
+    "gp_per_hour": 2000,
+    "requirements": {
+      "min_levels": {
+        "mining": 1
+      }
+    },
+    "notes": "AFK-ish. Placeholder."
+  },
+  {
+    "id": "f2p_mining_iron",
+    "name": "F2P Mining - Iron",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "mining": 22000
+    },
+    "gp_per_hour": 8000,
+    "requirements": {
+      "min_levels": {
+        "mining": 15
+      }
+    },
+    "notes": "AFK-ish. Placeholder."
+  },
+  {
+    "id": "f2p_cooking_shrimp",
+    "name": "F2P Cooking - Shrimp",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 80000
+    },
+    "gp_per_hour": -5000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 1
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_anchovies",
+    "name": "F2P Cooking - Anchovies",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 85000
+    },
+    "gp_per_hour": -5000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 1
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_sardine",
+    "name": "F2P Cooking - Sardine",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 90000
+    },
+    "gp_per_hour": -7000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 1
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_herring",
+    "name": "F2P Cooking - Herring",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 95000
+    },
+    "gp_per_hour": -8000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 5
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_mackerel",
+    "name": "F2P Cooking - Mackerel",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 100000
+    },
+    "gp_per_hour": -9000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 10
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_trout",
+    "name": "F2P Cooking - Trout",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 110000
+    },
+    "gp_per_hour": -12000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 15
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_cod",
+    "name": "F2P Cooking - Cod",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 112000
+    },
+    "gp_per_hour": -12000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 18
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_pike",
+    "name": "F2P Cooking - Pike",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 115000
+    },
+    "gp_per_hour": -13000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 20
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_salmon",
+    "name": "F2P Cooking - Salmon",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 120000
+    },
+    "gp_per_hour": -14000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 25
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_tuna",
+    "name": "F2P Cooking - Tuna",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 130000
+    },
+    "gp_per_hour": -15000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 30
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_lobster",
+    "name": "F2P Cooking - Lobster",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 140000
+    },
+    "gp_per_hour": -20000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 40
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_swordfish",
+    "name": "F2P Cooking - Swordfish",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 145000
+    },
+    "gp_per_hour": -22000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 45
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_firemaking_oak_logs",
+    "name": "F2P Firemaking - Oak Logs",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "firemaking": 130000
+    },
+    "gp_per_hour": -25000,
+    "requirements": {
+      "min_levels": {
+        "firemaking": 15
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_firemaking_willow_logs",
+    "name": "F2P Firemaking - Willow Logs",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "firemaking": 170000
+    },
+    "gp_per_hour": -45000,
+    "requirements": {
+      "min_levels": {
+        "firemaking": 30
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_firemaking_maple_logs",
+    "name": "F2P Firemaking - Maple Logs",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "firemaking": 200000
+    },
+    "gp_per_hour": -65000,
+    "requirements": {
+      "min_levels": {
+        "firemaking": 45
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_fletching_shortbows",
+    "name": "F2P Fletching - Shortbows",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 45000
+    },
+    "gp_per_hour": -15000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 5
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_fishing_draynor_small_net",
+    "name": "F2P Fishing - Draynor - Small net",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 9000
+    },
+    "gp_per_hour": 0,
+    "requirements": {
+      "min_levels": {
+        "fishing": 1
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_draynor_bait",
+    "name": "F2P Fishing - Draynor - Bait",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 11000
+    },
+    "gp_per_hour": -500,
+    "requirements": {
+      "min_levels": {
+        "fishing": 5
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_lumbridge_south_small_net",
+    "name": "F2P Fishing - Lumbridge South - Small net",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 9000
+    },
+    "gp_per_hour": 0,
+    "requirements": {
+      "min_levels": {
+        "fishing": 1
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_lumbridge_south_bait",
+    "name": "F2P Fishing - Lumbridge South - Bait",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 11000
+    },
+    "gp_per_hour": -500,
+    "requirements": {
+      "min_levels": {
+        "fishing": 5
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_lumbridge_river_lure",
+    "name": "F2P Fishing - Lumbridge River - Lure",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 24000
+    },
+    "gp_per_hour": -1500,
+    "requirements": {
+      "min_levels": {
+        "fishing": 20
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_lumbridge_river_bait",
+    "name": "F2P Fishing - Lumbridge River - Bait",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 11000
+    },
+    "gp_per_hour": -500,
+    "requirements": {
+      "min_levels": {
+        "fishing": 5
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_barb_village_lure",
+    "name": "F2P Fishing - Barbarian Village - Lure",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 26000
+    },
+    "gp_per_hour": -1500,
+    "requirements": {
+      "min_levels": {
+        "fishing": 20
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_barb_village_bait",
+    "name": "F2P Fishing - Barbarian Village - Bait",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 11500
+    },
+    "gp_per_hour": -500,
+    "requirements": {
+      "min_levels": {
+        "fishing": 5
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_karamja_small_net",
+    "name": "F2P Fishing - Karamja - Small net",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 9000
+    },
+    "gp_per_hour": 0,
+    "requirements": {
+      "min_levels": {
+        "fishing": 1
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_karamja_bait",
+    "name": "F2P Fishing - Karamja - Bait",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 11500
+    },
+    "gp_per_hour": -500,
+    "requirements": {
+      "min_levels": {
+        "fishing": 5
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_karamja_cage",
+    "name": "F2P Fishing - Karamja - Cage (lobster)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 28000
+    },
+    "gp_per_hour": 2000,
+    "requirements": {
+      "min_levels": {
+        "fishing": 40
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_karamja_harpoon",
+    "name": "F2P Fishing - Karamja - Harpoon (tuna/swordfish)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 30000
+    },
+    "gp_per_hour": 4000,
+    "requirements": {
+      "min_levels": {
+        "fishing": 35
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_alkharid_small_net",
+    "name": "F2P Fishing - Al Kharid - Small net",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 8500
+    },
+    "gp_per_hour": 0,
+    "requirements": {
+      "min_levels": {
+        "fishing": 1
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fishing_alkharid_bait",
+    "name": "F2P Fishing - Al Kharid - Bait",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 10500
+    },
+    "gp_per_hour": -500,
+    "requirements": {
+      "min_levels": {
+        "fishing": 5
+      }
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "f2p_fletching_shortbow",
+    "name": "F2P Fletching - Shortbows",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 45000
+    },
+    "gp_per_hour": -15000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 5
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_fletching_longbow",
+    "name": "F2P Fletching - Longbows",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 55000
+    },
+    "gp_per_hour": -18000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 10
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_fletching_oak_shortbow",
+    "name": "F2P Fletching - Oak shortbows",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 70000
+    },
+    "gp_per_hour": -22000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 20
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_fletching_willow_shortbow",
+    "name": "F2P Fletching - Willow shortbows",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 95000
+    },
+    "gp_per_hour": -30000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 35
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_fletching_maple_shortbow",
+    "name": "F2P Fletching - Maple shortbows",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 115000
+    },
+    "gp_per_hour": -38000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 50
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_fletching_yew_shortbow",
+    "name": "F2P Fletching - Yew shortbows",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 135000
+    },
+    "gp_per_hour": -45000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 65
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "f2p_cooking_wine",
+    "name": "F2P Cooking - Wine",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 450000
+    },
+    "gp_per_hour": -80000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 35
+      }
+    },
+    "notes": "Auto cooking method; placeholder."
+  },
+  {
+    "id": "f2p_cooking_shrimps",
+    "name": "F2P Cooking - Shrimps",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 80000
+    },
+    "gp_per_hour": -5000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 1
+      }
+    },
+    "notes": "Auto cooking method; placeholder."
+  },
+  {
+    "id": "f2p_cooking_chicken",
+    "name": "F2P Cooking - Chicken",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 65000
+    },
+    "gp_per_hour": -2000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 1
+      }
+    },
+    "notes": "Auto cooking method; placeholder."
+  }
+]

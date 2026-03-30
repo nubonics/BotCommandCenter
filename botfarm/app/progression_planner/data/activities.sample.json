@@ -1,0 +1,357 @@
+[
+  {
+    "id": "crabs_attack",
+    "name": "Sand Crabs - Attack",
+    "category": "combat",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "attack": 40000,
+      "hitpoints": 13000
+    },
+    "gp_per_hour": -5000,
+    "requirements": {
+      "min_levels": {
+        "attack": 1
+      }
+    },
+    "notes": "Placeholder rates; tune per gear + intensity."
+  },
+  {
+    "id": "crabs_strength",
+    "name": "Sand Crabs - Strength",
+    "category": "combat",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "strength": 42000,
+      "hitpoints": 14000
+    },
+    "gp_per_hour": -5000,
+    "requirements": {
+      "min_levels": {
+        "strength": 1
+      }
+    },
+    "notes": "Placeholder rates; tune per gear + intensity."
+  },
+  {
+    "id": "green_dragons",
+    "name": "Green Dragons",
+    "category": "money",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "attack": 20000,
+      "strength": 20000,
+      "hitpoints": 8000
+    },
+    "gp_per_hour": 500000,
+    "requirements": {
+      "min_levels": {
+        "attack": 50
+      }
+    },
+    "notes": "Placeholder rates."
+  },
+  {
+    "id": "blackjacking",
+    "name": "Blackjacking",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "thieving": 170000
+    },
+    "gp_per_hour": 180000,
+    "requirements": {
+      "min_levels": {
+        "thieving": 45
+      },
+      "required_unlocks": [
+        "unlock:blackjacking"
+      ]
+    },
+    "notes": "High intensity; placeholder rates."
+  },
+  {
+    "id": "vorkath",
+    "name": "Vorkath",
+    "category": "bossing",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "ranged": 35000,
+      "hitpoints": 10000
+    },
+    "gp_per_hour": 2500000,
+    "requirements": {
+      "min_levels": {
+        "ranged": 75
+      },
+      "required_unlocks": [
+        "unlock:vorkath"
+      ]
+    },
+    "notes": "Placeholder rates."
+  },
+  {
+    "id": "crabs_ranged",
+    "name": "Sand Crabs - Ranged",
+    "category": "combat",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "ranged": 38000,
+      "hitpoints": 12000
+    },
+    "gp_per_hour": -8000,
+    "requirements": {
+      "min_levels": {
+        "ranged": 1
+      }
+    },
+    "notes": "Placeholder rates; ammo cost."
+  },
+  {
+    "id": "magic_high_alch",
+    "name": "High Alchemy (training)",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 78000
+    },
+    "gp_per_hour": -30000,
+    "requirements": {
+      "min_levels": {
+        "magic": 55
+      }
+    },
+    "notes": "Placeholder; depends on item choice."
+  },
+  {
+    "id": "magic_splashing",
+    "name": "Splashing (low magic)",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 12000
+    },
+    "gp_per_hour": -15000,
+    "requirements": {
+      "min_levels": {
+        "magic": 1
+      }
+    },
+    "notes": "Very low intensity; placeholder."
+  },
+  {
+    "id": "prayer_chaos_altar",
+    "name": "Prayer - Chaos altar (bones)",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "prayer": 220000
+    },
+    "gp_per_hour": -650000,
+    "requirements": {
+      "min_levels": {
+        "prayer": 1
+      }
+    },
+    "notes": "Fast prayer, risky; placeholder."
+  },
+  {
+    "id": "agility_gnome",
+    "name": "Agility - Gnome course",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 8000
+    },
+    "gp_per_hour": 0,
+    "requirements": {
+      "min_levels": {
+        "agility": 1
+      }
+    },
+    "notes": "Early agility."
+  },
+  {
+    "id": "agility_rooftops",
+    "name": "Agility - Rooftops",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 52000
+    },
+    "gp_per_hour": 60000,
+    "requirements": {
+      "min_levels": {
+        "agility": 40
+      }
+    },
+    "notes": "Marks of grace; placeholder."
+  },
+  {
+    "id": "thieving_pickpocket",
+    "name": "Thieving - Pickpocketing",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "thieving": 30000
+    },
+    "gp_per_hour": 10000,
+    "requirements": {
+      "min_levels": {
+        "thieving": 1
+      }
+    },
+    "notes": "Early thieving; placeholder."
+  },
+  {
+    "id": "crafting_leather",
+    "name": "Crafting - Leather (early)",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 25000
+    },
+    "gp_per_hour": -40000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 1
+      }
+    },
+    "notes": "Placeholder profit/loss."
+  },
+  {
+    "id": "crafting_glass",
+    "name": "Crafting - Glassblowing",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 65000
+    },
+    "gp_per_hour": -90000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 46
+      }
+    },
+    "notes": "Common mid crafting; placeholder."
+  },
+  {
+    "id": "slayer_tasks",
+    "name": "Slayer - Tasks",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "slayer": 20000,
+      "hitpoints": 8000
+    },
+    "gp_per_hour": 120000,
+    "requirements": {
+      "min_levels": {
+        "attack": 50
+      }
+    },
+    "notes": "Highly variable; placeholder."
+  },
+  {
+    "id": "cooking_fish",
+    "name": "Cooking - Fish",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 120000
+    },
+    "gp_per_hour": -20000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 1
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "firemaking_logs",
+    "name": "Firemaking - Logs",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "firemaking": 160000
+    },
+    "gp_per_hour": -50000,
+    "requirements": {
+      "min_levels": {
+        "firemaking": 1
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "woodcutting_willows",
+    "name": "Woodcutting - Willows",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "woodcutting": 35000
+    },
+    "gp_per_hour": 5000,
+    "requirements": {
+      "min_levels": {
+        "woodcutting": 30
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "woodcutting_trees",
+    "name": "Woodcutting - Trees (early)",
+    "category": "skilling",
+    "repeatable": true,
+    "one_time": false,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "woodcutting": 12000
+    },
+    "gp_per_hour": 0,
+    "requirements": {
+      "min_levels": {
+        "woodcutting": 1
+      }
+    },
+    "notes": "Placeholder."
+  }
+]

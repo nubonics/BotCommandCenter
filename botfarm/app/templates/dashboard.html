@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% set next_name_dir = 'desc' if sort == 'name' and direction == 'asc' else 'asc' %}
+{% set next_profit_dir = 'desc' if sort == 'profit' and direction == 'asc' else 'asc' %}
+{% set next_usd_profit_dir = 'desc' if sort == 'usd_profit' and direction == 'asc' else 'asc' %}
+
+<div class="page-header">
+    <div>
+        <h2>Dashboard</h2>
+        <p>Saved OSRS money makers. USD uses {{ usd_per_million | usd }} per 1M OSRS GP.</p>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap: wrap;">
+        <form action="/refresh-items" method="post" style="margin:0;">
+            <button type="submit">Refresh Prices</button>
+        </form>
+        <a href="/money-makers/new"><button type="button">New Money Maker</button></a>
+    </div>
+</div>
+
+<div class="card">
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <span class="muted">Filter:</span>
+
+        <a href="/?members=all&sort={{ sort }}&direction={{ direction }}">
+            <button type="button" class="{% if members == 'all' %}{% else %}secondary{% endif %}">All</button>
+        </a>
+
+        <a href="/?members=f2p&sort={{ sort }}&direction={{ direction }}">
+            <button type="button" class="{% if members == 'f2p' %}{% else %}secondary{% endif %}">F2P</button>
+        </a>
+
+        <a href="/?members=p2p&sort={{ sort }}&direction={{ direction }}">
+            <button type="button" class="{% if members == 'p2p' %}{% else %}secondary{% endif %}">P2P</button>
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    <a href="/?members={{ members }}&sort=name&direction={{ next_name_dir }}">
+                        Name
+                        {% if sort == "name" %}
+                            {% if direction == "asc" %}▲{% else %}▼{% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Units/Hr</th>
+                <th>Input Cost/Hr</th>
+                <th>Output Value/Hr</th>
+                <th>
+                    <a href="/?members={{ members }}&sort=profit&direction={{ next_profit_dir }}">
+                        Profit/Hr
+                        {% if sort == "profit" %}
+                            {% if direction == "asc" %}▲{% else %}▼{% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="/?members={{ members }}&sort=usd_profit&direction={{ next_usd_profit_dir }}">
+                        USD/Hr
+                        {% if sort == "usd_profit" %}
+                            {% if direction == "asc" %}▲{% else %}▼{% endif %}
+                        {% endif %}
+                    </a>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>
+                    <a href="/money-makers/{{ row.money_maker.id }}">
+                        {{ row.money_maker.name }}
+                    </a>
+                </td>
+                <td>{% if row.money_maker.is_members %}P2P{% else %}F2P{% endif %}</td>
+                <td>{{ row.money_maker.category }}</td>
+                <td>{{ row.money_maker.units_per_hour }}</td>
+                <td>{{ row.summary.input_cost | gp }}</td>
+                <td>{{ row.summary.output_value | gp }}</td>
+                <td class="{% if row.summary.profit_per_hour >= 0 %}positive{% else %}negative{% endif %}">
+                    {{ row.summary.profit_per_hour | gp }}
+                </td>
+                <td class="{% if row.usd_profit_per_hour >= 0 %}positive{% else %}negative{% endif %}">
+                    {{ row.usd_profit_per_hour | usd }}
+                </td>
+                <td class="actions">
+                    <a href="/money-makers/{{ row.money_maker.id }}/edit">
+                        <button type="button" class="secondary tiny-btn">Edit</button>
+                    </a>
+                    <form action="/money-makers/{{ row.money_maker.id }}/delete" method="post" onsubmit="return confirm('Delete this money maker?');">
+                        <button type="submit" class="danger tiny-btn">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="9">No money makers yet. Create one to get started.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

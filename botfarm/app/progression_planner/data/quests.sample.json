@@ -1,0 +1,52 @@
+[
+  {
+    "id": "quest_waterfall",
+    "name": "Waterfall Quest",
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 0.75,
+    "quest_name": "Waterfall Quest",
+    "reward": {
+      "xp": { "attack": 13750, "strength": 13750 },
+      "gp": 0,
+      "unlocks": ["area:baxtorian"],
+      "quest_points": 1
+    },
+    "notes": "Early melee XP skip."
+  },
+  {
+    "id": "quest_the_feud",
+    "name": "The Feud",
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 0.8,
+    "quest_name": "The Feud",
+    "requirements": { "min_levels": { "thieving": 45 } },
+    "reward": {
+      "xp": { "thieving": 15000 },
+      "unlocks": ["unlock:blackjacking"],
+      "quest_points": 1
+    },
+    "notes": "Unlocks blackjacking."
+  },
+  {
+    "id": "quest_ds2",
+    "name": "Dragon Slayer II",
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 4.5,
+    "quest_name": "Dragon Slayer II",
+    "requirements": {
+      "min_levels": { "ranged": 75 },
+      "required_unlocks": ["quest:Dragon Slayer", "quest:Legends' Quest"]
+    },
+    "reward": {
+      "unlocks": ["unlock:vorkath"],
+      "quest_points": 2
+    },
+    "notes": "Unlocks Vorkath."
+  }
+]

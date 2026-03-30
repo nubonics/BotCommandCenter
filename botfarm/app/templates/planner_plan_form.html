@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>{% if plan %}Edit Plan{% else %}New Plan{% endif %}</h2>
+        <p>Create the plan shell first, then add steps on the plan detail page.</p>
+    </div>
+</div>
+
+<div class="card">
+    <form action="{% if plan %}/planner_core/plans/{{ plan.id }}/edit{% else %}/planner_core/plans/new{% endif %}" method="post">
+        <div class="form-grid">
+            <div class="form-group form-group-full">
+                <label for="name">Plan Name</label>
+                <input type="text" name="name" id="name" value="{{ plan.name if plan else '' }}" placeholder="Example: Daily Fletching Rotation" required>
+            </div>
+
+            <div class="form-group">
+                <label for="target_active_minutes">Target Active Minutes</label>
+                <input type="number" name="target_active_minutes" id="target_active_minutes" min="0" value="{{ plan.target_active_minutes if plan and plan.target_active_minutes else 0 }}">
+            </div>
+
+            <div class="form-group form-group-full">
+                <label for="description">Description</label>
+                <textarea name="description" id="description" rows="5" placeholder="Optional description">{{ plan.description if plan and plan.description else '' }}</textarea>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="/planner_core/plans"><button type="button" class="secondary">Cancel</button></a>
+            <button type="submit">{% if plan %}Save Changes{% else %}Create Plan{% endif %}</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>{% if planner_task %}Edit Planner Task{% else %}New Planner Task{% endif %}</h2>
+        <p>Create a reusable task for manual plans and random generation.</p>
+    </div>
+</div>
+
+<div class="card">
+    <form action="{% if planner_task %}/planner_core/tasks/{{ planner_task.id }}/edit{% else %}/planner_core/tasks/new{% endif %}" method="post">
+        <div class="form-grid">
+            <div class="form-group form-group-full">
+                <label for="name">Task Name</label>
+                <input type="text" name="name" id="name" value="{{ planner_task.name if planner_task else '' }}" placeholder="Example: Fletch maple shortbows" required>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <input type="text" name="category" id="category" value="{{ planner_task.category if planner_task else 'general' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="members_only">Task Type</label>
+                {% set current_type = 'p2p' if planner_task and planner_task.members_only else 'f2p' %}
+                <select name="members_only" id="members_only">
+                    <option value="f2p" {% if current_type == 'f2p' %}selected{% endif %}>F2P</option>
+                    <option value="p2p" {% if current_type == 'p2p' %}selected{% endif %}>P2P</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="enabled">Enabled</label>
+                {% set enabled_value = 'true' if not planner_task or planner_task.enabled else 'false' %}
+                <select name="enabled" id="enabled">
+                    <option value="true" {% if enabled_value == 'true' %}selected{% endif %}>Yes</option>
+                    <option value="false" {% if enabled_value == 'false' %}selected{% endif %}>No</option>
+                </select>
+            </div>
+
+            <div class="form-group form-group-full">
+                <label for="notes">Notes</label>
+                <textarea name="notes" id="notes" rows="5" placeholder="Optional notes">{{ planner_task.notes if planner_task and planner_task.notes else '' }}</textarea>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="/planner_core/tasks"><button type="button" class="secondary">Cancel</button></a>
+            <button type="submit">{% if planner_task %}Save Changes{% else %}Create Planner Task{% endif %}</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

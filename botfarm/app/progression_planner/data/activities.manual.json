@@ -1,0 +1,1202 @@
+[
+  {
+    "id": "manual_smithing_blast_furnace_bars",
+    "name": "Manual Smithing - Blast Furnace (bars)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "smithing": 180000
+    },
+    "gp_per_hour": -250000,
+    "requirements": {
+      "min_levels": {
+        "smithing": 30
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "High attention but not tick-manip. Placeholder rates/costs."
+  },
+  {
+    "id": "manual_smithing_anvil_platebodies",
+    "name": "Manual Smithing - Anvil (platebodies)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "smithing": 90000
+    },
+    "gp_per_hour": -150000,
+    "requirements": {
+      "min_levels": {
+        "smithing": 68
+      }
+    },
+    "notes": "Clicky; placeholder."
+  },
+  {
+    "id": "manual_prayer_house_altar",
+    "name": "Manual Prayer - POH altar (bones)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "prayer": 350000
+    },
+    "gp_per_hour": -750000,
+    "requirements": {
+      "min_levels": {
+        "prayer": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Fast prayer via gilded altar; placeholder."
+  },
+  {
+    "id": "manual_crafting_battlestaves",
+    "name": "Manual Crafting - Battlestaves",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 95000
+    },
+    "gp_per_hour": -120000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 54
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Bankstanding. Placeholder."
+  },
+  {
+    "id": "manual_herblore_clean_make_potions",
+    "name": "Manual Herblore - Potions (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "herblore": 220000
+    },
+    "gp_per_hour": -400000,
+    "requirements": {
+      "min_levels": {
+        "herblore": 38
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Very variable by potion; placeholder."
+  },
+  {
+    "id": "manual_farming_herb_runs",
+    "name": "Manual Farming - Herb runs",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "farming": 15000
+    },
+    "gp_per_hour": 250000,
+    "requirements": {
+      "min_levels": {
+        "farming": 32
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Represents multiple runs/hour + travel; placeholder."
+  },
+  {
+    "id": "manual_runecraft_guardians_of_the_rift",
+    "name": "Manual Runecraft - Guardians of the Rift",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "runecraft": 45000
+    },
+    "gp_per_hour": 120000,
+    "requirements": {
+      "min_levels": {
+        "runecraft": 27
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Minigame; placeholder."
+  },
+  {
+    "id": "manual_slayers_tasks_high_efficiency",
+    "name": "Manual Slayer - Tasks (active)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "slayer": 35000,
+      "hitpoints": 12000
+    },
+    "gp_per_hour": 250000,
+    "requirements": {
+      "min_levels": {
+        "attack": 70
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "More active than auto slayer. Placeholder."
+  },
+  {
+    "id": "manual_money_barrows",
+    "name": "Manual Money - Barrows",
+    "category": "money",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 8000,
+      "hitpoints": 5000
+    },
+    "gp_per_hour": 700000,
+    "requirements": {
+      "min_levels": {
+        "magic": 50
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Gear dependent; placeholder."
+  },
+  {
+    "id": "manual_money_blast_furnace_profit",
+    "name": "Manual Money - Blast Furnace (profit)",
+    "category": "money",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "smithing": 60000
+    },
+    "gp_per_hour": 350000,
+    "requirements": {
+      "min_levels": {
+        "smithing": 30
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Profit method; placeholder."
+  },
+  {
+    "id": "manual_money_vorkath_solo",
+    "name": "Manual Money - Vorkath (solo)",
+    "category": "money",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "ranged": 25000,
+      "hitpoints": 8000
+    },
+    "gp_per_hour": 2200000,
+    "requirements": {
+      "min_levels": {
+        "ranged": 75
+      },
+      "required_unlocks": [
+        "members:p2p",
+        "unlock:vorkath"
+      ]
+    },
+    "notes": "Solo bossing; gear dependent. Placeholder."
+  },
+  {
+    "id": "manual_money_zulrah_solo",
+    "name": "Manual Money - Zulrah (solo)",
+    "category": "money",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 18000,
+      "ranged": 18000,
+      "hitpoints": 7000
+    },
+    "gp_per_hour": 1800000,
+    "requirements": {
+      "min_levels": {
+        "magic": 75,
+        "ranged": 75
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Solo bossing; rotation memorization. Placeholder."
+  },
+  {
+    "id": "manual_money_gauntlet",
+    "name": "Manual Money - The Gauntlet (solo)",
+    "category": "money",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 10000,
+      "ranged": 10000,
+      "hitpoints": 5000
+    },
+    "gp_per_hour": 900000,
+    "requirements": {
+      "min_levels": {
+        "magic": 70,
+        "ranged": 70
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Solo; skill-based. Placeholder."
+  },
+  {
+    "id": "manual_money_corrupted_gauntlet",
+    "name": "Manual Money - Corrupted Gauntlet (solo)",
+    "category": "money",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 12000,
+      "ranged": 12000,
+      "hitpoints": 6000
+    },
+    "gp_per_hour": 1600000,
+    "requirements": {
+      "min_levels": {
+        "magic": 80,
+        "ranged": 80
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Solo; high difficulty. Placeholder."
+  },
+  {
+    "id": "manual_money_giant_mole",
+    "name": "Manual Money - Giant Mole (solo)",
+    "category": "money",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "attack": 12000,
+      "strength": 12000,
+      "hitpoints": 5000
+    },
+    "gp_per_hour": 400000,
+    "requirements": {
+      "min_levels": {
+        "attack": 60
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Solo. Placeholder."
+  },
+  {
+    "id": "manual_money_sarachnis",
+    "name": "Manual Money - Sarachnis (solo)",
+    "category": "money",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "attack": 14000,
+      "strength": 14000,
+      "hitpoints": 6000
+    },
+    "gp_per_hour": 500000,
+    "requirements": {
+      "min_levels": {
+        "attack": 70
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Solo. Placeholder."
+  },
+  {
+    "id": "manual_thieving_ardy_knights",
+    "name": "Manual Thieving - Ardougne Knights",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "thieving": 110000
+    },
+    "gp_per_hour": 120000,
+    "requirements": {
+      "min_levels": {
+        "thieving": 55
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Clicky but not tick-manip. Placeholder."
+  },
+  {
+    "id": "manual_agility_sepulchre",
+    "name": "Manual Agility - Hallowed Sepulchre",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 65000
+    },
+    "gp_per_hour": 200000,
+    "requirements": {
+      "min_levels": {
+        "agility": 52
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Mechanical; solo. Placeholder."
+  },
+  {
+    "id": "manual_construction_oak_larders",
+    "name": "Manual Construction - Oak larders",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "construction": 400000
+    },
+    "gp_per_hour": -900000,
+    "requirements": {
+      "min_levels": {
+        "construction": 33
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Clicky; no tick-manip. Placeholder."
+  },
+  {
+    "id": "manual_construction_teak_benches",
+    "name": "Manual Construction - Teak benches",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "construction": 550000
+    },
+    "gp_per_hour": -1200000,
+    "requirements": {
+      "min_levels": {
+        "construction": 66
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Clicky; no tick-manip. Placeholder."
+  },
+  {
+    "id": "manual_construction_mahogany_tables",
+    "name": "Manual Construction - Mahogany tables",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "construction": 650000
+    },
+    "gp_per_hour": -1800000,
+    "requirements": {
+      "min_levels": {
+        "construction": 52
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Clicky; no tick-manip. Placeholder."
+  },
+  {
+    "id": "manual_smithing_giants_foundry",
+    "name": "Manual Smithing - Giants' Foundry",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "smithing": 160000
+    },
+    "gp_per_hour": 50000,
+    "requirements": {
+      "min_levels": {
+        "smithing": 50
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Solo minigame; placeholder."
+  },
+  {
+    "id": "manual_smithing_cannonballs",
+    "name": "Manual Smithing - Cannonballs (AFK)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "smithing": 25000
+    },
+    "gp_per_hour": 60000,
+    "requirements": {
+      "min_levels": {
+        "smithing": 35
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Very AFK; placeholder."
+  },
+  {
+    "id": "manual_prayer_ensouled_heads",
+    "name": "Manual Prayer - Ensouled heads",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "prayer": 120000,
+      "magic": 15000
+    },
+    "gp_per_hour": -250000,
+    "requirements": {
+      "min_levels": {
+        "prayer": 1,
+        "magic": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Cost varies; placeholder."
+  },
+  {
+    "id": "manual_prayer_ecto",
+    "name": "Manual Prayer - Ectofuntus",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "prayer": 90000
+    },
+    "gp_per_hour": -120000,
+    "requirements": {
+      "min_levels": {
+        "prayer": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Travel heavy; placeholder."
+  },
+  {
+    "id": "manual_runecraft_zmi",
+    "name": "Manual Runecraft - ZMI altar",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "runecraft": 55000
+    },
+    "gp_per_hour": -20000,
+    "requirements": {
+      "min_levels": {
+        "runecraft": 28
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Solo; placeholder."
+  },
+  {
+    "id": "manual_runecraft_bloods",
+    "name": "Manual Runecraft - Blood runes",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "runecraft": 38000
+    },
+    "gp_per_hour": 250000,
+    "requirements": {
+      "min_levels": {
+        "runecraft": 77
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "manual_herblore_prayer_pots",
+    "name": "Manual Herblore - Prayer potions",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "herblore": 200000
+    },
+    "gp_per_hour": -500000,
+    "requirements": {
+      "min_levels": {
+        "herblore": 38
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "manual_herblore_super_combat",
+    "name": "Manual Herblore - Super combat potions",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "herblore": 260000
+    },
+    "gp_per_hour": -800000,
+    "requirements": {
+      "min_levels": {
+        "herblore": 90
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Expensive; placeholder."
+  },
+  {
+    "id": "manual_crafting_jewelry",
+    "name": "Manual Crafting - Jewelry (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 110000
+    },
+    "gp_per_hour": -180000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 5
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "manual_money_demonic_gorillas",
+    "name": "Manual Money - Demonic gorillas (solo)",
+    "category": "money",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "attack": 9000,
+      "strength": 9000,
+      "hitpoints": 4000
+    },
+    "gp_per_hour": 1200000,
+    "requirements": {
+      "min_levels": {
+        "attack": 75
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Requires MM2 completion in reality; model via unlock later. Placeholder."
+  },
+  {
+    "id": "manual_money_slayer_gargoyles",
+    "name": "Manual Money - Gargoyles (slayer)",
+    "category": "money",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "slayer": 12000,
+      "hitpoints": 5000
+    },
+    "gp_per_hour": 650000,
+    "requirements": {
+      "min_levels": {
+        "slayer": 75
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Solo; placeholder."
+  },
+  {
+    "id": "manual_money_alchemical_hydra",
+    "name": "Manual Money - Alchemical Hydra (solo)",
+    "category": "money",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "slayer": 8000,
+      "hitpoints": 4000
+    },
+    "gp_per_hour": 2400000,
+    "requirements": {
+      "min_levels": {
+        "slayer": 95,
+        "ranged": 85
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "High level solo; placeholder."
+  },
+  {
+    "id": "manual_crafting_cut_gems",
+    "name": "Manual Crafting - Cut gems (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 160000
+    },
+    "gp_per_hour": -120000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 1
+      }
+    },
+    "notes": "Gem choice affects gp/xp. Placeholder."
+  },
+  {
+    "id": "manual_crafting_dhide",
+    "name": "Manual Crafting - D'hide bodies (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 190000
+    },
+    "gp_per_hour": -250000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 63
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "manual_crafting_glass_lunar",
+    "name": "Manual Crafting - Molten glass (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 300000
+    },
+    "gp_per_hour": -450000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 20
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Clicky but common. Not tick-manip. Placeholder."
+  },
+  {
+    "id": "manual_fletching_string_bows",
+    "name": "Manual Fletching - String bows (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 190000
+    },
+    "gp_per_hour": -90000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 10
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "manual_fletching_arrows",
+    "name": "Manual Fletching - Arrows (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 120000
+    },
+    "gp_per_hour": -25000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 1
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "manual_magic_enchant_jewelry",
+    "name": "Manual Magic - Enchant jewelry (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 110000
+    },
+    "gp_per_hour": -60000,
+    "requirements": {
+      "min_levels": {
+        "magic": 7
+      }
+    },
+    "notes": "Spell choice varies. Placeholder."
+  },
+  {
+    "id": "manual_magic_plank_make",
+    "name": "Manual Magic - Plank Make (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 90000
+    },
+    "gp_per_hour": -350000,
+    "requirements": {
+      "min_levels": {
+        "magic": 86
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Spellbook unlock not modeled yet. Placeholder."
+  },
+  {
+    "id": "manual_cooking_karambwans",
+    "name": "Manual Cooking - Karambwans (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 200000
+    },
+    "gp_per_hour": -30000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 30
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Fast cooking; placeholder."
+  },
+  {
+    "id": "manual_smithing_dart_tips",
+    "name": "Manual Smithing - Dart tips (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "smithing": 75000
+    },
+    "gp_per_hour": -80000,
+    "requirements": {
+      "min_levels": {
+        "smithing": 52
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "manual_crafting_jewelry_make",
+    "name": "Manual Crafting - Make jewelry (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 140000
+    },
+    "gp_per_hour": -140000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 5
+      }
+    },
+    "notes": "Gold bars + gems vary. Placeholder."
+  },
+  {
+    "id": "manual_magic_enchant_jewelry_high",
+    "name": "Manual Magic - Enchant jewelry (higher tiers)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 160000
+    },
+    "gp_per_hour": -120000,
+    "requirements": {
+      "min_levels": {
+        "magic": 49
+      }
+    },
+    "notes": "Higher enchants; placeholder."
+  },
+  {
+    "id": "manual_herblore_unf_potions",
+    "name": "Manual Herblore - Unfinished potions (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "herblore": 90000
+    },
+    "gp_per_hour": -80000,
+    "requirements": {
+      "min_levels": {
+        "herblore": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Lower xp, preparatory step. Placeholder."
+  },
+  {
+    "id": "manual_herblore_finish_potions",
+    "name": "Manual Herblore - Finish potions (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "herblore": 240000
+    },
+    "gp_per_hour": -450000,
+    "requirements": {
+      "min_levels": {
+        "herblore": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Main xp; potion choice varies. Placeholder."
+  },
+  {
+    "id": "manual_fletching_bolts",
+    "name": "Manual Fletching - Bolts (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 95000
+    },
+    "gp_per_hour": -20000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 9
+      }
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "manual_fletching_bolt_tips",
+    "name": "Manual Fletching - Bolt tips (bankstanding)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 160000
+    },
+    "gp_per_hour": -60000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 50
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "manual_herblore_finish_potions_cheap",
+    "name": "Manual Herblore - Finish potions (bankstanding) (cheap)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "herblore": 180000
+    },
+    "gp_per_hour": -250000,
+    "requirements": {
+      "min_levels": {
+        "herblore": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Bankstanding profile: cheap. Placeholder."
+  },
+  {
+    "id": "manual_herblore_finish_potions_fast",
+    "name": "Manual Herblore - Finish potions (bankstanding) (fast)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "herblore": 300000
+    },
+    "gp_per_hour": -900000,
+    "requirements": {
+      "min_levels": {
+        "herblore": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Bankstanding profile: fast. Placeholder."
+  },
+  {
+    "id": "manual_crafting_cut_gems_cheap",
+    "name": "Manual Crafting - Cut gems (bankstanding) (cheap)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 120000
+    },
+    "gp_per_hour": -40000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 1
+      }
+    },
+    "notes": "Bankstanding profile: cheap. Placeholder."
+  },
+  {
+    "id": "manual_crafting_cut_gems_fast",
+    "name": "Manual Crafting - Cut gems (bankstanding) (fast)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 220000
+    },
+    "gp_per_hour": -180000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 1
+      }
+    },
+    "notes": "Bankstanding profile: fast. Placeholder."
+  },
+  {
+    "id": "manual_fletching_string_bows_cheap",
+    "name": "Manual Fletching - String bows (bankstanding) (cheap)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 140000
+    },
+    "gp_per_hour": -40000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 10
+      }
+    },
+    "notes": "Bankstanding profile: cheap. Placeholder."
+  },
+  {
+    "id": "manual_fletching_string_bows_fast",
+    "name": "Manual Fletching - String bows (bankstanding) (fast)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 240000
+    },
+    "gp_per_hour": -120000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 10
+      }
+    },
+    "notes": "Bankstanding profile: fast. Placeholder."
+  },
+  {
+    "id": "manual_magic_enchant_jewelry_cheap",
+    "name": "Manual Magic - Enchant jewelry (bankstanding) (cheap)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 85000
+    },
+    "gp_per_hour": -25000,
+    "requirements": {
+      "min_levels": {
+        "magic": 7
+      }
+    },
+    "notes": "Bankstanding profile: cheap. Placeholder."
+  },
+  {
+    "id": "manual_magic_enchant_jewelry_fast",
+    "name": "Manual Magic - Enchant jewelry (bankstanding) (fast)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 140000
+    },
+    "gp_per_hour": -90000,
+    "requirements": {
+      "min_levels": {
+        "magic": 7
+      }
+    },
+    "notes": "Bankstanding profile: fast. Placeholder."
+  },
+  {
+    "id": "manual_crafting_glass_lunar_cheap",
+    "name": "Manual Crafting - Molten glass (bankstanding) (cheap)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 220000
+    },
+    "gp_per_hour": -250000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 20
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Bankstanding profile: cheap. Placeholder."
+  },
+  {
+    "id": "manual_crafting_glass_lunar_fast",
+    "name": "Manual Crafting - Molten glass (bankstanding) (fast)",
+    "category": "skilling",
+    "manual": true,
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 380000
+    },
+    "gp_per_hour": -650000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 20
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Bankstanding profile: fast. Placeholder."
+  }
+]

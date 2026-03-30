@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>{{ plan.name }}</h2>
+        <p>{{ plan.description or "No description yet." }}</p>
+    </div>
+    <div class="actions">
+        <a href="/planner_core/plans/{{ plan.id }}/edit"><button type="button" class="secondary">Edit</button></a>
+        <form action="/planner_core/plans/{{ plan.id }}/delete" method="post" onsubmit="return confirm('Delete this plan?');">
+            <button type="submit" class="danger">Delete</button>
+        </form>
+    </div>
+</div>
+
+<div class="grid-3">
+    <div class="card stat-card">
+        <h3>Total Minutes</h3>
+        <div class="big-number">{{ total_minutes }}</div>
+    </div>
+    <div class="card stat-card">
+        <h3>Active Minutes</h3>
+        <div class="big-number">{{ active_minutes }}</div>
+    </div>
+    <div class="card stat-card">
+        <h3>Break Minutes</h3>
+        <div class="big-number">{{ break_minutes }}</div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Add Step</h3>
+        <form action="/planner_core/plans/{{ plan.id }}/steps" method="post">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="step_type">Step Type</label>
+                    <select name="step_type" id="step_type" required>
+                        <option value="task">Task</option>
+                        <option value="break">Break</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="planner_task_id">Planner Task</label>
+                    <select name="planner_task_id" id="planner_task_id">
+                        <option value="">-- Select Task --</option>
+                        {% for task in tasks %}
+                        <option value="{{ task.id }}">{{ task.name }} ({% if task.members_only %}P2P{% else %}F2P{% endif %})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration_minutes">Duration Minutes</label>
+                    <input type="number" name="duration_minutes" id="duration_minutes" min="1" value="30" required>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="notes">Notes</label>
+                    <input type="text" name="notes" id="notes" placeholder="Optional notes">
+                </div>
+            </div>
+
+            <button type="submit">Add Step</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Assign This Plan</h3>
+        <form action="/planner_core/assignments" method="post">
+            <input type="hidden" name="plan_id" value="{{ plan.id }}">
+
+            <div class="form-group">
+                <label for="account_id">Account</label>
+                <select name="account_id" id="account_id" required>
+                    <option value="">-- Select Account --</option>
+                    {% for account in accounts %}
+                    <option value="{{ account.id }}">{{ account.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="assigned_for_date">Date</label>
+                <input type="date" name="assigned_for_date" id="assigned_for_date">
+            </div>
+
+            <div class="form-group">
+                <label for="planned_start_time">Start Time</label>
+                <input type="text" name="planned_start_time" id="planned_start_time" placeholder="Example: 08:30">
+            </div>
+
+            <div class="form-group">
+                <label for="assignment_notes">Notes</label>
+                <input type="text" name="notes" id="assignment_notes" placeholder="Optional notes">
+            </div>
+
+            <button type="submit">Assign Plan</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Steps</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Order</th>
+                <th>Type</th>
+                <th>Task</th>
+                <th>Minutes</th>
+                <th>Notes</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for step in plan.steps %}
+            <tr>
+                <td>{{ step.step_order }}</td>
+                <td>{{ step.step_type }}</td>
+                <td>{{ step.planner_task.name if step.planner_task else "-" }}</td>
+                <td>{{ step.duration_minutes }}</td>
+                <td>{{ step.notes or "-" }}</td>
+                <td>
+                    <form action="/planner_core/steps/{{ step.id }}/delete" method="post" onsubmit="return confirm('Delete this step?');">
+                        <button type="submit" class="danger tiny-btn">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">No steps yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h3>Active Assignments</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Account</th>
+                <th>Date</th>
+                <th>Start Time</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assignment in active_assignments %}
+            <tr>
+                <td>{{ assignment.account.label }}</td>
+                <td>{{ assignment.assigned_for_date or "-" }}</td>
+                <td>{{ assignment.planned_start_time or "-" }}</td>
+                <td>{{ assignment.created_at }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4">No active assignments for this plan.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>{{ item.name }}</h2>
+        <p>Wiki item ID: {{ item.osrs_id or "-" }}</p>
+    </div>
+    <form action="/items/{{ item.id }}/refresh" method="post">
+        <button type="submit">Refresh This Item</button>
+    </form>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Prices</h3>
+        <dl>
+            <dt>Latest high</dt><dd>{{ (item.ge_buy_price or 0) | gp }}</dd>
+            <dt>Latest low</dt><dd>{{ (item.ge_sell_price or 0) | gp }}</dd>
+            <dt>High alch</dt><dd>{{ (item.high_alch_value or 0) | gp }}</dd>
+        </dl>
+    </div>
+
+    <div class="card">
+        <h3>Details</h3>
+        <p>No extra mapping details are currently stored for this item.</p>
+        <p><strong>Price updated:</strong> {{ item.updated_at or "-" }}</p>
+    </div>
+</div>
+{% endblock %}

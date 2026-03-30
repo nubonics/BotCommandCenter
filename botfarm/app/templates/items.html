@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Items</h2>
+        <p>Live catalog synced from the OSRS Wiki price API.</p>
+    </div>
+    <form action="/refresh-items" method="post">
+        <button type="submit">Refresh Latest Prices</button>
+    </form>
+</div>
+
+<div class="card">
+    <form method="get" action="/items" class="inline-form">
+        <input
+            type="text"
+            name="q"
+            value="{{ q }}"
+            placeholder="Search item name"
+        >
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<div class="card">
+    {% if not q %}
+        <p class="muted" style="margin:0;">Search for an item to load results. (Nothing is loaded by default for performance.)</p>
+    {% elif q|length < 2 %}
+        <p class="muted" style="margin:0;">Type at least 2 characters to search.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Wiki ID</th>
+                    <th>Market Price</th>
+                    <th>High Alch</th>
+                    <th>Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        <a href="/items/{{ item.id }}">{{ item.name }}</a>
+                    </td>
+                    <td class="mono">{{ item.osrs_id or "" }}</td>
+                    <td>
+                        {% if item.ge_buy_price and item.ge_sell_price %}
+                            {{ (((item.ge_buy_price + item.ge_sell_price) / 2) | round(0) | int) | gp }}
+                        {% elif item.ge_buy_price %}
+                            {{ item.ge_buy_price | gp }}
+                        {% elif item.ge_sell_price %}
+                            {{ item.ge_sell_price | gp }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+                    <td>{{ (item.high_alch_value or 0) | gp }}</td>
+                    <td>{{ item.updated_at or "-" }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="muted" style="text-align:center;padding:22px 0;">
+                        No items found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+{% endblock %}

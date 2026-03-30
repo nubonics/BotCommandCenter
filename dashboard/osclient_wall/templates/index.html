@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OSClient Wall</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>OSClient Wall</h1>
+    <div class="topbar-right">
+      <div class="control-block">
+        <div class="control-header">
+          <span>Capture FPS</span>
+          <strong id="fps-value">{{ target_fps }} FPS</strong>
+        </div>
+        <input
+          id="fps-slider"
+          type="range"
+          min="{{ fps_slider_min }}"
+          max="{{ fps_slider_max }}"
+          value="{{ target_fps }}"
+          step="1"
+        >
+      </div>
+
+      <div class="control-block">
+        <div class="control-header">
+          <span>Columns</span>
+          <strong id="cols-value">{{ grid_cols }} cols</strong>
+        </div>
+        <input
+          id="cols-slider"
+          type="range"
+          min="{{ cols_slider_min }}"
+          max="{{ cols_slider_max }}"
+          value="{{ grid_cols }}"
+          step="1"
+        >
+      </div>
+
+      <div class="mini-stats">
+        <span>Actual <strong id="actual-fps">0</strong></span>
+        <span>Windows <strong id="window-count">0</strong></span>
+        <span>Frame <strong id="frame-ms">0</strong> ms</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <section class="board-wrap">
+      <div class="board-shell">
+        <img
+          id="mosaic"
+          src="/stream.mjpg"
+          alt="Live OSClient board"
+          width="{{ board_width }}"
+          height="{{ board_height }}"
+        >
+      </div>
+    </section>
+    <div class="status-bar">
+      <span id="focus-status">Ready.</span>
+    </div>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

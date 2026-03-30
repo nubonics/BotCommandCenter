@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Assignments</h2>
+        <p>Assign plans to accounts and manage active daily plans.</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-top: 0;">Assign Plan To Account</h3>
+    <form action="/planner_core/assignments" method="post">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="account_id">Account</label>
+                <select name="account_id" id="account_id" required>
+                    <option value="">-- Select Account --</option>
+                    {% for account in accounts %}
+                    <option value="{{ account.id }}">{{ account.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="plan_id">Plan</label>
+                <select name="plan_id" id="plan_id" required>
+                    <option value="">-- Select Plan --</option>
+                    {% for plan in plans %}
+                    <option value="{{ plan.id }}">{{ plan.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="assigned_for_date">Date</label>
+                <input type="date" name="assigned_for_date" id="assigned_for_date">
+            </div>
+
+            <div class="form-group">
+                <label for="planned_start_time">Start Time</label>
+                <input type="text" name="planned_start_time" id="planned_start_time" placeholder="Example: 09:15">
+            </div>
+
+            <div class="form-group form-group-full">
+                <label for="notes">Notes</label>
+                <input type="text" name="notes" id="notes" placeholder="Optional notes">
+            </div>
+        </div>
+
+        <button type="submit">Assign Plan</button>
+    </form>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Account</th>
+                <th>Plan</th>
+                <th>Date</th>
+                <th>Start</th>
+                <th>Active</th>
+                <th>Created</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assignment in assignments %}
+            <tr>
+                <td>{{ assignment.account.label }}</td>
+                <td><a href="/planner_core/plans/{{ assignment.plan.id }}">{{ assignment.plan.name }}</a></td>
+                <td>{{ assignment.assigned_for_date or "-" }}</td>
+                <td>{{ assignment.planned_start_time or "-" }}</td>
+                <td>{% if assignment.is_active %}Yes{% else %}No{% endif %}</td>
+                <td>{{ assignment.created_at }}</td>
+                <td>
+                    {% if assignment.is_active %}
+                    <form action="/planner_core/assignments/{{ assignment.id }}/deactivate" method="post">
+                        <button type="submit" class="danger tiny-btn">Deactivate</button>
+                    </form>
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7">No assignments yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

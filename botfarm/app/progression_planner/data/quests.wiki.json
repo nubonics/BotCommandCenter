@@ -1,0 +1,4196 @@
+[
+  {
+    "id": "quest_a_kingdom_divided",
+    "name": "A Kingdom Divided",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "A Kingdom Divided",
+    "requirements": {
+      "min_levels": {
+        "agility": 54,
+        "crafting": 38,
+        "herblore": 50,
+        "magic": 35,
+        "mining": 42,
+        "thieving": 52,
+        "woodcutting": 52
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_a_night_at_the_theatre",
+    "name": "A Night at the Theatre",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "A Night at the Theatre",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_a_porcine_of_interest",
+    "name": "A Porcine of Interest",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "A Porcine of Interest",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_a_soul_s_bane",
+    "name": "A Soul's Bane",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "A Soul's Bane",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_a_tail_of_two_cats",
+    "name": "A Tail of Two Cats",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "A Tail of Two Cats",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_a_taste_of_hope",
+    "name": "A Taste of Hope",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "A Taste of Hope",
+    "requirements": {
+      "min_levels": {
+        "agility": 45,
+        "attack": 40,
+        "crafting": 48,
+        "herblore": 40,
+        "slayer": 38
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_alfred_grimhand_s_barcrawl",
+    "name": "Alfred Grimhand's Barcrawl",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Alfred Grimhand's Barcrawl",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_animal_magnetism",
+    "name": "Animal Magnetism",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Animal Magnetism",
+    "requirements": {
+      "min_levels": {
+        "crafting": 19,
+        "ranged": 30,
+        "slayer": 18,
+        "woodcutting": 35
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_another_slice_of_h_a_m",
+    "name": "Another Slice of H.A.M.",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Another Slice of H.A.M.",
+    "requirements": {
+      "min_levels": {
+        "attack": 15,
+        "prayer": 25
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_at_first_light",
+    "name": "At First Light",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "At First Light",
+    "requirements": {
+      "min_levels": {
+        "construction": 27,
+        "herblore": 30,
+        "hunter": 46
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_barbarian_training",
+    "name": "Barbarian Training",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Barbarian Training",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_bear_your_soul",
+    "name": "Bear Your Soul",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Bear Your Soul",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_below_ice_mountain",
+    "name": "Below Ice Mountain",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Below Ice Mountain",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_beneath_cursed_sands",
+    "name": "Beneath Cursed Sands",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Beneath Cursed Sands",
+    "requirements": {
+      "min_levels": {
+        "agility": 62,
+        "crafting": 55,
+        "firemaking": 55
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_between_a_rock",
+    "name": "Between a Rock...",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Between a Rock...",
+    "requirements": {
+      "min_levels": {
+        "defence": 30,
+        "mining": 40,
+        "smithing": 50
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_big_chompy_bird_hunting",
+    "name": "Big Chompy Bird Hunting",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Big Chompy Bird Hunting",
+    "requirements": {
+      "min_levels": {
+        "cooking": 30,
+        "fletching": 5,
+        "ranged": 30
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_biohazard",
+    "name": "Biohazard",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Biohazard",
+    "requirements": {},
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_black_knights_fortress",
+    "name": "Black Knights' Fortress",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Black Knights' Fortress",
+    "requirements": {},
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_bone_voyage",
+    "name": "Bone Voyage",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Bone Voyage",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_cabin_fever",
+    "name": "Cabin Fever",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Cabin Fever",
+    "requirements": {
+      "min_levels": {
+        "agility": 42,
+        "crafting": 45,
+        "ranged": 40,
+        "smithing": 50
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_children_of_the_sun",
+    "name": "Children of the Sun",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Children of the Sun",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_client_of_kourend",
+    "name": "Client of Kourend",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Client of Kourend",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_clock_tower",
+    "name": "Clock Tower",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Clock Tower",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_cold_war",
+    "name": "Cold War",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Cold War",
+    "requirements": {
+      "min_levels": {
+        "agility": 30,
+        "construction": 34,
+        "crafting": 30,
+        "hunter": 10,
+        "thieving": 15
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_contact",
+    "name": "Contact!",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Contact!",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_cook_s_assistant",
+    "name": "Cook's Assistant",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Cook's Assistant",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_creature_of_fenkenstrain",
+    "name": "Creature of Fenkenstrain",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Creature of Fenkenstrain",
+    "requirements": {
+      "min_levels": {
+        "crafting": 20,
+        "thieving": 25
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_current_affairs",
+    "name": "Current Affairs",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Current Affairs",
+    "requirements": {
+      "min_levels": {
+        "fishing": 10,
+        "sailing": 22
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_curse_of_the_empty_lord",
+    "name": "Curse of the Empty Lord",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Curse of the Empty Lord",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_daddy_s_home",
+    "name": "Daddy's Home",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Daddy's Home",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_darkness_of_hallowvale",
+    "name": "Darkness of Hallowvale",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Darkness of Hallowvale",
+    "requirements": {
+      "min_levels": {
+        "agility": 26,
+        "construction": 5,
+        "crafting": 32,
+        "magic": 33,
+        "mining": 20,
+        "strength": 40,
+        "thieving": 22
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_death_plateau",
+    "name": "Death Plateau",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Death Plateau",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_death_on_the_isle",
+    "name": "Death on the Isle",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Death on the Isle",
+    "requirements": {
+      "min_levels": {
+        "agility": 32,
+        "thieving": 34
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_death_to_the_dorgeshuun",
+    "name": "Death to the Dorgeshuun",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Death to the Dorgeshuun",
+    "requirements": {
+      "min_levels": {
+        "agility": 23,
+        "thieving": 23
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_defender_of_varrock",
+    "name": "Defender of Varrock",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Defender of Varrock",
+    "requirements": {
+      "min_levels": {
+        "hunter": 52,
+        "smithing": 55
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_demon_slayer",
+    "name": "Demon Slayer",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Demon Slayer",
+    "requirements": {},
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_desert_treasure_i",
+    "name": "Desert Treasure I",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Desert Treasure I",
+    "requirements": {
+      "min_levels": {
+        "firemaking": 50,
+        "magic": 50,
+        "slayer": 10,
+        "thieving": 53
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_desert_treasure_ii_the_fallen_empire",
+    "name": "Desert Treasure II - The Fallen Empire",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Desert Treasure II - The Fallen Empire",
+    "requirements": {
+      "min_levels": {
+        "construction": 60,
+        "firemaking": 75,
+        "herblore": 62,
+        "magic": 75,
+        "runecraft": 60,
+        "thieving": 70
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 5
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_devious_minds",
+    "name": "Devious Minds",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Devious Minds",
+    "requirements": {
+      "min_levels": {
+        "fletching": 50,
+        "runecraft": 50,
+        "smithing": 65
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_doric_s_quest",
+    "name": "Doric's Quest",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Doric's Quest",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_dragon_slayer_i",
+    "name": "Dragon Slayer I",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Dragon Slayer I",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_dragon_slayer_ii",
+    "name": "Dragon Slayer II",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Dragon Slayer II",
+    "requirements": {
+      "min_levels": {
+        "agility": 60,
+        "construction": 50,
+        "crafting": 62,
+        "hitpoints": 50,
+        "magic": 75,
+        "mining": 68,
+        "smithing": 70,
+        "thieving": 60
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 5
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_dream_mentor",
+    "name": "Dream Mentor",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Dream Mentor",
+    "requirements": {
+      "min_levels": {},
+      "required_unlocks": [
+        "quest:Combat level"
+      ]
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_druidic_ritual",
+    "name": "Druidic Ritual",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Druidic Ritual",
+    "requirements": {},
+    "reward": {
+      "quest_points": 4
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_dwarf_cannon",
+    "name": "Dwarf Cannon",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Dwarf Cannon",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_eadgar_s_ruse",
+    "name": "Eadgar's Ruse",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Eadgar's Ruse",
+    "requirements": {
+      "min_levels": {
+        "herblore": 31
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_eagles_peak",
+    "name": "Eagles' Peak",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Eagles' Peak",
+    "requirements": {
+      "min_levels": {
+        "hunter": 27
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_elemental_workshop_i",
+    "name": "Elemental Workshop I",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Elemental Workshop I",
+    "requirements": {
+      "min_levels": {
+        "crafting": 20,
+        "mining": 20,
+        "smithing": 20
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_elemental_workshop_ii",
+    "name": "Elemental Workshop II",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Elemental Workshop II",
+    "requirements": {
+      "min_levels": {
+        "magic": 20,
+        "smithing": 30
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_enakhra_s_lament",
+    "name": "Enakhra's Lament",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Enakhra's Lament",
+    "requirements": {
+      "min_levels": {
+        "crafting": 50,
+        "firemaking": 45,
+        "magic": 39,
+        "prayer": 43
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_enlightened_journey",
+    "name": "Enlightened Journey",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Enlightened Journey",
+    "requirements": {
+      "min_levels": {
+        "crafting": 36,
+        "farming": 30,
+        "firemaking": 20
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_enter_the_abyss",
+    "name": "Enter the Abyss",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Enter the Abyss",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_ernest_the_chicken",
+    "name": "Ernest the Chicken",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Ernest the Chicken",
+    "requirements": {},
+    "reward": {
+      "quest_points": 4
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_ethically_acquired_antiquities",
+    "name": "Ethically Acquired Antiquities",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Ethically Acquired Antiquities",
+    "requirements": {
+      "min_levels": {
+        "thieving": 25
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_fairytale_i_growing_pains",
+    "name": "Fairytale I - Growing Pains",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Fairytale I - Growing Pains",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_fairytale_ii_cure_a_queen",
+    "name": "Fairytale II - Cure a Queen",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Fairytale II - Cure a Queen",
+    "requirements": {
+      "min_levels": {
+        "farming": 49,
+        "herblore": 57,
+        "thieving": 40
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_family_crest",
+    "name": "Family Crest",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Family Crest",
+    "requirements": {
+      "min_levels": {
+        "crafting": 40,
+        "magic": 59,
+        "mining": 40,
+        "smithing": 40
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_family_pest",
+    "name": "Family Pest",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Family Pest",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_fight_arena",
+    "name": "Fight Arena",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Fight Arena",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_fishing_contest",
+    "name": "Fishing Contest",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Fishing Contest",
+    "requirements": {
+      "min_levels": {
+        "fishing": 10
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_forgettable_tale",
+    "name": "Forgettable Tale...",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Forgettable Tale...",
+    "requirements": {
+      "min_levels": {
+        "cooking": 22,
+        "farming": 17
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_garden_of_tranquillity",
+    "name": "Garden of Tranquillity",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Garden of Tranquillity",
+    "requirements": {
+      "min_levels": {
+        "farming": 25
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_gertrude_s_cat",
+    "name": "Gertrude's Cat",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Gertrude's Cat",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_getting_ahead",
+    "name": "Getting Ahead",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Getting Ahead",
+    "requirements": {
+      "min_levels": {
+        "construction": 26,
+        "crafting": 30
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_ghosts_ahoy",
+    "name": "Ghosts Ahoy",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Ghosts Ahoy",
+    "requirements": {
+      "min_levels": {
+        "agility": 25,
+        "cooking": 20
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_goblin_diplomacy",
+    "name": "Goblin Diplomacy",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Goblin Diplomacy",
+    "requirements": {},
+    "reward": {
+      "quest_points": 5
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_grim_tales",
+    "name": "Grim Tales",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Grim Tales",
+    "requirements": {
+      "min_levels": {
+        "agility": 59,
+        "farming": 45,
+        "herblore": 52,
+        "thieving": 58,
+        "woodcutting": 71
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_haunted_mine",
+    "name": "Haunted Mine",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Haunted Mine",
+    "requirements": {
+      "min_levels": {
+        "crafting": 35
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_hazeel_cult",
+    "name": "Hazeel Cult",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Hazeel Cult",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_heroes_quest",
+    "name": "Heroes' Quest",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Heroes' Quest",
+    "requirements": {
+      "min_levels": {
+        "cooking": 53,
+        "fishing": 53,
+        "herblore": 25,
+        "mining": 50
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_his_faithful_servants",
+    "name": "His Faithful Servants",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "His Faithful Servants",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_holy_grail",
+    "name": "Holy Grail",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Holy Grail",
+    "requirements": {
+      "min_levels": {
+        "attack": 20
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_hopespear_s_will",
+    "name": "Hopespear's Will",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Hopespear's Will",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_horror_from_the_deep",
+    "name": "Horror from the Deep",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Horror from the Deep",
+    "requirements": {
+      "min_levels": {
+        "agility": 35
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_icthlarin_s_little_helper",
+    "name": "Icthlarin's Little Helper",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Icthlarin's Little Helper",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_imp_catcher",
+    "name": "Imp Catcher",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Imp Catcher",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_in_aid_of_the_myreque",
+    "name": "In Aid of the Myreque",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "In Aid of the Myreque",
+    "requirements": {
+      "min_levels": {
+        "crafting": 25,
+        "magic": 7,
+        "mining": 15
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_in_search_of_knowledge",
+    "name": "In Search of Knowledge",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "In Search of Knowledge",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_in_search_of_the_myreque",
+    "name": "In Search of the Myreque",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "In Search of the Myreque",
+    "requirements": {
+      "min_levels": {
+        "agility": 25
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_into_the_tombs",
+    "name": "Into the Tombs",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Into the Tombs",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_jungle_potion",
+    "name": "Jungle Potion",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Jungle Potion",
+    "requirements": {
+      "min_levels": {
+        "herblore": 3
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_king_s_ransom",
+    "name": "King's Ransom",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "King's Ransom",
+    "requirements": {
+      "min_levels": {
+        "defence": 65,
+        "magic": 45
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_lair_of_tarn_razorlor",
+    "name": "Lair of Tarn Razorlor",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Lair of Tarn Razorlor",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_land_of_the_goblins",
+    "name": "Land of the Goblins",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Land of the Goblins",
+    "requirements": {
+      "min_levels": {
+        "agility": 38,
+        "fishing": 40,
+        "herblore": 48,
+        "thieving": 45
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_learning_the_ropes",
+    "name": "Learning the Ropes",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Learning the Ropes",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_legends_quest",
+    "name": "Legends' Quest",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Legends' Quest",
+    "requirements": {
+      "min_levels": {
+        "agility": 50,
+        "crafting": 50,
+        "herblore": 45,
+        "magic": 56,
+        "mining": 52,
+        "prayer": 42,
+        "smithing": 50,
+        "strength": 50,
+        "thieving": 50,
+        "woodcutting": 50
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 4
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_lost_city",
+    "name": "Lost City",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Lost City",
+    "requirements": {
+      "min_levels": {
+        "crafting": 31,
+        "woodcutting": 36
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_lunar_diplomacy",
+    "name": "Lunar Diplomacy",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Lunar Diplomacy",
+    "requirements": {
+      "min_levels": {
+        "crafting": 61,
+        "defence": 40,
+        "firemaking": 49,
+        "herblore": 5,
+        "magic": 65,
+        "mining": 60,
+        "woodcutting": 55
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_mage_arena_i",
+    "name": "Mage Arena I",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Mage Arena I",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_mage_arena_ii",
+    "name": "Mage Arena II",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Mage Arena II",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_making_friends_with_my_arm",
+    "name": "Making Friends with My Arm",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Making Friends with My Arm",
+    "requirements": {
+      "min_levels": {
+        "agility": 68,
+        "construction": 35,
+        "firemaking": 66,
+        "mining": 72
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_making_history",
+    "name": "Making History",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Making History",
+    "requirements": {},
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_meat_and_greet",
+    "name": "Meat and Greet",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Meat and Greet",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_merlin_s_crystal",
+    "name": "Merlin's Crystal",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Merlin's Crystal",
+    "requirements": {},
+    "reward": {
+      "quest_points": 6
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_misthalin_mystery",
+    "name": "Misthalin Mystery",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Misthalin Mystery",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_monk_s_friend",
+    "name": "Monk's Friend",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Monk's Friend",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_monkey_madness_i",
+    "name": "Monkey Madness I",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Monkey Madness I",
+    "requirements": {},
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_monkey_madness_ii",
+    "name": "Monkey Madness II",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Monkey Madness II",
+    "requirements": {
+      "min_levels": {
+        "agility": 55,
+        "crafting": 70,
+        "firemaking": 60,
+        "hunter": 60,
+        "slayer": 69,
+        "thieving": 55
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 4
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_mountain_daughter",
+    "name": "Mountain Daughter",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Mountain Daughter",
+    "requirements": {
+      "min_levels": {
+        "agility": 20
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_mourning_s_end_part_i",
+    "name": "Mourning's End Part I",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Mourning's End Part I",
+    "requirements": {
+      "min_levels": {
+        "ranged": 60,
+        "thieving": 50
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_mourning_s_end_part_ii",
+    "name": "Mourning's End Part II",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Mourning's End Part II",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_murder_mystery",
+    "name": "Murder Mystery",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Murder Mystery",
+    "requirements": {},
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_my_arm_s_big_adventure",
+    "name": "My Arm's Big Adventure",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "My Arm's Big Adventure",
+    "requirements": {
+      "min_levels": {
+        "farming": 29,
+        "woodcutting": 10
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_nature_spirit",
+    "name": "Nature Spirit",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Nature Spirit",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_observatory_quest",
+    "name": "Observatory Quest",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Observatory Quest",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_olaf_s_quest",
+    "name": "Olaf's Quest",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Olaf's Quest",
+    "requirements": {
+      "min_levels": {
+        "firemaking": 40,
+        "woodcutting": 50
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_one_small_favour",
+    "name": "One Small Favour",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "One Small Favour",
+    "requirements": {
+      "min_levels": {
+        "agility": 36,
+        "crafting": 25,
+        "herblore": 18,
+        "smithing": 30
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_pandemonium",
+    "name": "Pandemonium",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Pandemonium",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_perilous_moons",
+    "name": "Perilous Moons",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Perilous Moons",
+    "requirements": {
+      "min_levels": {
+        "hunter": 20,
+        "slayer": 48
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_pirate_s_treasure",
+    "name": "Pirate's Treasure",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Pirate's Treasure",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_plague_city",
+    "name": "Plague City",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Plague City",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_priest_in_peril",
+    "name": "Priest in Peril",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Priest in Peril",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_prince_ali_rescue",
+    "name": "Prince Ali Rescue",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Prince Ali Rescue",
+    "requirements": {},
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_prying_times",
+    "name": "Prying Times",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Prying Times",
+    "requirements": {
+      "min_levels": {
+        "sailing": 12,
+        "smithing": 30
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_rag_and_bone_man_i",
+    "name": "Rag and Bone Man I",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Rag and Bone Man I",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_rag_and_bone_man_ii",
+    "name": "Rag and Bone Man II",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Rag and Bone Man II",
+    "requirements": {
+      "min_levels": {
+        "defence": 20,
+        "slayer": 40
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_ratcatchers",
+    "name": "Ratcatchers",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Ratcatchers",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster",
+    "name": "Recipe for Disaster",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster",
+    "requirements": {},
+    "reward": {
+      "quest_points": 10
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_another_cook_s_quest",
+    "name": "Recipe for Disaster - Another Cook's Quest",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster - Another Cook's Quest",
+    "requirements": {
+      "min_levels": {
+        "cooking": 10
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_evil_dave",
+    "name": "Recipe for Disaster - Freeing Evil Dave",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster - Freeing Evil Dave",
+    "requirements": {
+      "min_levels": {
+        "cooking": 25
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_king_awowogei",
+    "name": "Recipe for Disaster - Freeing King Awowogei",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster - Freeing King Awowogei",
+    "requirements": {
+      "min_levels": {
+        "agility": 48,
+        "cooking": 70
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_skrach_uglogwee",
+    "name": "Recipe for Disaster - Freeing Skrach Uglogwee",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster - Freeing Skrach Uglogwee",
+    "requirements": {
+      "min_levels": {
+        "cooking": 41,
+        "firemaking": 20
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_the_lumbridge_guide",
+    "name": "Recipe for Disaster - Freeing the Lumbridge Guide",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster - Freeing the Lumbridge Guide",
+    "requirements": {
+      "min_levels": {
+        "cooking": 40
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_another_cook_s_quest",
+    "name": "Recipe for Disaster/Another Cook's Quest",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster/Another Cook's Quest",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_defeating_the_culinaromancer",
+    "name": "Recipe for Disaster/Defeating the Culinaromancer",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster/Defeating the Culinaromancer",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_evil_dave",
+    "name": "Recipe for Disaster/Freeing Evil Dave",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster/Freeing Evil Dave",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_king_awowogei",
+    "name": "Recipe for Disaster/Freeing King Awowogei",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster/Freeing King Awowogei",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_pirate_pete",
+    "name": "Recipe for Disaster/Freeing Pirate Pete",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster/Freeing Pirate Pete",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_sir_amik_varze",
+    "name": "Recipe for Disaster/Freeing Sir Amik Varze",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster/Freeing Sir Amik Varze",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_skrach_uglogwee",
+    "name": "Recipe for Disaster/Freeing Skrach Uglogwee",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster/Freeing Skrach Uglogwee",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_the_goblin_generals",
+    "name": "Recipe for Disaster/Freeing the Goblin generals",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster/Freeing the Goblin generals",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_the_lumbridge_guide",
+    "name": "Recipe for Disaster/Freeing the Lumbridge Guide",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster/Freeing the Lumbridge Guide",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recipe_for_disaster_freeing_the_mountain_dwarf",
+    "name": "Recipe for Disaster/Freeing the Mountain Dwarf",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recipe for Disaster/Freeing the Mountain Dwarf",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_recruitment_drive",
+    "name": "Recruitment Drive",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Recruitment Drive",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_regicide",
+    "name": "Regicide",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Regicide",
+    "requirements": {
+      "min_levels": {
+        "agility": 56
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_romeo_juliet",
+    "name": "Romeo & Juliet",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Romeo & Juliet",
+    "requirements": {},
+    "reward": {
+      "quest_points": 5
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_roving_elves",
+    "name": "Roving Elves",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Roving Elves",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_royal_trouble",
+    "name": "Royal Trouble",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Royal Trouble",
+    "requirements": {
+      "min_levels": {
+        "agility": 40,
+        "slayer": 40
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_rum_deal",
+    "name": "Rum Deal",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Rum Deal",
+    "requirements": {
+      "min_levels": {
+        "crafting": 42,
+        "farming": 40,
+        "fishing": 50,
+        "prayer": 47,
+        "slayer": 42
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_rune_mysteries",
+    "name": "Rune Mysteries",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Rune Mysteries",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_scorpion_catcher",
+    "name": "Scorpion Catcher",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Scorpion Catcher",
+    "requirements": {
+      "min_levels": {
+        "prayer": 31
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_scrambled",
+    "name": "Scrambled!",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Scrambled!",
+    "requirements": {
+      "min_levels": {
+        "construction": 38,
+        "smithing": 35
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_sea_slug",
+    "name": "Sea Slug",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Sea Slug",
+    "requirements": {
+      "min_levels": {
+        "firemaking": 30
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_secrets_of_the_north",
+    "name": "Secrets of the North",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Secrets of the North",
+    "requirements": {
+      "min_levels": {
+        "agility": 69,
+        "hunter": 56,
+        "thieving": 64
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_shades_of_mort_ton",
+    "name": "Shades of Mort'ton",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Shades of Mort'ton",
+    "requirements": {
+      "min_levels": {
+        "crafting": 20,
+        "firemaking": 5,
+        "herblore": 15
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_shadow_of_the_storm",
+    "name": "Shadow of the Storm",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Shadow of the Storm",
+    "requirements": {
+      "min_levels": {
+        "crafting": 30
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_shadows_of_custodia",
+    "name": "Shadows of Custodia",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Shadows of Custodia",
+    "requirements": {
+      "min_levels": {
+        "construction": 41,
+        "fishing": 45,
+        "hunter": 36,
+        "slayer": 54
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_sheep_herder",
+    "name": "Sheep Herder",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Sheep Herder",
+    "requirements": {},
+    "reward": {
+      "quest_points": 4
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_sheep_shearer",
+    "name": "Sheep Shearer",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Sheep Shearer",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_shield_of_arrav",
+    "name": "Shield of Arrav",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Shield of Arrav",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_shilo_village",
+    "name": "Shilo Village",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Shilo Village",
+    "requirements": {
+      "min_levels": {
+        "agility": 32,
+        "crafting": 20
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_sins_of_the_father",
+    "name": "Sins of the Father",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Sins of the Father",
+    "requirements": {
+      "min_levels": {
+        "agility": 52,
+        "attack": 50,
+        "crafting": 56,
+        "fletching": 60,
+        "magic": 49,
+        "slayer": 50,
+        "woodcutting": 62
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_skippy_and_the_mogres",
+    "name": "Skippy and the Mogres",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Skippy and the Mogres",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_sleeping_giants",
+    "name": "Sleeping Giants",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Sleeping Giants",
+    "requirements": {
+      "min_levels": {
+        "smithing": 15
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_song_of_the_elves",
+    "name": "Song of the Elves",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Song of the Elves",
+    "requirements": {
+      "min_levels": {
+        "agility": 70,
+        "construction": 70,
+        "farming": 70,
+        "herblore": 70,
+        "hunter": 70,
+        "mining": 70,
+        "smithing": 70,
+        "woodcutting": 70
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 4
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_spirits_of_the_elid",
+    "name": "Spirits of the Elid",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Spirits of the Elid",
+    "requirements": {
+      "min_levels": {
+        "magic": 33,
+        "mining": 37,
+        "ranged": 37,
+        "thieving": 37
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_swan_song",
+    "name": "Swan Song",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Swan Song",
+    "requirements": {
+      "min_levels": {
+        "cooking": 62,
+        "crafting": 40,
+        "firemaking": 42,
+        "fishing": 62,
+        "magic": 66,
+        "smithing": 45
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_tai_bwo_wannai_trio",
+    "name": "Tai Bwo Wannai Trio",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Tai Bwo Wannai Trio",
+    "requirements": {
+      "min_levels": {
+        "agility": 15,
+        "fishing": 5
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_tale_of_the_righteous",
+    "name": "Tale of the Righteous",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Tale of the Righteous",
+    "requirements": {
+      "min_levels": {
+        "mining": 10,
+        "strength": 16
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_tears_of_guthix",
+    "name": "Tears of Guthix",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Tears of Guthix",
+    "requirements": {
+      "min_levels": {
+        "crafting": 20,
+        "firemaking": 49,
+        "mining": 20
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_temple_of_ikov",
+    "name": "Temple of Ikov",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Temple of Ikov",
+    "requirements": {
+      "min_levels": {
+        "ranged": 40,
+        "thieving": 42
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_temple_of_the_eye",
+    "name": "Temple of the Eye",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Temple of the Eye",
+    "requirements": {
+      "min_levels": {
+        "runecraft": 10
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_ascent_of_arceuus",
+    "name": "The Ascent of Arceuus",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Ascent of Arceuus",
+    "requirements": {
+      "min_levels": {
+        "hunter": 12
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_corsair_curse",
+    "name": "The Corsair Curse",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Corsair Curse",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_curse_of_arrav",
+    "name": "The Curse of Arrav",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Curse of Arrav",
+    "requirements": {
+      "min_levels": {
+        "agility": 61,
+        "mining": 64,
+        "ranged": 62,
+        "slayer": 37,
+        "strength": 58,
+        "thieving": 62
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_depths_of_despair",
+    "name": "The Depths of Despair",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Depths of Despair",
+    "requirements": {
+      "min_levels": {
+        "agility": 18
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_dig_site",
+    "name": "The Dig Site",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Dig Site",
+    "requirements": {
+      "min_levels": {
+        "agility": 10,
+        "herblore": 10,
+        "thieving": 25
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_enchanted_key",
+    "name": "The Enchanted Key",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Enchanted Key",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_eyes_of_glouphrie",
+    "name": "The Eyes of Glouphrie",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Eyes of Glouphrie",
+    "requirements": {
+      "min_levels": {
+        "construction": 5,
+        "magic": 46
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_feud",
+    "name": "The Feud",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Feud",
+    "requirements": {
+      "min_levels": {
+        "thieving": 30
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_final_dawn",
+    "name": "The Final Dawn",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Final Dawn",
+    "requirements": {
+      "min_levels": {
+        "fletching": 52,
+        "runecraft": 52,
+        "thieving": 66
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_forsaken_tower",
+    "name": "The Forsaken Tower",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Forsaken Tower",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_fremennik_exiles",
+    "name": "The Fremennik Exiles",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Fremennik Exiles",
+    "requirements": {
+      "min_levels": {
+        "crafting": 65,
+        "fishing": 60,
+        "runecraft": 55,
+        "slayer": 60,
+        "smithing": 60
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_fremennik_isles",
+    "name": "The Fremennik Isles",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Fremennik Isles",
+    "requirements": {
+      "min_levels": {
+        "construction": 20
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_fremennik_trials",
+    "name": "The Fremennik Trials",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Fremennik Trials",
+    "requirements": {},
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_frozen_door",
+    "name": "The Frozen Door",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Frozen Door",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_garden_of_death",
+    "name": "The Garden of Death",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Garden of Death",
+    "requirements": {
+      "min_levels": {
+        "farming": 20
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_general_s_shadow",
+    "name": "The General's Shadow",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The General's Shadow",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_giant_dwarf",
+    "name": "The Giant Dwarf",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Giant Dwarf",
+    "requirements": {
+      "min_levels": {
+        "crafting": 12,
+        "firemaking": 16,
+        "magic": 33,
+        "thieving": 14
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_golem",
+    "name": "The Golem",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Golem",
+    "requirements": {
+      "min_levels": {
+        "crafting": 20,
+        "thieving": 25
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_grand_tree",
+    "name": "The Grand Tree",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Grand Tree",
+    "requirements": {
+      "min_levels": {
+        "agility": 25
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 5
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_great_brain_robbery",
+    "name": "The Great Brain Robbery",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Great Brain Robbery",
+    "requirements": {
+      "min_levels": {
+        "construction": 30,
+        "crafting": 16,
+        "prayer": 50
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_hand_in_the_sand",
+    "name": "The Hand in the Sand",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Hand in the Sand",
+    "requirements": {
+      "min_levels": {
+        "crafting": 49,
+        "thieving": 17
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_heart_of_darkness",
+    "name": "The Heart of Darkness",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Heart of Darkness",
+    "requirements": {
+      "min_levels": {
+        "agility": 46,
+        "mining": 55,
+        "slayer": 48,
+        "thieving": 48
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_ides_of_milk",
+    "name": "The Ides of Milk",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Ides of Milk",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_knight_s_sword",
+    "name": "The Knight's Sword",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Knight's Sword",
+    "requirements": {
+      "min_levels": {
+        "mining": 10
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_lost_tribe",
+    "name": "The Lost Tribe",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Lost Tribe",
+    "requirements": {
+      "min_levels": {
+        "agility": 13,
+        "mining": 17,
+        "thieving": 13
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_path_of_glouphrie",
+    "name": "The Path of Glouphrie",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Path of Glouphrie",
+    "requirements": {
+      "min_levels": {
+        "agility": 45,
+        "ranged": 47,
+        "slayer": 56,
+        "strength": 60,
+        "thieving": 56
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_queen_of_thieves",
+    "name": "The Queen of Thieves",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Queen of Thieves",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_restless_ghost",
+    "name": "The Restless Ghost",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Restless Ghost",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_ribbiting_tale_of_a_lily_pad_labour_dispute",
+    "name": "The Ribbiting Tale of a Lily Pad Labour Dispute",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Ribbiting Tale of a Lily Pad Labour Dispute",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_slug_menace",
+    "name": "The Slug Menace",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Slug Menace",
+    "requirements": {
+      "min_levels": {
+        "crafting": 30,
+        "runecraft": 30,
+        "slayer": 30,
+        "thieving": 30
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_the_tourist_trap",
+    "name": "The Tourist Trap",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "The Tourist Trap",
+    "requirements": {
+      "min_levels": {
+        "fletching": 10,
+        "smithing": 20
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_throne_of_miscellania",
+    "name": "Throne of Miscellania",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Throne of Miscellania",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_tower_of_life",
+    "name": "Tower of Life",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Tower of Life",
+    "requirements": {
+      "min_levels": {
+        "construction": 10
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_tree_gnome_village",
+    "name": "Tree Gnome Village",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Tree Gnome Village",
+    "requirements": {},
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_tribal_totem",
+    "name": "Tribal Totem",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Tribal Totem",
+    "requirements": {
+      "min_levels": {
+        "thieving": 21
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_troll_romance",
+    "name": "Troll Romance",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Troll Romance",
+    "requirements": {
+      "min_levels": {
+        "agility": 28
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 2
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_troll_stronghold",
+    "name": "Troll Stronghold",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Troll Stronghold",
+    "requirements": {
+      "min_levels": {
+        "agility": 15
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_troubled_tortugans",
+    "name": "Troubled Tortugans",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Troubled Tortugans",
+    "requirements": {
+      "min_levels": {
+        "construction": 48,
+        "crafting": 34,
+        "hunter": 45,
+        "sailing": 45,
+        "slayer": 51,
+        "woodcutting": 40
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_twilight_s_promise",
+    "name": "Twilight's Promise",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Twilight's Promise",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_underground_pass",
+    "name": "Underground Pass",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Underground Pass",
+    "requirements": {
+      "min_levels": {
+        "ranged": 25
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 5
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_vale_totems",
+    "name": "Vale Totems",
+    "is_miniquest": true,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Vale Totems",
+    "requirements": {},
+    "reward": {
+      "quest_points": 0
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_vampyre_slayer",
+    "name": "Vampyre Slayer",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Vampyre Slayer",
+    "requirements": {},
+    "reward": {
+      "quest_points": 3
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_wanted",
+    "name": "Wanted!",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Wanted!",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_watchtower",
+    "name": "Watchtower",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Watchtower",
+    "requirements": {
+      "min_levels": {
+        "agility": 25,
+        "herblore": 14,
+        "magic": 14,
+        "mining": 40,
+        "thieving": 15
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 4
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_waterfall_quest",
+    "name": "Waterfall Quest",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Waterfall Quest",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_what_lies_below",
+    "name": "What Lies Below",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "What Lies Below",
+    "requirements": {
+      "min_levels": {
+        "runecraft": 35
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_while_guthix_sleeps",
+    "name": "While Guthix Sleeps",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "While Guthix Sleeps",
+    "requirements": {
+      "min_levels": {
+        "agility": 66,
+        "farming": 65,
+        "herblore": 65,
+        "hunter": 62,
+        "magic": 67,
+        "thieving": 72
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 5
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_witch_s_house",
+    "name": "Witch's House",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Witch's House",
+    "requirements": {},
+    "reward": {
+      "quest_points": 4
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_witch_s_potion",
+    "name": "Witch's Potion",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Witch's Potion",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_x_marks_the_spot",
+    "name": "X Marks the Spot",
+    "is_miniquest": false,
+    "is_members": false,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "X Marks the Spot",
+    "requirements": {},
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  },
+  {
+    "id": "quest_zogre_flesh_eaters",
+    "name": "Zogre Flesh Eaters",
+    "is_miniquest": false,
+    "is_members": true,
+    "category": "quest",
+    "repeatable": false,
+    "one_time": true,
+    "duration_hours": 1.0,
+    "quest_name": "Zogre Flesh Eaters",
+    "requirements": {
+      "min_levels": {
+        "herblore": 8,
+        "ranged": 30,
+        "smithing": 4
+      },
+      "required_unlocks": []
+    },
+    "reward": {
+      "quest_points": 1
+    },
+    "notes": "Generated from OSRS Wiki requirements tables."
+  }
+]

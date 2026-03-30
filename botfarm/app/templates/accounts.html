@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Accounts</h2>
+        <p>Track email, RuneScape, and proxy credentials.</p>
+    </div>
+    <div class="actions">
+        <a href="/accounts/new"><button type="button">New Account</button></a>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-top: 0;">Import From Botting Hub</h3>
+    <form action="/accounts/import-botting-hub" method="post" class="inline-form">
+        <input
+            type="text"
+            name="db_path"
+            value="C:\Users\nubonix\Botting Hub\Manager\Data\database.db"
+            placeholder="Botting Hub database path"
+            style="min-width: 460px;"
+            required
+        >
+        <button type="submit">Import Botting Hub Accounts</button>
+    </form>
+</div>
+
+<div class="card">
+    <form method="get" action="/accounts" class="inline-form">
+        <input type="text" name="q" value="{{ q }}" placeholder="Search label, email, RS email, proxy IP, RSN">
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Label</th>
+                <th>RSN</th>
+                <th>Email</th>
+                <th>RS Login</th>
+                <th>Proxy</th>
+                <th>Status</th>
+                <th>Banned</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for account in accounts %}
+            <tr>
+                <td><a href="/accounts/{{ account.id }}">{{ account.label }}</a></td>
+                <td>{{ account.rsn or "-" }}</td>
+                <td>{{ account.email_address or "-" }}</td>
+                <td>{{ account.rs_email or "-" }}</td>
+                <td>
+                    {% if account.proxy_ip %}
+                        {{ account.proxy_ip }}{% if account.proxy_port %}:{{ account.proxy_port }}{% endif %}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ account.status or "-" }}</td>
+                <td>{% if account.banned %}Yes{% else %}No{% endif %}</td>
+                <td class="actions">
+                    <a href="/accounts/{{ account.id }}/edit">
+                        <button type="button" class="secondary tiny-btn">Edit</button>
+                    </a>
+                    <form action="/accounts/{{ account.id }}/delete" method="post" onsubmit="return confirm('Delete this account?');">
+                        <button type="submit" class="danger tiny-btn">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="8">No accounts yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>{% if money_maker %}Edit Money Maker{% else %}New Money Maker{% endif %}</h2>
+        <p>
+            {% if money_maker %}
+                Update the method details here. Inputs and outputs are managed on the detail page.
+            {% else %}
+                Create the method first, then add inputs and outputs on the next screen.
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<div class="form-shell">
+    <div class="form-hero card">
+        <div class="hero-badge">OSRS</div>
+        <h3>{% if money_maker %}Update Money Maker{% else %}Create a Money Maker{% endif %}</h3>
+        <p>
+            {% if money_maker %}
+                Edit the name, category, type, hourly volume, and notes for this method.
+            {% else %}
+                Set the name, category, type, and hourly volume for the method.
+                After saving, you’ll be taken to the detail page where you can add inputs, outputs, runes, and coins.
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="card form-card">
+        <form
+            action="{% if money_maker %}/money-makers/{{ money_maker.id }}/edit{% else %}/money-makers/new{% endif %}"
+            method="post"
+            class="money-maker-form"
+        >
+            <div class="form-grid">
+                <div class="form-group form-group-lg">
+                    <label for="name">Method Name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        value="{{ money_maker.name if money_maker else '' }}"
+                        placeholder="Example: Maple shortbow stringing"
+                        required
+                    >
+                    <small>Use a clear name you’ll recognize on the dashboard.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select name="category" id="category" required>
+                        {% set current_category = money_maker.category if money_maker else 'processing' %}
+                        <option value="processing" {% if current_category == 'processing' %}selected{% endif %}>Processing</option>
+                        <option value="fletching" {% if current_category == 'fletching' %}selected{% endif %}>Fletching</option>
+                        <option value="magic" {% if current_category == 'magic' %}selected{% endif %}>Magic</option>
+                        <option value="smithing" {% if current_category == 'smithing' %}selected{% endif %}>Smithing</option>
+                        <option value="crafting" {% if current_category == 'crafting' %}selected{% endif %}>Crafting</option>
+                        <option value="cooking" {% if current_category == 'cooking' %}selected{% endif %}>Cooking</option>
+                        <option value="herblore" {% if current_category == 'herblore' %}selected{% endif %}>Herblore</option>
+                        <option value="other" {% if current_category == 'other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="is_members">Method Type</label>
+                    {% set current_type = 'p2p' if not money_maker or money_maker.is_members else 'f2p' %}
+                    <select name="is_members" id="is_members" required>
+                        <option value="f2p" {% if current_type == 'f2p' %}selected{% endif %}>F2P</option>
+                        <option value="p2p" {% if current_type == 'p2p' %}selected{% endif %}>P2P</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="units_per_hour">Units Per Hour</label>
+                    <input
+                        type="number"
+                        name="units_per_hour"
+                        id="units_per_hour"
+                        min="1"
+                        value="{{ money_maker.units_per_hour if money_maker else 1000 }}"
+                        required
+                    >
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="notes">Notes</label>
+                    <textarea
+                        name="notes"
+                        id="notes"
+                        rows="5"
+                        placeholder="Optional notes, assumptions, gear setup, spell used, average actions per hour, etc."
+                    >{{ money_maker.notes if money_maker and money_maker.notes else '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% if money_maker %}/money-makers/{{ money_maker.id }}{% else %}/{% endif %}" class="secondary-link">Cancel</a>
+                <button type="submit" class="primary-btn">
+                    {% if money_maker %}Save Changes{% else %}Create Money Maker{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.form-shell {
+    max-width: 980px;
+    margin: 0 auto;
+    display: grid;
+    gap: 20px;
+}
+.form-hero {
+    padding: 28px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255, 196, 0, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.form-hero h3 {
+    margin: 8px 0 10px 0;
+    font-size: 1.5rem;
+}
+.form-hero p {
+    margin: 0;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+.hero-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: rgba(255, 196, 0, 0.14);
+    color: #ffd24d;
+}
+.form-card {
+    padding: 28px;
+    border-radius: 18px;
+}
+.money-maker-form {
+    display: grid;
+    gap: 24px;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+.form-group {
+    display: grid;
+    gap: 8px;
+}
+.form-group-lg,
+.form-group-full {
+    grid-column: span 2;
+}
+.form-group label {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: inherit;
+    font: inherit;
+    box-sizing: border-box;
+}
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.primary-btn {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.secondary-link {
+    text-decoration: none;
+    opacity: 0.8;
+}
+@media (max-width: 760px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-group-lg,
+    .form-group-full {
+        grid-column: span 1;
+    }
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+</style>
+
+{% endblock %}

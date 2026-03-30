@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Plans</h2>
+        <p>Manual and generated daily plans.</p>
+    </div>
+    <div class="actions">
+        <a href="/planner_core/tasks"><button type="button" class="secondary">Tasks</button></a>
+        <a href="/planner_core/assignments"><button type="button" class="secondary">Assignments</button></a>
+        <a href="/planner_core/generate"><button type="button" class="secondary">Generate Plans</button></a>
+        <a href="/planner_core/plans/new"><button type="button">New Plan</button></a>
+    </div>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Generated</th>
+                <th>Target Active Min</th>
+                <th>Steps</th>
+                <th>Updated</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plan in plans %}
+            <tr>
+                <td><a href="/planner_core/plans/{{ plan.id }}">{{ plan.name }}</a></td>
+                <td>{% if plan.is_generated %}Yes{% else %}No{% endif %}</td>
+                <td>{{ plan.target_active_minutes or "-" }}</td>
+                <td>{{ plan.steps | length }}</td>
+                <td>{{ plan.updated_at }}</td>
+                <td class="actions">
+                    <a href="/planner_core/plans/{{ plan.id }}/edit"><button type="button" class="secondary tiny-btn">Edit</button></a>
+                    <form action="/planner_core/plans/{{ plan.id }}/delete" method="post" onsubmit="return confirm('Delete this plan?');">
+                        <button type="submit" class="danger tiny-btn">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">No plans yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

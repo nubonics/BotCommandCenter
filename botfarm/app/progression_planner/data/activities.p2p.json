@@ -1,0 +1,1135 @@
+[
+  {
+    "id": "p2p_crabs_attack",
+    "name": "P2P Combat - Sand Crabs (Attack)",
+    "category": "combat",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "attack": 40000,
+      "hitpoints": 13000
+    },
+    "gp_per_hour": -5000,
+    "requirements": {
+      "min_levels": {
+        "attack": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish. Placeholder rates."
+  },
+  {
+    "id": "p2p_crabs_strength",
+    "name": "P2P Combat - Sand Crabs (Strength)",
+    "category": "combat",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "strength": 42000,
+      "hitpoints": 14000
+    },
+    "gp_per_hour": -5000,
+    "requirements": {
+      "min_levels": {
+        "strength": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish. Placeholder rates."
+  },
+  {
+    "id": "p2p_crabs_ranged",
+    "name": "P2P Combat - Sand Crabs (Ranged)",
+    "category": "combat",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "ranged": 38000,
+      "hitpoints": 12000
+    },
+    "gp_per_hour": -8000,
+    "requirements": {
+      "min_levels": {
+        "ranged": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish. Placeholder rates."
+  },
+  {
+    "id": "p2p_magic_splashing",
+    "name": "P2P Magic - Splashing",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 12000
+    },
+    "gp_per_hour": -15000,
+    "requirements": {
+      "min_levels": {
+        "magic": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish. Placeholder."
+  },
+  {
+    "id": "p2p_magic_high_alch",
+    "name": "P2P Magic - High Alchemy",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 78000
+    },
+    "gp_per_hour": -30000,
+    "requirements": {
+      "min_levels": {
+        "magic": 55
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish. Placeholder."
+  },
+  {
+    "id": "p2p_agility_gnome",
+    "name": "P2P Agility - Gnome course",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 8000
+    },
+    "gp_per_hour": 0,
+    "requirements": {
+      "min_levels": {
+        "agility": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Early agility. Placeholder."
+  },
+  {
+    "id": "p2p_agility_rooftops",
+    "name": "P2P Agility - Rooftops",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 52000
+    },
+    "gp_per_hour": 60000,
+    "requirements": {
+      "min_levels": {
+        "agility": 40
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Marks of grace. Placeholder."
+  },
+  {
+    "id": "p2p_thieving_pickpocket",
+    "name": "P2P Thieving - Pickpocketing",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "thieving": 30000
+    },
+    "gp_per_hour": 10000,
+    "requirements": {
+      "min_levels": {
+        "thieving": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Early thieving. Placeholder."
+  },
+  {
+    "id": "p2p_blackjacking",
+    "name": "P2P Thieving - Blackjacking",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "thieving": 170000
+    },
+    "gp_per_hour": 180000,
+    "requirements": {
+      "min_levels": {
+        "thieving": 45
+      },
+      "required_unlocks": [
+        "members:p2p",
+        "unlock:blackjacking"
+      ]
+    },
+    "notes": "High intensity; placeholder rates."
+  },
+  {
+    "id": "p2p_crafting_leather",
+    "name": "P2P Crafting - Leather (early)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 25000
+    },
+    "gp_per_hour": -40000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "p2p_crafting_glass",
+    "name": "P2P Crafting - Glassblowing",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "crafting": 65000
+    },
+    "gp_per_hour": -90000,
+    "requirements": {
+      "min_levels": {
+        "crafting": 46
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "p2p_prayer_chaos_altar",
+    "name": "P2P Prayer - Chaos altar (bones)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "prayer": 220000
+    },
+    "gp_per_hour": -650000,
+    "requirements": {
+      "min_levels": {
+        "prayer": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Fast prayer, risky; placeholder."
+  },
+  {
+    "id": "p2p_slayer_tasks",
+    "name": "P2P Slayer - Tasks",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "slayer": 20000,
+      "hitpoints": 8000
+    },
+    "gp_per_hour": 120000,
+    "requirements": {
+      "min_levels": {
+        "attack": 50
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Highly variable; placeholder."
+  },
+  {
+    "id": "p2p_green_dragons",
+    "name": "P2P Money - Green Dragons",
+    "category": "money",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "attack": 20000,
+      "strength": 20000,
+      "hitpoints": 8000
+    },
+    "gp_per_hour": 500000,
+    "requirements": {
+      "min_levels": {
+        "attack": 50
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder rates."
+  },
+  {
+    "id": "p2p_vorkath",
+    "name": "P2P Bossing - Vorkath",
+    "category": "bossing",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "ranged": 35000,
+      "hitpoints": 10000
+    },
+    "gp_per_hour": 2500000,
+    "requirements": {
+      "min_levels": {
+        "ranged": 75
+      },
+      "required_unlocks": [
+        "members:p2p",
+        "unlock:vorkath"
+      ]
+    },
+    "notes": "Placeholder rates."
+  },
+  {
+    "id": "p2p_magic_tele_camelot",
+    "name": "P2P Magic - Teleport: Camelot",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 36000
+    },
+    "gp_per_hour": -20000,
+    "requirements": {
+      "min_levels": {
+        "magic": 45
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Casts/hour varies; placeholder rune cost + xp/hr."
+  },
+  {
+    "id": "p2p_magic_tele_ardougne",
+    "name": "P2P Magic - Teleport: Ardougne",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 40000
+    },
+    "gp_per_hour": -22000,
+    "requirements": {
+      "min_levels": {
+        "magic": 51
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Casts/hour varies; placeholder rune cost + xp/hr."
+  },
+  {
+    "id": "p2p_agility_rooftops_10",
+    "name": "P2P Agility - Rooftops (best available)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 9000
+    },
+    "gp_per_hour": 0,
+    "requirements": {
+      "min_levels": {
+        "agility": 10
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Approx tier at Draynor. Placeholder."
+  },
+  {
+    "id": "p2p_agility_rooftops_20",
+    "name": "P2P Agility - Rooftops (best available)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 14000
+    },
+    "gp_per_hour": 0,
+    "requirements": {
+      "min_levels": {
+        "agility": 20
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Approx tier at Al Kharid. Placeholder."
+  },
+  {
+    "id": "p2p_agility_rooftops_30",
+    "name": "P2P Agility - Rooftops (best available)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 26000
+    },
+    "gp_per_hour": 8000,
+    "requirements": {
+      "min_levels": {
+        "agility": 30
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Approx tier at Varrock. Placeholder."
+  },
+  {
+    "id": "p2p_agility_rooftops_40",
+    "name": "P2P Agility - Rooftops (best available)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 52000
+    },
+    "gp_per_hour": 60000,
+    "requirements": {
+      "min_levels": {
+        "agility": 40
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Approx tier at Canifis/Seers-ish. Placeholder."
+  },
+  {
+    "id": "p2p_agility_rooftops_50",
+    "name": "P2P Agility - Rooftops (best available)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 55000
+    },
+    "gp_per_hour": 70000,
+    "requirements": {
+      "min_levels": {
+        "agility": 50
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Approx tier at Seers. Placeholder."
+  },
+  {
+    "id": "p2p_agility_rooftops_60",
+    "name": "P2P Agility - Rooftops (best available)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 60000
+    },
+    "gp_per_hour": 80000,
+    "requirements": {
+      "min_levels": {
+        "agility": 60
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Approx tier at Pollnivneach. Placeholder."
+  },
+  {
+    "id": "p2p_agility_rooftops_70",
+    "name": "P2P Agility - Rooftops (best available)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "agility": 65000
+    },
+    "gp_per_hour": 90000,
+    "requirements": {
+      "min_levels": {
+        "agility": 70
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Approx tier at Rellekka. Placeholder."
+  },
+  {
+    "id": "p2p_mining_mlm_30",
+    "name": "P2P Mining - Motherlode Mine (MLM)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "mining": 22000
+    },
+    "gp_per_hour": 40000,
+    "requirements": {
+      "min_levels": {
+        "mining": 30
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish. Placeholder."
+  },
+  {
+    "id": "p2p_mining_mlm_50",
+    "name": "P2P Mining - Motherlode Mine (MLM)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "mining": 32000
+    },
+    "gp_per_hour": 60000,
+    "requirements": {
+      "min_levels": {
+        "mining": 50
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish. Placeholder."
+  },
+  {
+    "id": "p2p_mining_mlm_70",
+    "name": "P2P Mining - Motherlode Mine (MLM)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "mining": 42000
+    },
+    "gp_per_hour": 80000,
+    "requirements": {
+      "min_levels": {
+        "mining": 70
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish. Placeholder."
+  },
+  {
+    "id": "p2p_nmz_strength_afk",
+    "name": "P2P Combat - NMZ (AFK Strength)",
+    "category": "combat",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "strength": 65000,
+      "hitpoints": 20000
+    },
+    "gp_per_hour": -100000,
+    "requirements": {
+      "min_levels": {
+        "strength": 60
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder; assumes absorptions + overloads."
+  },
+  {
+    "id": "p2p_cooking_monkfish",
+    "name": "P2P Cooking - Monkfish",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 155000
+    },
+    "gp_per_hour": -25000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 62
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "p2p_cooking_shark",
+    "name": "P2P Cooking - Shark",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 170000
+    },
+    "gp_per_hour": -40000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 80
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "p2p_cooking_anglerfish",
+    "name": "P2P Cooking - Anglerfish",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 175000
+    },
+    "gp_per_hour": -45000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 84
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "p2p_cooking_dark_crab",
+    "name": "P2P Cooking - Dark_Crab",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 180000
+    },
+    "gp_per_hour": -50000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 90
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "p2p_cooking_manta_ray",
+    "name": "P2P Cooking - Manta_Ray",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 185000
+    },
+    "gp_per_hour": -55000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 91
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "p2p_fletching_darts",
+    "name": "P2P Fletching - Darts (bulk)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 140000
+    },
+    "gp_per_hour": -60000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 22
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "p2p_fishing_otto_grotto_rod",
+    "name": "P2P Fishing - Otto's Grotto - Use-rod (barb fishing)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 52000
+    },
+    "gp_per_hour": 2000,
+    "requirements": {
+      "min_levels": {
+        "fishing": 48
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "p2p_fishing_fishing_guild_small_net",
+    "name": "P2P Fishing - Fishing Guild - Small net",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 36000
+    },
+    "gp_per_hour": 2000,
+    "requirements": {
+      "min_levels": {
+        "fishing": 68
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "p2p_fishing_fishing_guild_cage",
+    "name": "P2P Fishing - Fishing Guild - Cage",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 38000
+    },
+    "gp_per_hour": 3000,
+    "requirements": {
+      "min_levels": {
+        "fishing": 68
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "p2p_fishing_fishing_guild_harpoon_shark",
+    "name": "P2P Fishing - Fishing Guild - Harpoon (shark)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 42000
+    },
+    "gp_per_hour": 12000,
+    "requirements": {
+      "min_levels": {
+        "fishing": 76
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "p2p_fishing_fishing_guild_harpoon_tuna_sword",
+    "name": "P2P Fishing - Fishing Guild - Harpoon (tuna/sword)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fishing": 40000
+    },
+    "gp_per_hour": 5000,
+    "requirements": {
+      "min_levels": {
+        "fishing": 68
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "p2p_hunter_crimson_swift",
+    "name": "P2P Hunter - Crimson swift",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "hunter": 12000
+    },
+    "gp_per_hour": -2000,
+    "requirements": {
+      "min_levels": {
+        "hunter": 1
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "p2p_hunter_copper_longtail",
+    "name": "P2P Hunter - Copper longtail",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "hunter": 16000
+    },
+    "gp_per_hour": -2500,
+    "requirements": {
+      "min_levels": {
+        "hunter": 9
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "p2p_hunter_tropical_wagtail",
+    "name": "P2P Hunter - Tropical wagtail",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "hunter": 22000
+    },
+    "gp_per_hour": -3000,
+    "requirements": {
+      "min_levels": {
+        "hunter": 19
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "p2p_hunter_ferret",
+    "name": "P2P Hunter - Ferret",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "hunter": 28000
+    },
+    "gp_per_hour": -3500,
+    "requirements": {
+      "min_levels": {
+        "hunter": 27
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "p2p_hunter_grey_chinchompa",
+    "name": "P2P Hunter - Grey chinchompa",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "hunter": 70000
+    },
+    "gp_per_hour": 20000,
+    "requirements": {
+      "min_levels": {
+        "hunter": 53
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "p2p_hunter_red_chinchompa",
+    "name": "P2P Hunter - Red chinchompa",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "hunter": 95000
+    },
+    "gp_per_hour": 65000,
+    "requirements": {
+      "min_levels": {
+        "hunter": 63
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "AFK-ish; placeholder."
+  },
+  {
+    "id": "p2p_fletching_magic_shortbow",
+    "name": "P2P Fletching - Magic shortbows",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 170000
+    },
+    "gp_per_hour": -70000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 80
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder."
+  },
+  {
+    "id": "p2p_fletching_darts_bronze",
+    "name": "P2P Fletching - Bronze darts (bulk)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 65000
+    },
+    "gp_per_hour": -15000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 10
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "No poison variants. Placeholder."
+  },
+  {
+    "id": "p2p_fletching_darts_iron",
+    "name": "P2P Fletching - Iron darts (bulk)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 85000
+    },
+    "gp_per_hour": -25000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 22
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "No poison variants. Placeholder."
+  },
+  {
+    "id": "p2p_fletching_darts_steel",
+    "name": "P2P Fletching - Steel darts (bulk)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 105000
+    },
+    "gp_per_hour": -35000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 37
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "No poison variants. Placeholder."
+  },
+  {
+    "id": "p2p_fletching_darts_mithril",
+    "name": "P2P Fletching - Mithril darts (bulk)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 125000
+    },
+    "gp_per_hour": -45000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 52
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "No poison variants. Placeholder."
+  },
+  {
+    "id": "p2p_fletching_darts_adamant",
+    "name": "P2P Fletching - Adamant darts (bulk)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 145000
+    },
+    "gp_per_hour": -60000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 67
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "No poison variants. Placeholder."
+  },
+  {
+    "id": "p2p_fletching_darts_rune",
+    "name": "P2P Fletching - Rune darts (bulk)",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "fletching": 165000
+    },
+    "gp_per_hour": -85000,
+    "requirements": {
+      "min_levels": {
+        "fletching": 81
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "No poison variants. Placeholder."
+  },
+  {
+    "id": "p2p_cooking_bass",
+    "name": "P2P Cooking - Bass",
+    "category": "skilling",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "cooking": 145000
+    },
+    "gp_per_hour": -22000,
+    "requirements": {
+      "min_levels": {
+        "cooking": 43
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Auto cooking method; placeholder."
+  },
+  {
+    "id": "p2p_nmz_attack_afk",
+    "name": "P2P Combat - NMZ (AFK Attack)",
+    "category": "combat",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "attack": 60000,
+      "hitpoints": 20000
+    },
+    "gp_per_hour": -100000,
+    "requirements": {
+      "min_levels": {
+        "attack": 60
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder; assumes absorptions. Skill requirement is placeholder."
+  },
+  {
+    "id": "p2p_nmz_ranged_afk",
+    "name": "P2P Combat - NMZ (AFK Ranged)",
+    "category": "combat",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "ranged": 55000,
+      "hitpoints": 18000
+    },
+    "gp_per_hour": -110000,
+    "requirements": {
+      "min_levels": {
+        "ranged": 60
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder; assumes absorptions. Skill requirement is placeholder."
+  },
+  {
+    "id": "p2p_nmz_magic_afk",
+    "name": "P2P Combat - NMZ (AFK Magic)",
+    "category": "combat",
+    "repeatable": true,
+    "duration_hours": 1.0,
+    "xp_rates": {
+      "magic": 45000,
+      "hitpoints": 15000
+    },
+    "gp_per_hour": -120000,
+    "requirements": {
+      "min_levels": {
+        "magic": 60
+      },
+      "required_unlocks": [
+        "members:p2p"
+      ]
+    },
+    "notes": "Placeholder; assumes absorptions. Skill requirement is placeholder."
+  }
+]
