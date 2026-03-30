@@ -110,6 +110,30 @@ class TailState:
         if self.f is not None:
             return
         self.f = self.path.open("r", encoding="utf-8", errors="replace")
+        # Bootstrap inference by scanning a slice of the existing file.
+        try:
+            size = self.path.stat().st_size
+            back = min(size, 256_000)
+            self.f.seek(size - back)
+            bootstrap = self.f.read(back)
+            for raw in bootstrap.splitlines():
+                parsed = _parse_ts(raw)
+                msg = parsed[1] if parsed else raw
+
+                m_sb = SANDBOX_PATH_RE.search(msg)
+                if m_sb:
+                    self.inferred_sandbox = m_sb.group(1)
+
+                m_pid = re.search(r"\bfound client pid=(\d+)", msg, re.IGNORECASE)
+                if m_pid:
+                    try:
+                        self.inferred_pid = int(m_pid.group(1))
+                    except ValueError:
+                        pass
+        except Exception:
+            pass
+
+        # Now follow from end.
         self.f.seek(0, os.SEEK_END)
         self.pos = self.f.tell()
 
@@ -155,14 +179,13 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
                     continue
                 ts, msg = parsed
 
-                # Infer the OSRS client PID when available.
-                if state.inferred_pid is None:
-                    m_pid = re.search(r"\bfound client pid=(\d+)", msg, re.IGNORECASE)
-                    if m_pid:
-                        try:
-                            state.inferred_pid = int(m_pid.group(1))
-                        except ValueError:
-                            pass
+                # Track the most recent OSRS client PID seen in this log.
+                m_pid = re.search(r"\bfound client pid=(\d+)", msg, re.IGNORECASE)
+                if m_pid:
+                    try:
+                        state.inferred_pid = int(m_pid.group(1))
+                    except ValueError:
+                        pass
 
                 if state.inferred_sandbox is None:
                     m = SANDBOX_PATH_RE.search(msg)
