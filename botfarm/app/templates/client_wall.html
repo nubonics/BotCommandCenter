@@ -1,15 +1,9 @@
 {% extends "base.html" %}
 
-{% block content %}
-<div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-  <h2 style="margin:0;">Client Wall</h2>
-  <div style="display:flex; gap:10px;">
-    <a class="btn" href="/wall" target="_blank" rel="noopener">Open wall in new tab</a>
-    <button class="btn" onclick="document.getElementById('wallFrame').contentWindow.location.reload();">Reload</button>
-  </div>
-</div>
+{% block body_class %}wall-max{% endblock %}
 
-<div class="card" style="padding:0; overflow:hidden; height: calc(100vh - 220px); min-height: 600px;">
+{% block content %}
+<div class="card" style="padding:0; overflow:hidden; height: calc(100vh - 160px); min-height: 720px;">
   <iframe
     id="wallFrame"
     src="/wall"
@@ -18,4 +12,3 @@
   ></iframe>
 </div>
 {% endblock %}
-

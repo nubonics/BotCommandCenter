@@ -41,6 +41,18 @@
             padding: 24px;
         }
 
+        /* Watching wall: maximize usable area while keeping top nav. */
+        body.wall-max .layout {
+            max-width: none;
+            padding: 10px 10px;
+        }
+
+        body.wall-max .topbar {
+            margin-bottom: 10px;
+            padding: 10px 12px;
+            border-radius: 14px;
+        }
+
         .topbar {
             display: flex;
             flex-wrap: wrap;
@@ -328,7 +340,7 @@
         }
     </style>
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <div class="layout">
         <div class="topbar">
             <div class="brand">
