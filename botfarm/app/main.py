@@ -79,7 +79,6 @@ async def lifespan(_: FastAPI):
         pattern="sara*.txt",
         kill_osclient=True,
         terminate_sandbox=True,
-        sandboxie_start_exe="Start.exe",
     )
     watchdog_task = asyncio.create_task(watchdog_loop(cfg))
 

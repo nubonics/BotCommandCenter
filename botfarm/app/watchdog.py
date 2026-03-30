@@ -30,7 +30,10 @@ class WatchdogConfig:
 
     kill_osclient: bool = True
     terminate_sandbox: bool = True
-    sandboxie_start_exe: str = "Start.exe"  # set full path if not in PATH
+    sandboxie_start_exe: str = r"C:\Program Files\Sandboxie-Plus\Start.exe"
+
+    # When running under WSL, use Windows executables via /mnt/c.
+    taskkill_exe: str = r"C:\Windows\System32\taskkill.exe"
 
 
 def _parse_ts(line: str) -> Optional[tuple[datetime, str]]:
@@ -44,6 +47,23 @@ def _parse_ts(line: str) -> Optional[tuple[datetime, str]]:
     return ts, m.group(2)
 
 
+def _is_wsl() -> bool:
+    try:
+        return "microsoft" in Path("/proc/version").read_text().lower()
+    except Exception:
+        return False
+
+
+def _win_to_wsl_path(win_path: str) -> str:
+    # Minimal conversion for absolute C:\ paths.
+    m = re.match(r"^([a-zA-Z]):\\(.*)$", win_path)
+    if not m:
+        return win_path
+    drive = m.group(1).lower()
+    rest = m.group(2).replace("\\", "/")
+    return f"/mnt/{drive}/{rest}"
+
+
 def _run(cmd: list[str]) -> subprocess.CompletedProcess | None:
     try:
         return subprocess.run(cmd, capture_output=True, text=True, timeout=20)
@@ -51,17 +71,21 @@ def _run(cmd: list[str]) -> subprocess.CompletedProcess | None:
         return None
 
 
-def _taskkill_osclient() -> None:
-    # Windows-only. No-op on non-Windows hosts.
-    if os.name != "nt":
+def _kill_pid(cfg: WatchdogConfig, pid: int) -> None:
+    # Prefer targeted kill by PID.
+    if os.name == "nt":
+        _run([cfg.taskkill_exe, "/PID", str(pid), "/F"])
         return
-    _run(["taskkill", "/IM", "osclient.exe", "/F"])
+    if _is_wsl():
+        _run([_win_to_wsl_path(cfg.taskkill_exe), "/PID", str(pid), "/F"])
 
 
-def _terminate_sandbox(start_exe: str, sandbox_name: str) -> None:
-    if os.name != "nt":
+def _terminate_sandbox(cfg: WatchdogConfig, sandbox_name: str) -> None:
+    if os.name == "nt":
+        _run([cfg.sandboxie_start_exe, f"/terminate_all:{sandbox_name}"])
         return
-    _run([start_exe, f"/terminate_all:{sandbox_name}"])
+    if _is_wsl():
+        _run([_win_to_wsl_path(cfg.sandboxie_start_exe), f"/terminate_all:{sandbox_name}"])
 
 
 class TailState:
@@ -72,6 +96,7 @@ class TailState:
         self.recent: list[tuple[datetime, str]] = []
         self.last_action_at: datetime = datetime.min
         self.inferred_sandbox: str | None = None
+        self.inferred_pid: int | None = None
 
     def close(self) -> None:
         if self.f:
@@ -130,6 +155,15 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
                     continue
                 ts, msg = parsed
 
+                # Infer the OSRS client PID when available.
+                if state.inferred_pid is None:
+                    m_pid = re.search(r"\bfound client pid=(\d+)", msg, re.IGNORECASE)
+                    if m_pid:
+                        try:
+                            state.inferred_pid = int(m_pid.group(1))
+                        except ValueError:
+                            pass
+
                 if state.inferred_sandbox is None:
                     m = SANDBOX_PATH_RE.search(msg)
                     if m:
@@ -149,13 +183,12 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
             if cooldown_ok and none_arrays >= cfg.threshold_none_arrays and withdraws >= cfg.threshold_withdraws:
                 state.last_action_at = now
 
-                # Kill osclient.exe
-                if cfg.kill_osclient:
-                    _taskkill_osclient()
+                # Kill only the malfunctioning instance if we have its PID.
+                if cfg.kill_osclient and state.inferred_pid is not None:
+                    _kill_pid(cfg, state.inferred_pid)
 
                 # Terminate Sandboxie sandbox if we can infer it from the log.
                 if cfg.terminate_sandbox and state.inferred_sandbox:
-                    _terminate_sandbox(cfg.sandboxie_start_exe, state.inferred_sandbox)
+                    _terminate_sandbox(cfg, state.inferred_sandbox)
 
         await asyncio.sleep(cfg.poll_interval)
-
