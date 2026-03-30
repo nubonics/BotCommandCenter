@@ -29,6 +29,7 @@
         <th>Log</th>
         <th>PID</th>
         <th>Sandbox</th>
+        <th>Last item</th>
         <th>None arrays</th>
         <th>Withdraws</th>
         <th>Last action</th>
@@ -40,6 +41,7 @@
         <td style="max-width:520px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ f.path }}">{{ f.path }}</td>
         <td>{{ f.inferred_pid or "-" }}</td>
         <td>{{ f.inferred_sandbox or "-" }}</td>
+        <td>{{ f.last_withdraw_item or "-" }}</td>
         <td>{{ f.none_arrays }}</td>
         <td>{{ f.withdraws }}</td>
         <td>
@@ -56,4 +58,3 @@
 </div>
 
 {% endblock %}
-

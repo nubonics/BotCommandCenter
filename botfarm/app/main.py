@@ -104,6 +104,17 @@ app.include_router(progression_router)
 mount_osclient_wall(app, prefix="/wall")
 
 
+@app.get("/client-wall", response_class=HTMLResponse)
+def client_wall_page(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "client_wall.html",
+        {
+            "request": request,
+        },
+    )
+
+
 @app.get("/watchdog", response_class=HTMLResponse)
 def watchdog_page(request: Request):
     return templates.TemplateResponse(
@@ -135,6 +146,7 @@ def watchdog_status_json():
                     "window_seconds": f.window_seconds,
                     "none_arrays": f.none_arrays,
                     "withdraws": f.withdraws,
+                    "last_withdraw_item": getattr(f, "last_withdraw_item", None),
                     "last_action_at": f.last_action_at,
                     "last_action": f.last_action,
                 }

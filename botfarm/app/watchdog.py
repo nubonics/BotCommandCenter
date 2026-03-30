@@ -44,6 +44,7 @@ class FileWatchStatus:
     window_seconds: int = 0
     none_arrays: int = 0
     withdraws: int = 0
+    last_withdraw_item: str | None = None
     last_action_at: str | None = None
     last_action: str | None = None
 
@@ -237,6 +238,13 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
             none_arrays = sum(1 for _, m in state.recent if NONE_ARRAY_RE.search(m))
             withdraws = sum(1 for _, m in state.recent if WITHDRAW_RE.search(m))
 
+            last_item = None
+            for _, m in reversed(state.recent):
+                m_w = WITHDRAW_RE.search(m)
+                if m_w:
+                    last_item = m_w.group(1).strip()
+                    break
+
             cooldown_ok = (now - state.last_action_at).total_seconds() >= cfg.cooldown_seconds
 
             if cooldown_ok and none_arrays >= cfg.threshold_none_arrays and withdraws >= cfg.threshold_withdraws:
@@ -275,6 +283,18 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
                         window_seconds=cfg.window_seconds,
                         none_arrays=sum(1 for _, m in st.recent if NONE_ARRAY_RE.search(m)),
                         withdraws=sum(1 for _, m in st.recent if WITHDRAW_RE.search(m)),
+                        last_withdraw_item=(
+                            next(
+                                (
+                                    WITHDRAW_RE.search(m).group(1).strip()
+                                    for _, m in reversed(st.recent)
+                                    if WITHDRAW_RE.search(m)
+                                ),
+                                None,
+                            )
+                            if st.recent
+                            else None
+                        ),
                         last_action_at=last_at,
                         last_action=getattr(st, "last_action", None),
                     )
