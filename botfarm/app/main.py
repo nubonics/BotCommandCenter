@@ -105,23 +105,24 @@ mount_osclient_wall(app, prefix="/wall")
 
 
 # --- Control-UI compatibility ---
-# Some frontends (including older OpenClaw control-ui builds) expect these
-# endpoints to exist on whatever backend they're pointed at.
-#
-# They are NOT part of the OpenClaw gateway API; they're provided here as
-# lightweight placeholders so the UI doesn't 404 when using this FastAPI app.
-
-
-@app.get("/api/layout")
-def api_layout():
-    # Minimal shape; extend if/when the frontend expects more.
-    return JSONResponse({"ok": True, "layout": None})
+# The OSClient Wall frontend (served at /wall) fetches /api/stats and
+# /api/layout at the server root. The actual implementations live in
+# botfarm.app.osclient_wall.app under a router mounted at /wall, so we add
+# thin pass-through routes here to avoid 404s.
 
 
 @app.get("/api/stats")
-def api_stats():
-    # Minimal shape; extend if/when the frontend expects more.
-    return JSONResponse({"ok": True, "stats": {}})
+def wall_api_stats() -> JSONResponse:
+    from .osclient_wall.app import manager
+
+    return JSONResponse(manager.get_stats())
+
+
+@app.get("/api/layout")
+def wall_api_layout() -> JSONResponse:
+    from .osclient_wall.app import manager
+
+    return JSONResponse(manager.get_layout())
 
 
 @app.get("/client-wall", response_class=HTMLResponse)
