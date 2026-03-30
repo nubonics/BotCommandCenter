@@ -370,6 +370,14 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
 
     accounts = session.scalars(select(Account).order_by(Account.label)).all()
 
+    # Optional skill filter (current level).
+    skill = (request.query_params.get("skill") or "").strip()
+    min_level_raw = (request.query_params.get("min_level") or "").strip()
+    try:
+        min_level = int(min_level_raw) if min_level_raw else None
+    except Exception:
+        min_level = None
+
     rows: list[dict[str, object]] = []
     for account in accounts:
         progress = _get_or_create_progress(session, account.id)
@@ -389,6 +397,18 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
         # Prefer quest points tracked on the progress object.
         quest_points = int(getattr(progress, "quest_points", 0) or 0)
 
+        # Skill filter (compute current level from XP json if requested).
+        current_level = None
+        if skill and skill in SKILLS:
+            skills_xp = dict(_safe_json_loads(progress.skills_xp_json, {}))
+            try:
+                current_level = xp_to_level(int(skills_xp.get(skill, 0) or 0))
+            except Exception:
+                current_level = 1
+
+            if min_level is not None and current_level < min_level:
+                continue
+
         rows.append(
             {
                 "account": account,
@@ -398,6 +418,8 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
                 "baseline_gp": baseline_gp,
                 "quest_points": quest_points,
                 "overall": float(overall or 0.0),
+                "skill": skill,
+                "current_level": current_level,
             }
         )
 
@@ -417,6 +439,9 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
             "rows": rows,
             "active_count": active_count,
             "avg_overall": avg_overall,
+            "skills": SKILLS,
+            "skill": skill,
+            "min_level": min_level if min_level is not None else "",
             "message": request.query_params.get("message"),
         },
     )

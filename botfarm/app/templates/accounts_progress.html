@@ -18,11 +18,35 @@
   </div>
 
   <div class="card">
+    <h3 style="margin-top: 0;">Filter by skill (current level)</h3>
+    <form method="get" action="/accounts/progress" class="inline-form">
+      <label>
+        Skill
+        <select name="skill">
+          <option value="" {% if not skill %}selected{% endif %}>Any</option>
+          {% for s in skills %}
+            <option value="{{ s }}" {% if skill == s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>
+        Min level
+        <input type="number" name="min_level" value="{{ min_level }}" min="1" max="126" placeholder="e.g. 50">
+      </label>
+
+      <button type="submit">Apply</button>
+      <a href="/accounts/progress"><button type="button" class="secondary">Clear</button></a>
+    </form>
+  </div>
+
+  <div class="card">
     <table class="table">
       <thead>
         <tr>
           <th>RSN</th>
           <th style="text-align:right;">QP</th>
+          <th style="text-align:right;">Skill match</th>
           <th>Active goal</th>
           <th>Goal created</th>
           <th>Baseline GP</th>
@@ -38,6 +62,13 @@
             </td>
             <td style="text-align:right; font-variant-numeric: tabular-nums;">
               {{ r.quest_points or 0 }}
+            </td>
+            <td style="text-align:right; font-variant-numeric: tabular-nums;">
+              {% if skill %}
+                {{ r.current_level or 1 }}
+              {% else %}
+                <span class="muted">-</span>
+              {% endif %}
             </td>
             <td>
               {% if r.goal %}
