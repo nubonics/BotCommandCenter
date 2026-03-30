@@ -15,27 +15,52 @@
   <div class="card">
     <div><strong>Accounts with active goal:</strong> {{ active_count }}</div>
     <div><strong>Average overall completion:</strong> {{ "%.2f"|format(avg_overall) }}</div>
+    <div><strong>Average runtime (hrs):</strong> {{ "%.2f"|format(avg_runtime) }}</div>
   </div>
 
   <div class="card">
-    <h3 style="margin-top: 0;">Filter by skill (current level)</h3>
+    <h3 style="margin-top: 0;">Filter by skills (current level, AND)</h3>
     <form method="get" action="/accounts/progress" class="inline-form">
-      <label>
-        Skill
-        <select name="skill">
-          <option value="" {% if not skill %}selected{% endif %}>Any</option>
-          {% for s in skills %}
-            <option value="{{ s }}" {% if skill == s %}selected{% endif %}>{{ s }}</option>
-          {% endfor %}
-        </select>
-      </label>
+      <div style="display:flex; gap: 12px; flex-wrap: wrap; align-items: end;">
+        <div>
+          <label style="display:block;">Log dir</label>
+          <input type="text" name="logs_dir" value="{{ logs_dir }}" style="min-width: 460px;" />
+        </div>
+        <div>
+          <label style="display:block;">Max gap seconds</label>
+          <input type="number" name="max_gap_seconds" value="{{ max_gap_seconds }}" min="1" max="3600" />
+        </div>
+      </div>
 
-      <label>
-        Min level
-        <input type="number" name="min_level" value="{{ min_level }}" min="1" max="126" placeholder="e.g. 50">
-      </label>
+      <div style="margin-top: 10px;">
+        {% set current = filters or [] %}
+        {% if current|length == 0 %}
+          {% set current = [("", 1)] %}
+        {% endif %}
+
+        {% for pair in current %}
+          {% set s = pair[0] %}
+          {% set mn = pair[1] %}
+          <div style="display:flex; gap: 10px; align-items: end; margin: 8px 0; flex-wrap: wrap;">
+            <div>
+              <label style="display:block;">Skill</label>
+              <select name="skill">
+                <option value="" {% if not s %}selected{% endif %}>Any</option>
+                {% for opt in skills %}
+                  <option value="{{ opt }}" {% if s == opt %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label style="display:block;">Min level</label>
+              <input type="number" name="min_level" value="{{ mn }}" min="1" max="126" placeholder="e.g. 50">
+            </div>
+          </div>
+        {% endfor %}
+      </div>
 
       <button type="submit">Apply</button>
+      <button type="submit" class="secondary" name="skill" value="">Add row</button>
       <a href="/accounts/progress"><button type="button" class="secondary">Clear</button></a>
     </form>
   </div>
@@ -46,7 +71,8 @@
         <tr>
           <th>RSN</th>
           <th style="text-align:right;">QP</th>
-          <th style="text-align:right;">Skill match</th>
+          <th style="text-align:right;">Runtime (hrs)</th>
+          <th>Skill matches</th>
           <th>Active goal</th>
           <th>Goal created</th>
           <th>Baseline GP</th>
@@ -64,8 +90,15 @@
               {{ r.quest_points or 0 }}
             </td>
             <td style="text-align:right; font-variant-numeric: tabular-nums;">
-              {% if skill %}
-                {{ r.current_level or 1 }}
+              {{ "%.2f"|format(r.runtime_hours or 0.0) }}
+            </td>
+            <td>
+              {% if filters and filters|length > 0 %}
+                {% for f in filters %}
+                  {% set fs = f[0] %}
+                  {% set fmn = f[1] %}
+                  <span class="pill">{{ fs }}: {{ (r.skill_levels or {}).get(fs, 1) }}/{{ fmn }}</span>
+                {% endfor %}
               {% else %}
                 <span class="muted">-</span>
               {% endif %}

@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import json
+import os
+import re
 from datetime import datetime
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
@@ -26,6 +29,65 @@ from .progression_planner.data_quests import load_quests, load_quests_overrides
 from .progression_planner.models import AccountState, Goal, PlannerConfig, PlannerWeights
 from .progression_planner.planner import GreedyProgressionPlanner
 from .progression_planner.xp import SKILLS, level_to_xp, xp_to_level
+
+
+# --- Runtime from Botting Hub script logs (sara*.txt) ---
+# One file per account; filename includes the RS login email.
+LOG_TS_RE = re.compile(r"^\[(\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2})\]\s*(.*)$")
+
+
+def _is_wsl() -> bool:
+    try:
+        return "microsoft" in Path("/proc/version").read_text().lower()
+    except Exception:
+        return False
+
+
+def _win_to_wsl_path(win_path: str) -> Path:
+    m = re.match(r"^([a-zA-Z]):\\(.*)$", win_path)
+    if not m:
+        return Path(win_path)
+    drive = m.group(1).lower()
+    rest = m.group(2).replace("\\", "/")
+    return Path(f"/mnt/{drive}/{rest}")
+
+
+def _parse_log_ts(line: str) -> datetime | None:
+    m = LOG_TS_RE.match(line.rstrip("\n"))
+    if not m:
+        return None
+    try:
+        return datetime.strptime(m.group(1), "%Y/%m/%d %H:%M:%S")
+    except Exception:
+        return None
+
+
+def _runtime_hours_from_log(path: Path, max_gap_seconds: int = 300) -> float:
+    """Compute active runtime hours from an action log.
+
+    We sum deltas between consecutive timestamps, but cap each delta to
+    max_gap_seconds so long idle gaps don't inflate runtime.
+    """
+    if not path.exists() or not path.is_file():
+        return 0.0
+
+    last: datetime | None = None
+    total = 0.0
+    try:
+        with path.open("r", encoding="utf-8", errors="replace") as f:
+            for line in f:
+                ts = _parse_log_ts(line)
+                if not ts:
+                    continue
+                if last is not None:
+                    dt = (ts - last).total_seconds()
+                    if dt > 0:
+                        total += min(dt, float(max_gap_seconds))
+                last = ts
+    except Exception:
+        return 0.0
+
+    return total / 3600.0
 
 
 router = APIRouter(tags=["progression"])
@@ -370,13 +432,33 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
 
     accounts = session.scalars(select(Account).order_by(Account.label)).all()
 
-    # Optional skill filter (current level).
-    skill = (request.query_params.get("skill") or "").strip()
-    min_level_raw = (request.query_params.get("min_level") or "").strip()
+    # Optional stacking skill filters (current level).
+    skills_q = list(request.query_params.getlist("skill"))
+    mins_q = list(request.query_params.getlist("min_level"))
+
+    filters: list[tuple[str, int]] = []
+    for i, s in enumerate(skills_q):
+        s = (s or "").strip()
+        if not s or s not in SKILLS:
+            continue
+        raw = (mins_q[i] if i < len(mins_q) else "").strip()
+        try:
+            mn = int(raw) if raw else 1
+        except Exception:
+            mn = 1
+        filters.append((s, max(1, mn)))
+
+    # Runtime from logs.
+    logs_dir = (request.query_params.get("logs_dir") or r"C:\Users\nubonix\Botting Hub\Client\Logs\Script").strip()
+    max_gap_raw = (request.query_params.get("max_gap_seconds") or "300").strip()
     try:
-        min_level = int(min_level_raw) if min_level_raw else None
+        max_gap_seconds = int(max_gap_raw)
     except Exception:
-        min_level = None
+        max_gap_seconds = 300
+    if max_gap_seconds < 1:
+        max_gap_seconds = 300
+
+    logs_dir_path = _win_to_wsl_path(logs_dir) if _is_wsl() else Path(logs_dir)
 
     rows: list[dict[str, object]] = []
     for account in accounts:
@@ -397,17 +479,40 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
         # Prefer quest points tracked on the progress object.
         quest_points = int(getattr(progress, "quest_points", 0) or 0)
 
-        # Skill filter (compute current level from XP json if requested).
-        current_level = None
-        if skill and skill in SKILLS:
+        # Skill filters (AND): compute requested skill levels from XP json.
+        skill_levels: dict[str, int] = {}
+        if filters:
             skills_xp = dict(_safe_json_loads(progress.skills_xp_json, {}))
-            try:
-                current_level = xp_to_level(int(skills_xp.get(skill, 0) or 0))
-            except Exception:
-                current_level = 1
-
-            if min_level is not None and current_level < min_level:
+            ok = True
+            for s, mn in filters:
+                try:
+                    lvl = xp_to_level(int(skills_xp.get(s, 0) or 0))
+                except Exception:
+                    lvl = 1
+                skill_levels[s] = lvl
+                if lvl < mn:
+                    ok = False
+                    break
+            if not ok:
                 continue
+
+        # Runtime (hours) from a per-account action log.
+        runtime_hours = 0.0
+        log_path = None
+        if account.rs_email:
+            candidate = f"sara{account.rs_email}.txt"
+            # Some environments may have 'sara*.txt' with or without separators.
+            candidates = [
+                logs_dir_path / candidate,
+                logs_dir_path / f"sara_{account.rs_email}.txt",
+                logs_dir_path / f"{account.rs_email}.txt",
+            ]
+            for p in candidates:
+                if p.exists():
+                    log_path = p
+                    break
+            if log_path is not None:
+                runtime_hours = _runtime_hours_from_log(log_path, max_gap_seconds=max_gap_seconds)
 
         rows.append(
             {
@@ -418,8 +523,9 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
                 "baseline_gp": baseline_gp,
                 "quest_points": quest_points,
                 "overall": float(overall or 0.0),
-                "skill": skill,
-                "current_level": current_level,
+                "filters": filters,
+                "skill_levels": skill_levels,
+                "runtime_hours": runtime_hours,
             }
         )
 
@@ -431,6 +537,10 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
     if active_count:
         avg_overall = sum(float(r.get("overall") or 0.0) for r in rows if r.get("goal") is not None) / active_count
 
+    avg_runtime = 0.0
+    if rows:
+        avg_runtime = sum(float(r.get("runtime_hours") or 0.0) for r in rows) / len(rows)
+
     return templates.TemplateResponse(
         request,
         "accounts_progress.html",
@@ -439,9 +549,11 @@ def progress_all_accounts_page(request: Request, session: Session = Depends(get_
             "rows": rows,
             "active_count": active_count,
             "avg_overall": avg_overall,
+            "avg_runtime": avg_runtime,
             "skills": SKILLS,
-            "skill": skill,
-            "min_level": min_level if min_level is not None else "",
+            "filters": filters,
+            "logs_dir": logs_dir,
+            "max_gap_seconds": max_gap_seconds,
             "message": request.query_params.get("message"),
         },
     )
