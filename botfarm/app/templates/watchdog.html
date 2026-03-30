@@ -11,11 +11,39 @@
 <ul>
   <li><strong>Logs dir:</strong> {{ status.logs_dir }}</li>
   <li><strong>Pattern:</strong> {{ status.pattern }}</li>
-  <li><strong>Poll interval:</strong> {{ status.poll_interval }}s</li>
+  <li><strong>Poll interval:</strong> <span id="pollInterval">{{ status.poll_interval }}</span>s</li>
   <li><strong>Window:</strong> {{ status.files[0].window_seconds if status.files and status.files[0] else "?" }}s</li>
   <li><strong>Thresholds:</strong> none_arrays ≥ {{ status.threshold_none_arrays }}, withdraws ≥ {{ status.threshold_withdraws }}</li>
   <li><strong>Cooldown:</strong> {{ status.cooldown_seconds }}s</li>
+  <li><strong>Bootstrap scan:</strong> <span id="bootstrapBytes">{{ status.bootstrap_bytes }}</span> bytes</li>
+  <li><strong>Bootstrap refresh:</strong> <span id="bootstrapRefresh">{{ status.bootstrap_refresh_seconds }}</span>s</li>
 </ul>
+
+<div class="card">
+  <h3 style="margin-top:0;">Config</h3>
+  <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;">
+    <label>Bootstrap bytes
+      <input id="cfg_bootstrap_bytes" type="number" min="100000" step="100000" value="{{ status.bootstrap_bytes }}" style="width:180px;">
+    </label>
+    <label>Bootstrap refresh (s)
+      <input id="cfg_bootstrap_refresh" type="number" min="0" step="1" value="{{ status.bootstrap_refresh_seconds }}" style="width:180px;">
+    </label>
+    <label>Window (s)
+      <input id="cfg_window" type="number" min="30" step="1" value="{{ status.files[0].window_seconds if status.files and status.files[0] else 180 }}" style="width:140px;">
+    </label>
+    <label>None arrays threshold
+      <input id="cfg_none" type="number" min="1" step="1" value="{{ status.threshold_none_arrays }}" style="width:160px;">
+    </label>
+    <label>Withdraws threshold
+      <input id="cfg_withdraws" type="number" min="1" step="1" value="{{ status.threshold_withdraws }}" style="width:160px;">
+    </label>
+    <label>Cooldown (s)
+      <input id="cfg_cooldown" type="number" min="0" step="1" value="{{ status.cooldown_seconds }}" style="width:140px;">
+    </label>
+    <button class="btn" onclick="applyConfig()">Apply</button>
+    <span id="cfg_msg" style="color:#666;"></span>
+  </div>
+</div>
 
 <h3>Files</h3>
 
@@ -67,6 +95,14 @@
       if (!res.ok) return;
       const data = await res.json();
 
+      // Update config display
+      const pollEl = document.getElementById('pollInterval');
+      if (pollEl) pollEl.textContent = data.poll_interval;
+      const bb = document.getElementById('bootstrapBytes');
+      if (bb) bb.textContent = data.bootstrap_bytes;
+      const br = document.getElementById('bootstrapRefresh');
+      if (br) br.textContent = data.bootstrap_refresh_seconds;
+
       // Update status line
       const statusEl = document.querySelector('p strong');
       // Table rebuild (simple + robust)
@@ -98,6 +134,30 @@
       }
     } catch (e) {
       // ignore
+    }
+  }
+
+  async function applyConfig() {
+    const payload = {
+      bootstrap_bytes: Number(document.getElementById('cfg_bootstrap_bytes').value),
+      bootstrap_refresh_seconds: Number(document.getElementById('cfg_bootstrap_refresh').value),
+      window_seconds: Number(document.getElementById('cfg_window').value),
+      threshold_none_arrays: Number(document.getElementById('cfg_none').value),
+      threshold_withdraws: Number(document.getElementById('cfg_withdraws').value),
+      cooldown_seconds: Number(document.getElementById('cfg_cooldown').value),
+    };
+    const msg = document.getElementById('cfg_msg');
+    if (msg) msg.textContent = 'Applying…';
+    try {
+      const res = await fetch('/watchdog/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (msg) msg.textContent = res.ok ? 'Applied.' : 'Failed to apply.';
+      await refreshWatchdog();
+    } catch (e) {
+      if (msg) msg.textContent = 'Failed to apply.';
     }
   }
 

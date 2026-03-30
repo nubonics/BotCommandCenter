@@ -28,6 +28,14 @@ class WatchdogConfig:
 
     poll_interval: float = 0.5
 
+    # Bootstrap scan size per file (in bytes). Used to infer last PID/sandbox/item even
+    # if the watchdog starts after the client already logged those lines.
+    bootstrap_bytes: int = 5_000_000
+
+    # Optional: periodically re-bootstrap from disk to correct inference if tail missed
+    # lines (e.g. restarts). 0 disables.
+    bootstrap_refresh_seconds: int = 60
+
     kill_osclient: bool = True
     terminate_sandbox: bool = True
     sandboxie_start_exe: str = r"C:\Program Files\Sandboxie-Plus\Start.exe"
@@ -58,10 +66,48 @@ class WatchdogStatus:
     threshold_none_arrays: int = 0
     threshold_withdraws: int = 0
     cooldown_seconds: int = 0
+    bootstrap_bytes: int = 0
+    bootstrap_refresh_seconds: int = 0
     files: list[FileWatchStatus] = None  # type: ignore[assignment]
 
 
 WATCHDOG_STATUS = WatchdogStatus(files=[])
+
+
+def update_watchdog_config(patch: dict) -> None:
+    """Best-effort runtime config update. Accepts a subset of WatchdogConfig fields."""
+    global WATCHDOG_CONFIG
+    if WATCHDOG_CONFIG is None:
+        return
+
+    allowed_int = {
+        "window_seconds",
+        "threshold_none_arrays",
+        "threshold_withdraws",
+        "cooldown_seconds",
+        "bootstrap_bytes",
+        "bootstrap_refresh_seconds",
+    }
+    allowed_float = {"poll_interval"}
+    allowed_bool = {"kill_osclient", "terminate_sandbox"}
+
+    for k, v in (patch or {}).items():
+        if k in allowed_int:
+            try:
+                setattr(WATCHDOG_CONFIG, k, int(v))
+            except Exception:
+                pass
+        elif k in allowed_float:
+            try:
+                setattr(WATCHDOG_CONFIG, k, float(v))
+            except Exception:
+                pass
+        elif k in allowed_bool:
+            if isinstance(v, bool):
+                setattr(WATCHDOG_CONFIG, k, v)
+
+
+WATCHDOG_CONFIG: WatchdogConfig | None = None
 
 
 def _parse_ts(line: str) -> Optional[tuple[datetime, str]]:
@@ -126,6 +172,8 @@ class TailState:
         self.last_action: str | None = None
         self.inferred_sandbox: str | None = None
         self.inferred_pid: int | None = None
+        self.last_bootstrap_at: datetime = datetime.min
+        self.last_withdraw_item: str | None = None
 
     def close(self) -> None:
         if self.f:
@@ -142,7 +190,7 @@ class TailState:
         # Bootstrap inference by scanning a slice of the existing file.
         try:
             size = self.path.stat().st_size
-            back = min(size, 256_000)
+            back = min(size, getattr(WATCHDOG_CONFIG, "bootstrap_bytes", 256_000) or 256_000)
             self.f.seek(size - back)
             bootstrap = self.f.read(back)
             for raw in bootstrap.splitlines():
@@ -159,6 +207,12 @@ class TailState:
                         self.inferred_pid = int(m_pid.group(1))
                     except ValueError:
                         pass
+
+                m_w = WITHDRAW_RE.search(msg)
+                if m_w:
+                    self.last_withdraw_item = m_w.group(1).strip()
+
+            self.last_bootstrap_at = datetime.now()
         except Exception:
             pass
 
@@ -184,6 +238,9 @@ class TailState:
 async def watchdog_loop(cfg: WatchdogConfig) -> None:
     tails: dict[Path, TailState] = {}
 
+    global WATCHDOG_CONFIG
+    WATCHDOG_CONFIG = cfg
+
     WATCHDOG_STATUS.running = True
     WATCHDOG_STATUS.logs_dir = str(cfg.logs_dir)
     WATCHDOG_STATUS.pattern = cfg.pattern
@@ -191,6 +248,8 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
     WATCHDOG_STATUS.threshold_none_arrays = cfg.threshold_none_arrays
     WATCHDOG_STATUS.threshold_withdraws = cfg.threshold_withdraws
     WATCHDOG_STATUS.cooldown_seconds = cfg.cooldown_seconds
+    WATCHDOG_STATUS.bootstrap_bytes = cfg.bootstrap_bytes
+    WATCHDOG_STATUS.bootstrap_refresh_seconds = cfg.bootstrap_refresh_seconds
 
     while True:
         # Discover files
@@ -201,6 +260,12 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
         now = datetime.now()
 
         for state in list(tails.values()):
+            # Periodic bootstrap refresh to catch missed PID/sandbox/item changes.
+            if cfg.bootstrap_refresh_seconds and cfg.bootstrap_refresh_seconds > 0:
+                if (now - state.last_bootstrap_at).total_seconds() >= cfg.bootstrap_refresh_seconds:
+                    state.close()
+                    state.open_if_needed()
+
             # If a file disappears, keep state but it will no-op.
             lines = state.read_new_lines()
             if not lines:
@@ -223,6 +288,10 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
                         state.inferred_pid = int(m_pid.group(1))
                     except ValueError:
                         pass
+
+                m_w = WITHDRAW_RE.search(msg)
+                if m_w:
+                    state.last_withdraw_item = m_w.group(1).strip()
 
                 if state.inferred_sandbox is None:
                     m = SANDBOX_PATH_RE.search(msg)
@@ -283,18 +352,7 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
                         window_seconds=cfg.window_seconds,
                         none_arrays=sum(1 for _, m in st.recent if NONE_ARRAY_RE.search(m)),
                         withdraws=sum(1 for _, m in st.recent if WITHDRAW_RE.search(m)),
-                        last_withdraw_item=(
-                            next(
-                                (
-                                    WITHDRAW_RE.search(m).group(1).strip()
-                                    for _, m in reversed(st.recent)
-                                    if WITHDRAW_RE.search(m)
-                                ),
-                                None,
-                            )
-                            if st.recent
-                            else None
-                        ),
+                        last_withdraw_item=st.last_withdraw_item,
                         last_action_at=last_at,
                         last_action=getattr(st, "last_action", None),
                     )

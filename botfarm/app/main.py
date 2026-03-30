@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 from .planner import router as planner_router
 from .progression_web import router as progression_router
 from .osclient_wall.app import mount as mount_osclient_wall
-from .watchdog import WATCHDOG_STATUS, WatchdogConfig, watchdog_loop
+from .watchdog import WATCHDOG_STATUS, WatchdogConfig, update_watchdog_config, watchdog_loop
 from . import models  # noqa: F401
 from .database import create_db_and_tables, get_session
 from .models import Account, Item, MoneyMaker, MoneyMakerComponent
@@ -138,6 +138,8 @@ def watchdog_status_json():
             "threshold_none_arrays": WATCHDOG_STATUS.threshold_none_arrays,
             "threshold_withdraws": WATCHDOG_STATUS.threshold_withdraws,
             "cooldown_seconds": WATCHDOG_STATUS.cooldown_seconds,
+            "bootstrap_bytes": getattr(WATCHDOG_STATUS, "bootstrap_bytes", 0),
+            "bootstrap_refresh_seconds": getattr(WATCHDOG_STATUS, "bootstrap_refresh_seconds", 0),
             "files": [
                 {
                     "path": f.path,
@@ -154,6 +156,12 @@ def watchdog_status_json():
             ],
         }
     )
+
+
+@app.post("/watchdog/config")
+async def watchdog_config_update(payload: dict):
+    update_watchdog_config(payload)
+    return JSONResponse({"ok": True})
 
 
 
