@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import psutil
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -936,26 +936,38 @@ def focus_window(hwnd: int) -> bool:
         return False
 
 
-app = FastAPI(title="OSClient Wall")
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+router = APIRouter()
+
+
+def mount(app, prefix: str = "/wall"):
+    """Mount OSClient Wall into an existing FastAPI app under `prefix`.
+
+    This registers:
+    - static files at {prefix}/static
+    - all routes under {prefix}
+    """
+    app.mount(f"{prefix}/static", StaticFiles(directory=STATIC_DIR), name="wall_static")
+    app.include_router(router, prefix=prefix)
+
+
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 manager = CaptureManager()
 flash_manager = FlashManager()
 
 
-@app.on_event("startup")
+@router.on_event("startup")
 def on_startup() -> None:
     manager.start()
     flash_manager.start()
 
 
-@app.on_event("shutdown")
+@router.on_event("shutdown")
 def on_shutdown() -> None:
     flash_manager.stop()
     manager.stop()
 
 
-@app.get("/")
+@router.get("/")
 def index(request: Request):
     return templates.TemplateResponse(
         request,
@@ -975,22 +987,22 @@ def index(request: Request):
     )
 
 
-@app.get("/api/stats")
+@router.get("/api/stats")
 def api_stats() -> JSONResponse:
     return JSONResponse(manager.get_stats())
 
 
-@app.get("/api/windows")
+@router.get("/api/windows")
 def api_windows() -> JSONResponse:
     return JSONResponse(manager.get_windows())
 
 
-@app.get("/api/layout")
+@router.get("/api/layout")
 def api_layout() -> JSONResponse:
     return JSONResponse(manager.get_layout())
 
 
-@app.post("/api/focus/{hwnd}")
+@router.post("/api/focus/{hwnd}")
 def api_focus(hwnd: int) -> JSONResponse:
     windows = {item["hwnd"] for item in manager.get_windows()}
     if hwnd not in windows:
@@ -1000,21 +1012,21 @@ def api_focus(hwnd: int) -> JSONResponse:
     return JSONResponse({"ok": ok, "hwnd": hwnd, "flashing": True, "flash_duration": FLASH_DURATION})
 
 
-@app.post("/api/settings/fps")
+@router.post("/api/settings/fps")
 def api_set_fps(payload: dict) -> JSONResponse:
     fps = int(payload.get("fps", CAPTURE_FPS))
     applied = manager.set_target_fps(fps)
     return JSONResponse({"ok": True, "target_fps": applied})
 
 
-@app.post("/api/settings/cols")
+@router.post("/api/settings/cols")
 def api_set_cols(payload: dict) -> JSONResponse:
     cols = int(payload.get("cols", GRID_COLS))
     applied = manager.set_grid_cols(cols)
     return JSONResponse({"ok": True, "grid_cols": applied})
 
 
-@app.get("/stream.mjpg")
+@router.get("/stream.mjpg")
 def stream_mjpg() -> StreamingResponse:
     boundary = "frame"
 
@@ -1042,4 +1054,7 @@ def stream_mjpg() -> StreamingResponse:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("app:app", host="0.0.0.0", port=8005, reload=False)
+    # Dev-only: allow running this module standalone.
+    _app = FastAPI(title="OSClient Wall")
+    mount(_app, prefix="")
+    uvicorn.run(_app, host="0.0.0.0", port=8005, reload=False)

@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from .planner import router as planner_router
 from .progression_web import router as progression_router
+from .osclient_wall.app import mount as mount_osclient_wall
 from . import models  # noqa: F401
 from .database import create_db_and_tables, get_session
 from .models import Account, Item, MoneyMaker, MoneyMakerComponent
@@ -79,6 +80,9 @@ templates.env.filters["mask_secret"] = mask_secret
 app.state.templates = templates
 app.include_router(planner_router)
 app.include_router(progression_router)
+
+# OSClient Wall (dashboard)
+mount_osclient_wall(app, prefix="/wall")
 
 
 def format_usd(value) -> str:
