@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import contextlib
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -13,6 +15,7 @@ from sqlalchemy.orm import Session
 from .planner import router as planner_router
 from .progression_web import router as progression_router
 from .osclient_wall.app import mount as mount_osclient_wall
+from .watchdog import WatchdogConfig, watchdog_loop
 from . import models  # noqa: F401
 from .database import create_db_and_tables, get_session
 from .models import Account, Item, MoneyMaker, MoneyMakerComponent
@@ -68,7 +71,24 @@ def mask_secret(value: str | None) -> str:
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     create_db_and_tables()
-    yield
+
+    # Background watchdog: tails bot log files and kills osclient.exe when a
+    # "stuck in withdraw loop" pattern is detected.
+    cfg = WatchdogConfig(
+        logs_dir=Path(r"C:\Users\nubonix\Botting Hub\Client\Logs\Script"),
+        pattern="sara*.txt",
+        kill_osclient=True,
+        terminate_sandbox=True,
+        sandboxie_start_exe="Start.exe",
+    )
+    watchdog_task = asyncio.create_task(watchdog_loop(cfg))
+
+    try:
+        yield
+    finally:
+        watchdog_task.cancel()
+        with contextlib.suppress(Exception):
+            await watchdog_task
 
 
 app = FastAPI(title="BotFarmPlanner", lifespan=lifespan)
@@ -83,6 +103,8 @@ app.include_router(progression_router)
 
 # OSClient Wall (dashboard)
 mount_osclient_wall(app, prefix="/wall")
+
+
 
 
 def format_usd(value) -> str:
