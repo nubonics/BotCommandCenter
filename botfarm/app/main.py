@@ -104,6 +104,26 @@ app.include_router(progression_router)
 mount_osclient_wall(app, prefix="/wall")
 
 
+# --- Control-UI compatibility ---
+# Some frontends (including older OpenClaw control-ui builds) expect these
+# endpoints to exist on whatever backend they're pointed at.
+#
+# They are NOT part of the OpenClaw gateway API; they're provided here as
+# lightweight placeholders so the UI doesn't 404 when using this FastAPI app.
+
+
+@app.get("/api/layout")
+def api_layout():
+    # Minimal shape; extend if/when the frontend expects more.
+    return JSONResponse({"ok": True, "layout": None})
+
+
+@app.get("/api/stats")
+def api_stats():
+    # Minimal shape; extend if/when the frontend expects more.
+    return JSONResponse({"ok": True, "stats": {}})
+
+
 @app.get("/client-wall", response_class=HTMLResponse)
 def client_wall_page(request: Request):
     return templates.TemplateResponse(
