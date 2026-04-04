@@ -204,12 +204,19 @@ class WindowSpreader:
         self._init_default_slots()
 
     def _init_default_slots(self) -> None:
-        """Default mapping:
-        Monitor 1 (index 0): 3 slots across top row => #1-#3
-        Monitor 2 (index 1): 3 slots across top row => #7-#9
+        """Auto-detect monitors and create 2 rows × 3 columns of slots per monitor.
 
-        This matches your example (slot 7 = top-left of monitor 2).
-        Slots 4-6 and 10-12 can be added later for second-row, etc.
+        Slot numbering is contiguous per monitor, left-to-right based on monitor.x:
+        - monitor 0 (leftmost): #1-#6
+        - monitor 1:            #7-#12
+        - monitor 2:            #13-#18
+        ...
+
+        Layout within a monitor:
+        - Row 1: left/center/right (#1 #2 #3)
+        - Row 2: left/center/right (#4 #5 #6)
+
+        Vacated-slot cooldown is handled elsewhere.
         """
         if get_monitors is None:
             self._slots = []
@@ -220,25 +227,39 @@ class WindowSpreader:
             self._slots = []
             return
 
-        def top_row_three(m, monitor_index: int, slot_start: int) -> List[Slot]:
-            # left, mid, right anchor positions
-            # right anchor is inclusive (right edge = x + width - 1)
-            x1 = m.x
-            x2 = m.x + (m.width // 2)
-            x3 = m.x + m.width - 1
-            y = m.y
-            return [
-                Slot(slot_index=slot_start + 0, monitor_index=monitor_index, x=x1, y=y),
-                Slot(slot_index=slot_start + 1, monitor_index=monitor_index, x=x2, y=y),
-                Slot(slot_index=slot_start + 2, monitor_index=monitor_index, x=x3, y=y),
-            ]
+        # Sort monitors by arrangement (left-to-right, then top-to-bottom)
+        monitors = sorted(monitors, key=lambda m: (getattr(m, "x", 0), getattr(m, "y", 0)))
+
+        # Configurable paddings/row step.
+        start_x_padding = int(os.getenv("WINDOW_SPREADER_START_X_PADDING", "0"))
+        start_y_padding = int(os.getenv("WINDOW_SPREADER_START_Y_PADDING", "0"))
+        row_step = int(os.getenv("WINDOW_SPREADER_ROW_STEP", "260"))
 
         slots: List[Slot] = []
-        # Monitor 1 -> slots 1-3
-        slots.extend(top_row_three(monitors[0], 0, 1))
-        # Monitor 2 -> slots 7-9 if present
-        if len(monitors) > 1:
-            slots.extend(top_row_three(monitors[1], 1, 7))
+
+        def anchors_2x3(m) -> List[Tuple[int, int]]:
+            # Anchor positions inside a monitor.
+            left_x = int(m.x + start_x_padding)
+            center_x = int(m.x + (m.width // 2))
+            right_x = int(m.x + m.width - 1)
+
+            top_y = int(m.y + start_y_padding)
+            y2 = int(top_y + row_step)
+
+            return [
+                (left_x, top_y),
+                (center_x, top_y),
+                (right_x, top_y),
+                (left_x, y2),
+                (center_x, y2),
+                (right_x, y2),
+            ]
+
+        slot_index = 1
+        for mi, m in enumerate(monitors):
+            for (x, y) in anchors_2x3(m):
+                slots.append(Slot(slot_index=slot_index, monitor_index=mi, x=x, y=y))
+                slot_index += 1
 
         self._slots = slots
 
@@ -316,11 +337,13 @@ class WindowSpreader:
                 if slot is None:
                     break
                 try:
-                    # Slot x positions: left=exact; mid/right are anchors; adjust by width.
+                    # Slot x positions are anchors: left/center/right.
+                    # Adjust based on column within the 3-col grid.
                     x = slot.x
-                    if slot.slot_index % 3 == 2:  # "middle" (2,8,...) anchor at center
+                    col = (slot.slot_index - 1) % 3  # 0=left,1=center,2=right
+                    if col == 1:
                         x = int(slot.x - (w.width // 2))
-                    elif slot.slot_index % 3 == 0:  # "right" (3,9,...) anchor at right edge
+                    elif col == 2:
                         x = int(slot.x - w.width)
 
                     if _is_minimized(w.hwnd):
