@@ -4,7 +4,7 @@
 <div class="page-header">
     <div>
         <h2>Accounts</h2>
-        <p>Track email, RuneScape, and proxy credentials.</p>
+        <p>Track RuneScape and proxy credentials.</p>
     </div>
     <div class="actions">
         <a href="/accounts/progress"><button type="button" class="secondary">Overall Progress</button></a>
@@ -40,8 +40,6 @@
             <tr>
                 <th>Label</th>
                 <th>RSN</th>
-                <th>Email</th>
-                <th>RS Login</th>
                 <th>Proxy</th>
                 <th>Status</th>
                 <th>Banned</th>
@@ -53,8 +51,6 @@
             <tr>
                 <td><a href="/accounts/{{ account.id }}">{{ account.label }}</a></td>
                 <td>{{ account.rsn or "-" }}</td>
-                <td>{{ account.email_address or "-" }}</td>
-                <td>{{ account.rs_email or "-" }}</td>
                 <td>
                     {% if account.proxy_ip %}
                         {{ account.proxy_ip }}{% if account.proxy_port %}:{{ account.proxy_port }}{% endif %}
@@ -75,7 +71,7 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="8">No accounts yet.</td>
+                <td colspan="6">No accounts yet.</td>
             </tr>
             {% endfor %}
         </tbody>

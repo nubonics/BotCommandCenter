@@ -662,16 +662,15 @@ def simulate_progress_plan(request: Request, account_id: int, session: Session =
 @router.post("/accounts/{account_id}/progress/import-hiscores")
 async def import_hiscores(
     account_id: int,
-    hiscores_rsn: str = Form(""),
     session: Session = Depends(get_session),
 ):
     account = session.get(Account, account_id)
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
 
-    rsn = hiscores_rsn.strip()
+    rsn = (account.rsn or "").strip()
     if not rsn:
-        raise HTTPException(status_code=400, detail="RuneScape username is required")
+        raise HTTPException(status_code=400, detail="Account has no RSN set")
 
     progress = _get_or_create_progress(session, account_id)
 
@@ -752,6 +751,108 @@ async def import_hiscores(
 
     return RedirectResponse(
         url=f"/accounts/{account_id}/progress?message=Imported skills from hiscores for {rsn}",
+        status_code=303,
+    )
+
+
+@router.post("/accounts/progress/import-hiscores")
+async def import_hiscores_all_accounts(
+    session: Session = Depends(get_session),
+):
+    """Bulk-update: import skills from hiscores for every account that has an RSN.
+
+    Kept intentionally simple for now (sequential). If needed we can add concurrency limits.
+    """
+
+    import urllib.parse
+    import httpx
+
+    accounts = session.exec(select(Account)).all()
+    updated = 0
+    skipped = 0
+    failed = 0
+
+    async with httpx.AsyncClient(timeout=20) as client:
+        for account in accounts:
+            rsn = (account.rsn or "").strip()
+            if not rsn:
+                skipped += 1
+                continue
+
+            url = "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player=" + urllib.parse.quote(rsn)
+
+            try:
+                resp = await client.get(url)
+                if resp.status_code != 200:
+                    failed += 1
+                    continue
+            except Exception:
+                failed += 1
+                continue
+
+            text = resp.text.strip()
+            lines = [ln for ln in text.splitlines() if ln.strip()]
+
+            order = [
+                "overall",
+                "attack",
+                "defence",
+                "strength",
+                "hitpoints",
+                "ranged",
+                "prayer",
+                "magic",
+                "cooking",
+                "woodcutting",
+                "fletching",
+                "fishing",
+                "firemaking",
+                "crafting",
+                "smithing",
+                "mining",
+                "herblore",
+                "agility",
+                "thieving",
+                "slayer",
+                "farming",
+                "runecraft",
+                "hunter",
+                "construction",
+            ]
+
+            xp_by_skill: dict[str, int] = {}
+            for idx, skill in enumerate(order):
+                if idx >= len(lines):
+                    break
+                parts = lines[idx].split(",")
+                if len(parts) < 3:
+                    continue
+
+                try:
+                    xp = int(parts[2])
+                except Exception:
+                    xp = 0
+
+                if skill != "overall":
+                    xp_by_skill[skill] = max(0, xp)
+
+            progress = _get_or_create_progress(session, account.id)
+
+            # Preserve sailing if present (not on lite hiscores yet).
+            try:
+                existing = dict(_safe_json_loads(progress.skills_xp_json, {}))
+                if "sailing" in existing and "sailing" not in xp_by_skill:
+                    xp_by_skill["sailing"] = int(existing.get("sailing") or 0)
+            except Exception:
+                pass
+
+            progress.skills_xp_json = _json_dumps(xp_by_skill)
+            updated += 1
+
+    session.commit()
+
+    return RedirectResponse(
+        url=f"/accounts/progress?message=Bulk hiscores update complete: updated={updated}, skipped(no RSN)={skipped}, failed={failed}",
         status_code=303,
     )
 
