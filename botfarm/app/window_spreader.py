@@ -298,6 +298,11 @@ class WindowSpreader:
                 )
             return out
 
+    def list_windows(self) -> List[dict]:
+        """Expose the same window enumeration the spreader uses, for the UI."""
+        windows = enumerate_osclient_windows(self.exact_window_titles)
+        return [asdict(w) for w in windows]
+
     def _load_pins(self) -> None:
         import json
 

@@ -173,6 +173,14 @@ def window_spreader_status() -> JSONResponse:
     )
 
 
+@app.get("/api/window-spreader/windows")
+def window_spreader_windows() -> JSONResponse:
+    from .window_spreader import get_spreader
+
+    s = get_spreader()
+    return JSONResponse({"windows": s.list_windows()})
+
+
 @app.post("/api/window-spreader/start")
 def window_spreader_start() -> JSONResponse:
     from .window_spreader import get_spreader

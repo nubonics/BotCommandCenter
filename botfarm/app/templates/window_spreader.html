@@ -155,7 +155,7 @@ async function refresh() {
   const lastEl = document.getElementById('lastAction');
   try {
     const data = await apiGet('/api/window-spreader/status');
-    const winData = await apiGetOptional('/wall/api/windows');
+    const winData = await apiGetOptional('/api/window-spreader/windows');
     statusEl.textContent = `Status: ${data.running ? 'running' : 'stopped'}`;
     lastEl.textContent = data.last_action || '';
     renderSlots(data);
