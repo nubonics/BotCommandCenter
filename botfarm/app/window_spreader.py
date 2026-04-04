@@ -5,7 +5,7 @@ import os
 import threading
 import time
 from dataclasses import dataclass, asdict
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 try:
     from screeninfo import get_monitors
@@ -134,7 +134,7 @@ def _move_window_only(hwnd: int, x: int, y: int) -> None:
 def enumerate_osclient_windows(exact_titles: List[str]) -> List[WindowInfo]:
     """Enumerate OSRS client windows.
 
-    This is intentionally implemented to mirror osrs-dwm-dashboard's approach:
+    Mirrors osrs-dwm-dashboard's approach:
     - EnumWindows
     - only visible windows
     - exact title match
@@ -201,23 +201,14 @@ class WindowSpreader:
         self._slots: List[Slot] = []
         self._last_action: str = ""
 
+        # Manual overrides: slot_index -> hwnd
+        self._pinned: dict[int, int] = {}
+
+        # Slot creation can be delayed until first tick.
         self._init_default_slots()
 
     def _init_default_slots(self) -> None:
-        """Auto-detect monitors and create 2 rows × 3 columns of slots per monitor.
-
-        Slot numbering is contiguous per monitor, left-to-right based on monitor.x:
-        - monitor 0 (leftmost): #1-#6
-        - monitor 1:            #7-#12
-        - monitor 2:            #13-#18
-        ...
-
-        Layout within a monitor:
-        - Row 1: left/center/right (#1 #2 #3)
-        - Row 2: left/center/right (#4 #5 #6)
-
-        Vacated-slot cooldown is handled elsewhere.
-        """
+        """Auto-detect monitors and create 2 rows × 3 columns of slots per monitor."""
         if get_monitors is None:
             self._slots = []
             return
@@ -227,18 +218,13 @@ class WindowSpreader:
             self._slots = []
             return
 
-        # Sort monitors by arrangement (left-to-right, then top-to-bottom)
         monitors = sorted(monitors, key=lambda m: (getattr(m, "x", 0), getattr(m, "y", 0)))
 
-        # Configurable paddings/row step.
         start_x_padding = int(os.getenv("WINDOW_SPREADER_START_X_PADDING", "0"))
         start_y_padding = int(os.getenv("WINDOW_SPREADER_START_Y_PADDING", "0"))
         row_step = int(os.getenv("WINDOW_SPREADER_ROW_STEP", "260"))
 
-        slots: List[Slot] = []
-
         def anchors_2x3(m) -> List[Tuple[int, int]]:
-            # Anchor positions inside a monitor.
             left_x = int(m.x + start_x_padding)
             center_x = int(m.x + (m.width // 2))
             right_x = int(m.x + m.width - 1)
@@ -255,6 +241,7 @@ class WindowSpreader:
                 (right_x, y2),
             ]
 
+        slots: List[Slot] = []
         slot_index = 1
         for mi, m in enumerate(monitors):
             for (x, y) in anchors_2x3(m):
@@ -297,54 +284,110 @@ class WindowSpreader:
                 cooldown_remaining = 0
                 if (not s.occupied) and s.last_vacated_at is not None:
                     cooldown_remaining = int(max(0, (s.last_vacated_at + self.reuse_cooldown_seconds) - now))
+
                 out.append(
                     {
                         **asdict(s),
                         "cooldown_remaining_s": cooldown_remaining,
+                        "pinned": (s.slot_index in self._pinned),
                     }
                 )
             return out
 
+    def set_pinned(self, slot_index: int, hwnd: Optional[int]) -> None:
+        with self._lock:
+            if hwnd is None:
+                self._pinned.pop(int(slot_index), None)
+            else:
+                self._pinned[int(slot_index)] = int(hwnd)
+
     def tick(self) -> None:
-        """One pass: discover windows, update occupancy, then place any unassigned windows."""
+        """One pass: discover windows, update occupancy, enforce pinning, enforce slot positions, auto-assign remaining."""
         # Lazily initialize slots (some environments may not have monitors ready at import time).
         with self._lock:
             if not self._slots:
                 self._init_default_slots()
 
         windows = enumerate_osclient_windows(self.exact_window_titles)
+        by_hwnd = {w.hwnd: w for w in windows}
         now = time.time()
 
         with self._lock:
-            hwnds = {w.hwnd for w in windows}
+            hwnds = set(by_hwnd.keys())
 
-            # Mark vacated slots.
+            # Mark slots vacated if their window disappeared.
             for s in self._slots:
                 if s.occupied and (s.hwnd is not None) and (s.hwnd not in hwnds):
                     s.occupied = False
                     s.hwnd = None
                     s.last_vacated_at = now
 
+            # Apply pinned assignments first (slot_index -> hwnd)
+            pinned_moves: list[str] = []
+            for s in self._slots:
+                want_hwnd = self._pinned.get(s.slot_index)
+                if want_hwnd is None:
+                    continue
+                if want_hwnd not in hwnds:
+                    pinned_moves.append(f"slot #{s.slot_index} pin missing (hwnd={want_hwnd} not found)")
+                    continue
+
+                # If that hwnd is currently occupying a different slot, free it.
+                for other in self._slots:
+                    if other.slot_index != s.slot_index and other.occupied and other.hwnd == want_hwnd:
+                        other.occupied = False
+                        other.hwnd = None
+                        other.last_vacated_at = now
+
+                s.occupied = True
+                s.hwnd = want_hwnd
+                s.last_vacated_at = None
+
+                # Enforce placement for pinned window.
+                w = by_hwnd.get(want_hwnd)
+                if w:
+                    x = self._slot_target_x(s.slot_index, s.x, w.width)
+                    try:
+                        if _is_minimized(w.hwnd):
+                            _restore_window(w.hwnd)
+                        _move_window_only(w.hwnd, x, s.y)
+                        pinned_moves.append(f"pinned: slot #{s.slot_index} <= hwnd={w.hwnd} @ ({x},{s.y})")
+                    except Exception as e:
+                        pinned_moves.append(f"FAILED pinned move hwnd={w.hwnd} slot #{s.slot_index}: {e}")
+
+            # Enforce slot position for assigned windows (snap back if manually moved).
+            tolerance = int(os.getenv("WINDOW_SPREADER_POSITION_TOLERANCE_PX", "10"))
+            snap_moves: list[str] = []
+            for s in self._slots:
+                if not s.occupied or s.hwnd is None:
+                    continue
+                w = by_hwnd.get(s.hwnd)
+                if not w:
+                    continue
+                target_x = self._slot_target_x(s.slot_index, s.x, w.width)
+                target_y = s.y
+                if abs(w.left - target_x) > tolerance or abs(w.top - target_y) > tolerance:
+                    try:
+                        if _is_minimized(w.hwnd):
+                            _restore_window(w.hwnd)
+                        _move_window_only(w.hwnd, target_x, target_y)
+                        snap_moves.append(f"snapback: hwnd={w.hwnd} -> slot #{s.slot_index} @ ({target_x},{target_y})")
+                    except Exception as e:
+                        snap_moves.append(f"FAILED snapback hwnd={w.hwnd} slot #{s.slot_index}: {e}")
+
             assigned = {s.hwnd for s in self._slots if s.occupied and s.hwnd is not None}
 
             # Windows that are not currently assigned to any slot.
             unassigned = [w for w in windows if w.hwnd not in assigned]
 
-            # Place them in next available slots, but respect cooldown.
+            # Auto-assign remaining windows to next available slots (respect cooldown).
             moves = []
             for w in unassigned:
                 slot = self._next_available_slot_locked(now)
                 if slot is None:
                     break
                 try:
-                    # Slot x positions are anchors: left/center/right.
-                    # Adjust based on column within the 3-col grid.
-                    x = slot.x
-                    col = (slot.slot_index - 1) % 3  # 0=left,1=center,2=right
-                    if col == 1:
-                        x = int(slot.x - (w.width // 2))
-                    elif col == 2:
-                        x = int(slot.x - w.width)
+                    x = self._slot_target_x(slot.slot_index, slot.x, w.width)
 
                     if _is_minimized(w.hwnd):
                         _restore_window(w.hwnd)
@@ -353,14 +396,28 @@ class WindowSpreader:
                     slot.occupied = True
                     slot.hwnd = w.hwnd
                     slot.last_vacated_at = None
-                    moves.append(f"slot #{slot.slot_index} <= hwnd={w.hwnd} @ ({x},{slot.y})")
+                    moves.append(f"auto: slot #{slot.slot_index} <= hwnd={w.hwnd} @ ({x},{slot.y})")
                 except Exception as e:
                     moves.append(f"FAILED placing hwnd={w.hwnd} into slot #{slot.slot_index}: {e}")
 
-            if moves:
-                self._last_action = "\n".join(moves)
+            lines: list[str] = []
+            lines.extend(pinned_moves)
+            lines.extend(snap_moves)
+            lines.extend(moves)
+
+            if lines:
+                self._last_action = "\n".join(lines)
             else:
                 self._last_action = f"Tick ok. windows={len(windows)} assigned={len(assigned)} unassigned={len(unassigned)}"
+
+    def _slot_target_x(self, slot_index: int, anchor_x: int, window_width: int) -> int:
+        # Slot x positions are anchors: left/center/right.
+        col = (int(slot_index) - 1) % 3  # 0=left,1=center,2=right
+        if col == 1:
+            return int(anchor_x - (window_width // 2))
+        if col == 2:
+            return int(anchor_x - window_width)
+        return int(anchor_x)
 
     def _next_available_slot_locked(self, now: float) -> Optional[Slot]:
         for s in sorted(self._slots, key=lambda x: x.slot_index):

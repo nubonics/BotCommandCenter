@@ -200,6 +200,24 @@ def window_spreader_tick() -> JSONResponse:
     return JSONResponse({"ok": True, "last_action": s.last_action()})
 
 
+@app.post("/api/window-spreader/pin")
+async def window_spreader_pin(request: Request) -> JSONResponse:
+    """Pin a specific window (hwnd) to a specific slot.
+
+    Body JSON:
+      {"slot_index": 1, "hwnd": 123456} to pin
+      {"slot_index": 1, "hwnd": null} to unpin
+    """
+    from .window_spreader import get_spreader
+
+    payload = await request.json()
+    slot_index = int(payload.get("slot_index"))
+    hwnd = payload.get("hwnd", None)
+    s = get_spreader()
+    s.set_pinned(slot_index, None if hwnd in (None, "", 0) else int(hwnd))
+    return JSONResponse({"ok": True})
+
+
 @app.get("/watchdog", response_class=HTMLResponse)
 def watchdog_page(request: Request):
     return templates.TemplateResponse(
