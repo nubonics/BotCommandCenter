@@ -687,25 +687,6 @@ def is_probably_blank(img: Image.Image) -> bool:
         return False
 
 
-def is_alt_tab_candidate(hwnd: int) -> bool:
-    if not user32.IsWindowVisible(hwnd):
-        return False
-    if user32.IsIconic(hwnd):
-        return False
-    title = get_window_text(hwnd)
-    if not title:
-        return False
-    rect = get_window_rect(hwnd)
-    if rect is None:
-        return False
-    left, top, right, bottom = rect
-    if right - left <= 0 or bottom - top <= 0:
-        return False
-    if get_client_size(hwnd) is None:
-        return False
-    return True
-
-
 def enumerate_target_windows(target_process: str) -> List[WindowInfo]:
     windows: List[WindowInfo] = []
     pid_name_cache: Dict[int, str] = {}
@@ -713,7 +694,10 @@ def enumerate_target_windows(target_process: str) -> List[WindowInfo]:
     @EnumWindowsProc
     def callback(hwnd: int, _lparam: int) -> bool:
         try:
-            if not is_alt_tab_candidate(hwnd):
+            # Relaxed eligibility check:
+            # In some OSClient setups the window title may be empty or client rect calls can fail
+            # (e.g., GPU-accelerated surfaces). We still want to discover the window for wall/spreader.
+            if not user32.IsWindowVisible(hwnd) or user32.IsIconic(hwnd):
                 return True
 
             pid = get_window_pid(hwnd)
@@ -733,12 +717,15 @@ def enumerate_target_windows(target_process: str) -> List[WindowInfo]:
             rect = get_window_rect(hwnd)
             if rect is None:
                 return True
+            left, top, right, bottom = rect
+
             client_size = get_client_size(hwnd)
             if client_size is None:
-                return True
-
-            left, top, right, bottom = rect
-            client_width, client_height = client_size
+                # Fall back to window rect size; allows discovery even if GetClientRect fails.
+                client_width = max(1, right - left)
+                client_height = max(1, bottom - top)
+            else:
+                client_width, client_height = client_size
             windows.append(
                 WindowInfo(
                     hwnd=int(hwnd),

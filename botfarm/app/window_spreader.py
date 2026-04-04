@@ -132,6 +132,8 @@ def _move_window_only(hwnd: int, x: int, y: int) -> None:
 
 
 def enumerate_osclient_windows(exact_titles: List[str]) -> List[WindowInfo]:
+    # Match the simple, reliable approach used in osrs-dwm-dashboard:
+    # exact window title match on visible windows.
     titles = set(exact_titles)
     found: List[WindowInfo] = []
     seen = set()
