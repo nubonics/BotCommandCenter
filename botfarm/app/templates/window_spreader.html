@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Window Spreader</h2>
+    <p>Automatically assigns new OSRS client windows to the next available slot.</p>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3 style="margin-top:0;">Controls</h3>
+
+    <div class="form-group">
+      <label>Auto-assign (polls every 5 seconds)</label>
+      <div class="inline-form">
+        <button id="startBtn" type="button">Start</button>
+        <button id="stopBtn" type="button" class="secondary">Stop</button>
+        <span id="status" class="muted">Status: unknown</span>
+      </div>
+      <p class="muted" style="margin:6px 0 0 0;">Vacated slots have a 2-minute cooldown before they can be reused.</p>
+    </div>
+
+    <div class="form-group">
+      <label>One-shot</label>
+      <div class="inline-form">
+        <button id="tickBtn" type="button" class="secondary">Run one assignment tick</button>
+        <button id="refreshBtn" type="button" class="secondary">Refresh status</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Last action</label>
+      <pre id="lastAction" class="mono" style="white-space: pre-wrap; margin:0; padding:12px; border:1px solid var(--border); border-radius:12px; background: rgba(255,255,255,0.03); min-height: 60px;"></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0;">Slots</h3>
+    <div id="slots" class="mono" style="font-size: 0.9rem;"></div>
+  </div>
+</div>
+
+<script>
+async function apiGet(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(await r.text());
+  return await r.json();
+}
+async function apiPost(url) {
+  const r = await fetch(url, { method: 'POST' });
+  if (!r.ok) throw new Error(await r.text());
+  return await r.json();
+}
+
+function renderSlots(data) {
+  const root = document.getElementById('slots');
+  if (!root) return;
+  const slots = data.slots || [];
+  if (!slots.length) {
+    root.textContent = 'No slots configured.';
+    return;
+  }
+  const lines = [];
+  for (const s of slots) {
+    const occ = s.occupied ? `hwnd=${s.hwnd}` : 'empty';
+    const cd = s.cooldown_remaining_s > 0 ? ` cooldown=${s.cooldown_remaining_s}s` : '';
+    lines.push(`#${s.slot_index}: ${occ} @ (${s.x},${s.y})${cd}`);
+  }
+  root.textContent = lines.join('\n');
+}
+
+async function refresh() {
+  const statusEl = document.getElementById('status');
+  const lastEl = document.getElementById('lastAction');
+  try {
+    const data = await apiGet('/api/window-spreader/status');
+    statusEl.textContent = `Status: ${data.running ? 'running' : 'stopped'}`;
+    lastEl.textContent = data.last_action || '';
+    renderSlots(data);
+  } catch (e) {
+    statusEl.textContent = 'Status: error';
+    if (lastEl) lastEl.textContent = String(e);
+  }
+}
+
+document.getElementById('startBtn')?.addEventListener('click', async () => {
+  await apiPost('/api/window-spreader/start');
+  await refresh();
+});
+
+document.getElementById('stopBtn')?.addEventListener('click', async () => {
+  await apiPost('/api/window-spreader/stop');
+  await refresh();
+});
+
+document.getElementById('tickBtn')?.addEventListener('click', async () => {
+  await apiPost('/api/window-spreader/tick');
+  await refresh();
+});
+
+document.getElementById('refreshBtn')?.addEventListener('click', refresh);
+
+refresh();
+setInterval(refresh, 5000);
+</script>
+{% endblock %}

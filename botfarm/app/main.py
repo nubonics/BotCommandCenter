@@ -146,6 +146,60 @@ def client_wall_page(request: Request):
     )
 
 
+@app.get("/window-spreader", response_class=HTMLResponse)
+def window_spreader_page(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "window_spreader.html",
+        {
+            "request": request,
+        },
+    )
+
+
+@app.get("/api/window-spreader/status")
+def window_spreader_status() -> JSONResponse:
+    from .window_spreader import get_spreader
+
+    s = get_spreader()
+    return JSONResponse(
+        {
+            "running": s.is_running(),
+            "poll_seconds": s.poll_seconds,
+            "reuse_cooldown_seconds": s.reuse_cooldown_seconds,
+            "slots": s.get_slots(),
+            "last_action": s.last_action(),
+        }
+    )
+
+
+@app.post("/api/window-spreader/start")
+def window_spreader_start() -> JSONResponse:
+    from .window_spreader import get_spreader
+
+    s = get_spreader()
+    s.start()
+    return JSONResponse({"ok": True, "running": s.is_running()})
+
+
+@app.post("/api/window-spreader/stop")
+def window_spreader_stop() -> JSONResponse:
+    from .window_spreader import get_spreader
+
+    s = get_spreader()
+    s.stop()
+    return JSONResponse({"ok": True, "running": s.is_running()})
+
+
+@app.post("/api/window-spreader/tick")
+def window_spreader_tick() -> JSONResponse:
+    from .window_spreader import get_spreader
+
+    s = get_spreader()
+    s.tick()
+    return JSONResponse({"ok": True, "last_action": s.last_action()})
+
+
 @app.get("/watchdog", response_class=HTMLResponse)
 def watchdog_page(request: Request):
     return templates.TemplateResponse(
