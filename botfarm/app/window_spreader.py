@@ -203,6 +203,10 @@ class WindowSpreader:
 
         # Manual overrides: slot_index -> hwnd
         self._pinned: dict[int, int] = {}
+        self._pins_path = os.getenv("WINDOW_SPREADER_PINS_PATH", "window_spreader_pins.json")
+
+        # Load pins (best-effort)
+        self._load_pins()
 
         # Slot creation can be delayed until first tick.
         self._init_default_slots()
@@ -294,12 +298,62 @@ class WindowSpreader:
                 )
             return out
 
+    def _load_pins(self) -> None:
+        import json
+
+        try:
+            if not self._pins_path:
+                return
+            if not os.path.exists(self._pins_path):
+                return
+            with open(self._pins_path, "r", encoding="utf-8") as f:
+                raw = json.load(f)
+            if not isinstance(raw, dict):
+                return
+            pins = raw.get("pinned") if "pinned" in raw else raw
+            if not isinstance(pins, dict):
+                return
+            cleaned: dict[int, int] = {}
+            for k, v in pins.items():
+                try:
+                    sk = int(k)
+                    hv = int(v)
+                    if sk > 0 and hv > 0:
+                        cleaned[sk] = hv
+                except Exception:
+                    continue
+            with self._lock:
+                self._pinned = cleaned
+        except Exception:
+            # Best-effort load only.
+            return
+
+    def _save_pins_locked(self) -> None:
+        """Save pins to disk. Caller must hold _lock."""
+        import json
+
+        try:
+            if not self._pins_path:
+                return
+            payload = {
+                "saved_at": time.time(),
+                "pinned": {str(k): int(v) for k, v in sorted(self._pinned.items(), key=lambda kv: kv[0])},
+            }
+            tmp_path = self._pins_path + ".tmp"
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(payload, f, indent=2, sort_keys=True)
+            os.replace(tmp_path, self._pins_path)
+        except Exception:
+            # Best-effort save only.
+            return
+
     def set_pinned(self, slot_index: int, hwnd: Optional[int]) -> None:
         with self._lock:
             if hwnd is None:
                 self._pinned.pop(int(slot_index), None)
             else:
                 self._pinned[int(slot_index)] = int(hwnd)
+            self._save_pins_locked()
 
     def tick(self) -> None:
         """One pass: discover windows, update occupancy, enforce pinning, enforce slot positions, auto-assign remaining."""
