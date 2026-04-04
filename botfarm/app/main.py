@@ -135,6 +135,43 @@ def wall_api_layout() -> JSONResponse:
     return JSONResponse(manager.get_layout())
 
 
+@app.get("/api/windows")
+def wall_api_windows() -> JSONResponse:
+    from .osclient_wall.app import manager
+
+    return JSONResponse(manager.get_windows())
+
+
+@app.post("/api/focus/{hwnd}")
+def wall_api_focus(hwnd: int) -> JSONResponse:
+    from .osclient_wall.app import focus_window, flash_manager, manager
+
+    windows = {item["hwnd"] for item in manager.get_windows()}
+    if hwnd not in windows:
+        raise HTTPException(status_code=404, detail="Window not found")
+    ok = focus_window(hwnd)
+    flash_manager.request_flash(hwnd)
+    return JSONResponse({"ok": ok, "hwnd": hwnd})
+
+
+@app.post("/api/settings/fps")
+def wall_api_set_fps(payload: dict) -> JSONResponse:
+    from .osclient_wall.app import manager
+
+    fps = int(payload.get("fps", 5))
+    applied = manager.set_target_fps(fps)
+    return JSONResponse({"ok": True, "target_fps": applied})
+
+
+@app.post("/api/settings/cols")
+def wall_api_set_cols(payload: dict) -> JSONResponse:
+    from .osclient_wall.app import manager
+
+    cols = int(payload.get("cols", 8))
+    applied = manager.set_grid_cols(cols)
+    return JSONResponse({"ok": True, "grid_cols": applied})
+
+
 @app.get("/client-wall", response_class=HTMLResponse)
 def client_wall_page(request: Request):
     return templates.TemplateResponse(
