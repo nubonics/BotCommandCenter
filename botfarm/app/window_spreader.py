@@ -132,11 +132,17 @@ def _move_window_only(hwnd: int, x: int, y: int) -> None:
 
 
 def enumerate_osclient_windows(exact_titles: List[str]) -> List[WindowInfo]:
-    # Match the simple, reliable approach used in osrs-dwm-dashboard:
-    # exact window title match on visible windows.
+    """Enumerate OSRS client windows.
+
+    This is intentionally implemented to mirror osrs-dwm-dashboard's approach:
+    - EnumWindows
+    - only visible windows
+    - exact title match
+    - uses GetWindowRect for geometry
+    """
     titles = set(exact_titles)
     found: List[WindowInfo] = []
-    seen = set()
+    seen: set[int] = set()
 
     @EnumWindowsProc
     def enum_proc(hwnd, _lparam):
@@ -155,6 +161,7 @@ def enumerate_osclient_windows(exact_titles: List[str]) -> List[WindowInfo]:
             if rect is None:
                 return True
             left, top, right, bottom = rect
+
             found.append(
                 WindowInfo(
                     hwnd=ihwnd,
