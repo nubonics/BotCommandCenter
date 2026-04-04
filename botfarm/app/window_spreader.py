@@ -221,12 +221,11 @@ class WindowSpreader:
             return
 
         def top_row_three(m, monitor_index: int, slot_start: int) -> List[Slot]:
-            # left, mid, right positions
+            # left, mid, right anchor positions
+            # right anchor is inclusive (right edge = x + width - 1)
             x1 = m.x
             x2 = m.x + (m.width // 2)
-            x3 = m.x + m.width
-            # We don't know window width; we align by left edge.
-            # For middle/right we will subtract window width at placement time.
+            x3 = m.x + m.width - 1
             y = m.y
             return [
                 Slot(slot_index=slot_start + 0, monitor_index=monitor_index, x=x1, y=y),
@@ -287,6 +286,11 @@ class WindowSpreader:
 
     def tick(self) -> None:
         """One pass: discover windows, update occupancy, then place any unassigned windows."""
+        # Lazily initialize slots (some environments may not have monitors ready at import time).
+        with self._lock:
+            if not self._slots:
+                self._init_default_slots()
+
         windows = enumerate_osclient_windows(self.exact_window_titles)
         now = time.time()
 
