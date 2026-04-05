@@ -398,7 +398,8 @@
                 <div class="hwbar" id="hwbar" aria-label="Hardware usage">
                     <span class="pill"><span>CPU</span> <strong id="hwCpu">-</strong></span>
                     <span class="pill"><span>RAM</span> <strong id="hwRam">-</strong></span>
-                    <span class="pill"><span>Disk</span> <strong id="hwDisk">-</strong></span>
+                    <span class="pill"><span>Disk Full</span> <strong id="hwDiskFull">-</strong></span>
+                    <span class="pill"><span>Disk Busy</span> <strong id="hwDiskBusy">-</strong></span>
                     <span class="pill" id="hwGpuPill" style="display:none;"><span>GPU</span> <strong id="hwGpu">-</strong></span>
                 </div>
             </div>
@@ -432,19 +433,31 @@
 
             const cpu = Number(data.cpu_percent ?? 0);
             const ram = Number(data.ram_percent ?? 0);
-            const disk = Number(data.disk_percent ?? 0);
+            const diskFull = Number(data.disk_full_percent ?? 0);
+            const diskBusy = data.disk_busy_percent;
 
             const cpuEl = document.getElementById('hwCpu');
             const ramEl = document.getElementById('hwRam');
-            const diskEl = document.getElementById('hwDisk');
+            const diskFullEl = document.getElementById('hwDiskFull');
+            const diskBusyEl = document.getElementById('hwDiskBusy');
 
             cpuEl.textContent = `${cpu.toFixed(0)}%`;
             ramEl.textContent = `${ram.toFixed(0)}%`;
-            diskEl.textContent = `${disk.toFixed(0)}%`;
+            diskFullEl.textContent = `${diskFull.toFixed(0)}%`;
+            if (diskBusy === null || diskBusy === undefined) {
+                diskBusyEl.textContent = `?`;
+            } else {
+                diskBusyEl.textContent = `${Number(diskBusy).toFixed(0)}%`;
+            }
 
             classifyPill(cpuEl.parentElement, cpu);
             classifyPill(ramEl.parentElement, ram);
-            classifyPill(diskEl.parentElement, disk);
+            classifyPill(diskFullEl.parentElement, diskFull);
+            if (diskBusy !== null && diskBusy !== undefined) {
+                classifyPill(diskBusyEl.parentElement, Number(diskBusy));
+            } else {
+                diskBusyEl.parentElement.classList.remove('warn', 'bad');
+            }
 
             const gpu = data.gpu;
             const gpuPill = document.getElementById('hwGpuPill');

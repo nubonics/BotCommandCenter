@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import os
+import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -99,7 +100,26 @@ def register_hw_routes(app: FastAPI) -> None:
 
         # Pick a stable path for disk usage.
         # On Windows, this will resolve to the drive containing the current working dir.
-        disk = psutil.disk_usage(str(Path.cwd().anchor or Path.cwd()))
+        disk_path = str(Path.cwd().anchor or Path.cwd())
+        disk = psutil.disk_usage(disk_path)
+
+        # Estimate disk "busy" via I/O counters delta over a short window.
+        # This is approximate and may not match Task Manager exactly.
+        busy_pct = None
+        try:
+            io1 = psutil.disk_io_counters()
+            t1 = time.perf_counter()
+            time.sleep(0.15)
+            io2 = psutil.disk_io_counters()
+            t2 = time.perf_counter()
+            if io1 and io2 and (t2 - t1) > 0:
+                # busy time delta (ms) / wall time (ms)
+                dt_ms = (t2 - t1) * 1000.0
+                busy_ms = float(getattr(io2, "busy_time", 0) - getattr(io1, "busy_time", 0))
+                if dt_ms > 1:
+                    busy_pct = max(0.0, min(100.0, busy_ms / dt_ms * 100.0))
+        except Exception:
+            busy_pct = None
 
         gpu = _try_get_nvidia_gpu()
 
@@ -108,9 +128,11 @@ def register_hw_routes(app: FastAPI) -> None:
             "ram_percent": round(float(vm.percent), 1),
             "ram_used_gb": round(_bytes_to_gb(vm.used), 2),
             "ram_total_gb": round(_bytes_to_gb(vm.total), 2),
-            "disk_percent": round(float(disk.percent), 1),
+            "disk_full_percent": round(float(disk.percent), 1),
             "disk_used_gb": round(_bytes_to_gb(disk.used), 2),
             "disk_total_gb": round(_bytes_to_gb(disk.total), 2),
+            "disk_path": disk_path,
+            "disk_busy_percent": None if busy_pct is None else round(float(busy_pct), 1),
             "gpu": gpu,
         }
         return JSONResponse(payload)
