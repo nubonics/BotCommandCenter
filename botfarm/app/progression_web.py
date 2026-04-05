@@ -767,7 +767,7 @@ async def import_hiscores_all_accounts(
     import urllib.parse
     import httpx
 
-    accounts = session.exec(select(Account)).all()
+    accounts = session.scalars(select(Account)).all()
     updated = 0
     skipped = 0
     failed = 0
