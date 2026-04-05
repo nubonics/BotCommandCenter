@@ -309,7 +309,7 @@ mount_osclient_wall(app, prefix="/wall")
 # --- Control-UI compatibility ---
 # The OSClient Wall frontend (served at /wall) fetches /api/stats and
 # /api/layout at the server root. The actual implementations live in
-# botfarm.app.osclient_wall.app under a router mounted at /wall, so we add
+# app.osclient_wall.app under a router mounted at /wall, so we add
 # thin pass-through routes here to avoid 404s.
 
 
