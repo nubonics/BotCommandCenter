@@ -162,6 +162,10 @@ class AccountGoal(Base):
     baseline_skills_xp_json: Mapped[str] = mapped_column(Text, default="{}")
     baseline_gp: Mapped[int] = mapped_column(Integer, default=0)
 
+    # Optional quest targets (manual): list of quest/miniquest names.
+    # These names should match the wiki dataset names used in completed_quests_json.
+    target_quests_json: Mapped[str] = mapped_column(Text, default="[]")
+
     target_skills_xp_json: Mapped[str] = mapped_column(Text, default="{}")
     target_gp: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 

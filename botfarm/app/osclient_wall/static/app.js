@@ -7,9 +7,14 @@ let lastStatusTimer = null;
 
 async function refresh() {
   try {
+    // When the wall is mounted under /wall (as in BotCommandCenter),
+    // the root-level /api/* pass-through routes exist, but they can
+    // collide with other app routes and make debugging confusing.
+    // Prefer a same-prefix API when available.
+    const base = window.location.pathname.startsWith('/wall') ? '/wall' : '';
     const [statsResp, layoutResp] = await Promise.all([
-      fetch('/api/stats', { cache: 'no-store' }),
-      fetch('/api/layout', { cache: 'no-store' }),
+      fetch(`${base}/api/stats`, { cache: 'no-store' }),
+      fetch(`${base}/api/layout`, { cache: 'no-store' }),
     ]);
 
     const stats = await statsResp.json();
@@ -51,12 +56,13 @@ async function pushFps(fps) {
     return;
   }
 
+  const base = window.location.pathname.startsWith('/wall') ? '/wall' : '';
   while (queuedFps !== null) {
     const next = queuedFps;
     queuedFps = null;
     fpsRequestInFlight = true;
     try {
-      const resp = await fetch('/api/settings/fps', {
+      const resp = await fetch(`${base}/api/settings/fps`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fps: next }),
@@ -83,12 +89,13 @@ async function pushCols(cols) {
     return;
   }
 
+  const base = window.location.pathname.startsWith('/wall') ? '/wall' : '';
   while (queuedCols !== null) {
     const next = queuedCols;
     queuedCols = null;
     colsRequestInFlight = true;
     try {
-      const resp = await fetch('/api/settings/cols', {
+      const resp = await fetch(`${base}/api/settings/cols`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cols: next }),
@@ -123,7 +130,8 @@ function setStatus(text) {
 async function focusWindow(hwnd) {
   try {
     setStatus(`Focusing ${hwnd}...`);
-    const resp = await fetch(`/api/focus/${hwnd}`, {
+    const base = window.location.pathname.startsWith('/wall') ? '/wall' : '';
+    const resp = await fetch(`${base}/api/focus/${hwnd}`, {
       method: 'POST',
       cache: 'no-store',
     });
