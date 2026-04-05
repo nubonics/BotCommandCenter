@@ -90,6 +90,59 @@ def _try_get_nvidia_gpu() -> dict | None:
         return None
 
 
+def _try_get_windows_gpu_engine_util() -> float | None:
+    """Best-effort GPU utilization using Windows performance counters.
+
+    This is vendor-agnostic (works for AMD/Intel/NVIDIA) but provides an estimate
+    based on GPU Engine utilization (similar to Task Manager).
+    """
+    try:
+        import subprocess
+
+        if os.name != "nt":
+            return None
+
+        # typeperf returns CSV. We sample once. Example output:
+        # "(PDH-CSV 4.0)","\\GPU Engine(pid_1234_luid_0x..._engtype_3D)\\Utilization Percentage",...
+        # "04/05/2026 02:59:00.123","12.345","0.000",...
+        cmd = [
+            "typeperf",
+            "\\GPU Engine(*)\\Utilization Percentage",
+            "-sc",
+            "1",
+        ]
+        out = subprocess.check_output(cmd, stderr=subprocess.DEVNULL, timeout=2, text=True, encoding="utf-8", errors="ignore")
+        lines = [ln.strip() for ln in out.splitlines() if ln.strip()]
+        if len(lines) < 3:
+            return None
+
+        # Data line is last.
+        data = lines[-1]
+        # Very small CSV parser: values are quoted and separated by ","
+        parts = [p.strip().strip('"') for p in data.split(",")]
+        if len(parts) <= 1:
+            return None
+
+        # parts[0] is timestamp; remaining are counters.
+        vals: list[float] = []
+        for raw in parts[1:]:
+            try:
+                # Some locales use comma decimal; typeperf typically uses dot. Handle both.
+                raw2 = raw.replace(",", ".")
+                vals.append(float(raw2))
+            except Exception:
+                pass
+        if not vals:
+            return None
+
+        # GPU Engine counters are per-engine; Task Manager shows a blended view.
+        # Taking max is a decent approximation of "current bottleneck".
+        util = max(vals)
+        return max(0.0, min(100.0, float(util)))
+    except Exception:
+        return None
+
+
 def register_hw_routes(app: FastAPI) -> None:
     @app.get("/api/health/hw")
     def hw_health() -> JSONResponse:
@@ -141,6 +194,11 @@ def register_hw_routes(app: FastAPI) -> None:
             gpu_util = gpu.get("util_percent")
             gpu_mem_pct = gpu.get("mem_percent")
             gpu_temp_c = gpu.get("temp_c")
+        else:
+            # Vendor-agnostic Windows fallback (AMD/Intel).
+            win_util = _try_get_windows_gpu_engine_util()
+            if win_util is not None:
+                gpu_util = round(float(win_util), 1)
 
         payload = {
             "cpu_percent": round(float(cpu), 1),
