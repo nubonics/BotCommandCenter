@@ -6,6 +6,8 @@ import os
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
+import subprocess
+import threading
 
 import psutil
 
@@ -35,6 +37,50 @@ from .services import (
 )
 
 BASE_DIR = Path(__file__).resolve().parent
+
+
+# --- Repo self-update (dev / git) ---
+_UPDATE_LOCK = threading.Lock()
+
+
+def _repo_root() -> Path:
+    # app/ lives under the repo root.
+    return BASE_DIR.parent
+
+
+def _run_git(args: list[str], timeout: float = 8.0) -> tuple[int, str, str]:
+    try:
+        proc = subprocess.run(
+            ["git", *args],
+            cwd=str(_repo_root()),
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+        return int(proc.returncode), (proc.stdout or ""), (proc.stderr or "")
+    except Exception as e:
+        return 1, "", str(e)
+
+
+def _git_head() -> str:
+    code, out, _err = _run_git(["rev-parse", "--short", "HEAD"], timeout=4.0)
+    return out.strip() if code == 0 else "-"
+
+
+def _git_branch() -> str:
+    code, out, _err = _run_git(["rev-parse", "--abbrev-ref", "HEAD"], timeout=4.0)
+    return out.strip() if code == 0 else "-"
+
+
+def _git_behind(remote_ref: str = "origin/master") -> int | None:
+    # Returns how many commits local is behind remote_ref, or None if unknown.
+    code, out, _err = _run_git(["rev-list", "--count", f"HEAD..{remote_ref}"])
+    if code != 0:
+        return None
+    try:
+        return int(out.strip() or "0")
+    except Exception:
+        return None
 
 
 def _bytes_to_gb(n: float) -> float:
@@ -221,6 +267,52 @@ def register_hw_routes(app: FastAPI) -> None:
         return JSONResponse(payload)
 
 
+def register_update_routes(app: FastAPI) -> None:
+    """Dev-only repo update helpers.
+
+    Assumes this app is run from a git checkout.
+    """
+
+    @app.get("/api/update/status")
+    def update_status() -> JSONResponse:
+        # Try a fetch, but keep it non-fatal/fast.
+        _run_git(["fetch", "origin", "master"], timeout=6.0)
+        branch = _git_branch()
+        head = _git_head()
+        behind = _git_behind("origin/master")
+        return JSONResponse(
+            {
+                "ok": True,
+                "branch": branch,
+                "head": head,
+                "remote": "origin/master",
+                "behind": behind,
+                "can_update": (behind is not None and behind > 0),
+            }
+        )
+
+    @app.post("/api/update/pull")
+    def update_pull() -> JSONResponse:
+        # Prevent concurrent pulls.
+        with _UPDATE_LOCK:
+            # Ensure we only fast-forward (safer for a local app).
+            _run_git(["fetch", "origin", "master"], timeout=10.0)
+            code, out, err = _run_git(["pull", "--ff-only", "origin", "master"], timeout=30.0)
+            head = _git_head()
+            behind = _git_behind("origin/master")
+            return JSONResponse(
+                {
+                    "ok": (code == 0),
+                    "head": head,
+                    "behind": behind,
+                    "stdout": (out or "").strip(),
+                    "stderr": (err or "").strip(),
+                    "restart_required": True,
+                    "restart_cmd": "uvicorn app.main:app --port 8025",
+                }
+            )
+
+
 def format_gp(value) -> str:
     if value is None:
         return "0"
@@ -297,6 +389,7 @@ templates.env.filters["gp"] = format_gp
 templates.env.filters["mask_secret"] = mask_secret
 
 register_hw_routes(app)
+register_update_routes(app)
 
 app.state.templates = templates
 app.include_router(planner_router)

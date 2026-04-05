@@ -404,6 +404,11 @@
                     <span class="pill" id="hwGpuPill" style="display:none;"><span>GPU</span> <strong id="hwGpu">-</strong></span>
                     <span class="pill" id="hwGpuMemPill" style="display:none;"><span>VRAM</span> <strong id="hwGpuMem">-</strong></span>
                 </div>
+
+                <div class="hwbar" id="updatebar" aria-label="Updates" style="margin-left: 12px;">
+                    <span class="pill" id="updatePill" style="display:none;"><span>Update</span> <strong id="updateText">-</strong></span>
+                    <button type="button" class="secondary tiny-btn" id="updateBtn" style="display:none;" onclick="runUpdatePull()">Update</button>
+                </div>
             </div>
         </div>
 
@@ -509,6 +514,59 @@
 
     refreshHwbar();
     setInterval(refreshHwbar, 2000);
+    </script>
+
+    <script>
+    async function checkUpdateStatus() {
+        try {
+            const resp = await fetch('/api/update/status', { cache: 'no-store' });
+            const data = await resp.json();
+            const pill = document.getElementById('updatePill');
+            const btn = document.getElementById('updateBtn');
+            const txt = document.getElementById('updateText');
+            if (!pill || !btn || !txt) return;
+
+            if (!resp.ok || !data.ok) {
+                pill.style.display = 'none';
+                btn.style.display = 'none';
+                return;
+            }
+
+            const behind = data.behind;
+            if (typeof behind === 'number' && behind > 0) {
+                pill.style.display = '';
+                btn.style.display = '';
+                txt.textContent = `${behind} behind`;
+            } else {
+                pill.style.display = 'none';
+                btn.style.display = 'none';
+            }
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    async function runUpdatePull() {
+        const btn = document.getElementById('updateBtn');
+        if (btn) btn.disabled = true;
+        try {
+            const resp = await fetch('/api/update/pull', { method: 'POST', cache: 'no-store' });
+            const data = await resp.json();
+            if (!resp.ok || !data.ok) {
+                alert(`Update failed.\n\n${data.stderr || ''}`);
+                return;
+            }
+            alert(`Update applied.\n\nRestart required.\nRun:\n${data.restart_cmd}`);
+        } catch (e) {
+            alert('Update failed.');
+        } finally {
+            if (btn) btn.disabled = false;
+            checkUpdateStatus();
+        }
+    }
+
+    checkUpdateStatus();
+    setInterval(checkUpdateStatus, 60_000);
     </script>
 </body>
 </html>
