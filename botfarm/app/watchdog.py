@@ -14,6 +14,8 @@ TS_RE = re.compile(r"^\[(\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2})\]\s*(.*)$")
 NONE_ARRAY_RE = re.compile(r"\[\s*None\s*,\s*None\s*,")
 WITHDRAW_RE = re.compile(r"\bwithdrawing item:\s*(.+)$", re.IGNORECASE)
 SANDBOX_PATH_RE = re.compile(r"C:\\Sandbox\\([^\\]+)\\", re.IGNORECASE)
+SANDBOX_KEY_RE = re.compile(r"\bkey:\s*([0-9a-f]{8,})\b", re.IGNORECASE)
+SANDBOX_LAUNCH_RE = re.compile(r"\bin sandbox\s+([0-9a-f]{8,})\b", re.IGNORECASE)
 
 
 @dataclass
@@ -201,6 +203,15 @@ class TailState:
                 if m_sb:
                     self.inferred_sandbox = m_sb.group(1)
 
+                # Alternate sandbox inference patterns seen in Botting Hub logs.
+                m_key = SANDBOX_KEY_RE.search(msg)
+                if m_key:
+                    self.inferred_sandbox = m_key.group(1)
+
+                m_launch = SANDBOX_LAUNCH_RE.search(msg)
+                if m_launch:
+                    self.inferred_sandbox = m_launch.group(1)
+
                 m_pid = re.search(r"\bfound client pid=(\d+)", msg, re.IGNORECASE)
                 if m_pid:
                     try:
@@ -278,6 +289,16 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
                         m = SANDBOX_PATH_RE.search(raw)
                         if m:
                             state.inferred_sandbox = m.group(1)
+
+                    if state.inferred_sandbox is None:
+                        m = SANDBOX_KEY_RE.search(raw)
+                        if m:
+                            state.inferred_sandbox = m.group(1)
+
+                    if state.inferred_sandbox is None:
+                        m = SANDBOX_LAUNCH_RE.search(raw)
+                        if m:
+                            state.inferred_sandbox = m.group(1)
                     continue
                 ts, msg = parsed
 
@@ -295,6 +316,16 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
 
                 if state.inferred_sandbox is None:
                     m = SANDBOX_PATH_RE.search(msg)
+                    if m:
+                        state.inferred_sandbox = m.group(1)
+
+                if state.inferred_sandbox is None:
+                    m = SANDBOX_KEY_RE.search(msg)
+                    if m:
+                        state.inferred_sandbox = m.group(1)
+
+                if state.inferred_sandbox is None:
+                    m = SANDBOX_LAUNCH_RE.search(msg)
                     if m:
                         state.inferred_sandbox = m.group(1)
 
