@@ -319,24 +319,25 @@ async def watchdog_loop(cfg: WatchdogConfig) -> None:
             if cooldown_ok and none_arrays >= cfg.threshold_none_arrays and withdraws >= cfg.threshold_withdraws:
                 state.last_action_at = now
 
-                # Kill only the malfunctioning instance if we have its PID.
-                if cfg.kill_osclient and state.inferred_pid is not None:
-                    _kill_pid(cfg, state.inferred_pid)
-                    state_last_action = f"killed pid {state.inferred_pid}"
-                else:
-                    state_last_action = None
+                # IMPORTANT: never kill all OSClients globally.
+                # Only take an action when we can confidently target a single instance.
+                state_last_action = None
 
-                # Terminate Sandboxie sandbox if we can infer it from the log.
+                # Prefer terminating the inferred Sandboxie sandbox (scoped to this log).
                 if cfg.terminate_sandbox and state.inferred_sandbox:
                     _terminate_sandbox(cfg, state.inferred_sandbox)
-                    if state_last_action:
-                        state_last_action += f"; terminated sandbox {state.inferred_sandbox}"
-                    else:
-                        state_last_action = f"terminated sandbox {state.inferred_sandbox}"
+                    state_last_action = f"terminated sandbox {state.inferred_sandbox}"
 
-                if state_last_action:
-                    # store on state for UI
-                    state.last_action = state_last_action
+                # Fallback: kill the inferred PID (scoped to this log).
+                elif cfg.kill_osclient and state.inferred_pid is not None:
+                    _kill_pid(cfg, state.inferred_pid)
+                    state_last_action = f"killed pid {state.inferred_pid}"
+
+                else:
+                    state_last_action = "no action (could not infer sandbox or pid)"
+
+                # Store on state for UI.
+                state.last_action = state_last_action
 
             # Update exported status snapshot (cheap; list is small).
             statuses: list[FileWatchStatus] = []
