@@ -116,4 +116,88 @@
     <p style="white-space: pre-line;">{{ account.notes or "No notes yet." }}</p>
 </div>
 
+<div class="card">
+    <div class="grid-2" style="align-items: start;">
+        <div>
+            <h3 style="margin-top: 0;">Spending</h3>
+            <p class="muted" style="margin: 0;">Track real-money spend per account (one-time + monthly).</p>
+            <div style="margin-top: 10px; display:flex; gap:16px; flex-wrap: wrap;">
+                <div class="pill"><span>Total (all time)</span> <strong>${{ '%.2f'|format(total_spent_all_time or 0) }}</strong></div>
+                <div class="pill"><span>Monthly burn (active)</span> <strong>${{ '%.2f'|format(monthly_burn or 0) }}</strong></div>
+            </div>
+        </div>
+        <div>
+            <h3 style="margin-top: 0;">Add expense</h3>
+            <form action="/accounts/{{ account.id }}/expenses/new" method="post">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="name" placeholder="Proxy / Sub / Bonds / etc" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (USD)</label>
+                        <input type="number" step="0.01" name="amount_usd" value="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select name="kind">
+                            <option value="one_time">One-time</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Start date (optional)</label>
+                        <input type="date" name="start_date">
+                    </div>
+                    <div class="form-group-full">
+                        <label>Notes (optional)</label>
+                        <input type="text" name="notes" placeholder="provider, invoice id, etc">
+                    </div>
+                </div>
+                <div class="actions">
+                    <button type="submit">Add expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 18px;">Expenses</h3>
+    {% if not expenses or expenses|length == 0 %}
+        <p class="muted">No expenses yet.</p>
+    {% else %}
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Active</th>
+                <th>Created</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for e in expenses %}
+            <tr>
+                <td><strong>{{ e.name }}</strong>{% if e.notes %}<div class="muted" style="margin-top: 2px;">{{ e.notes }}</div>{% endif %}</td>
+                <td>{{ 'Monthly' if e.kind == 'monthly' else 'One-time' }}</td>
+                <td>${{ '%.2f'|format(e.amount_usd or 0) }}</td>
+                <td>
+                    <form action="/accounts/{{ account.id }}/expenses/{{ e.id }}/toggle" method="post">
+                        <button type="submit" class="secondary tiny-btn">{% if e.is_active %}On{% else %}Off{% endif %}</button>
+                    </form>
+                </td>
+                <td class="mono">{{ e.created_at }}</td>
+                <td>
+                    <form action="/accounts/{{ account.id }}/expenses/{{ e.id }}/delete" method="post" onsubmit="return confirm('Delete this expense?');">
+                        <button type="submit" class="danger tiny-btn">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
 {% endblock %}

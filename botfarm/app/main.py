@@ -22,7 +22,7 @@ from .osclient_wall.app import mount as mount_osclient_wall
 from .watchdog import WATCHDOG_STATUS, WatchdogConfig, update_watchdog_config, watchdog_loop
 from . import models  # noqa: F401
 from .database import create_db_and_tables, get_session
-from .models import Account, Item, MoneyMaker, MoneyMakerComponent
+from .models import Account, AccountExpense, Item, MoneyMaker, MoneyMakerComponent
 from .services import (
     ensure_item_catalog,
     evaluate_money_maker,
@@ -964,6 +964,29 @@ def account_detail(request: Request, account_id: int, session: Session = Depends
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
 
+    expenses = session.scalars(
+        select(AccountExpense)
+        .where(AccountExpense.account_id == account_id)
+        .order_by(AccountExpense.created_at.desc())
+    ).all()
+
+    total_spent = 0.0
+    monthly_burn = 0.0
+    for e in expenses:
+        try:
+            amt = float(e.amount_usd or 0)
+        except Exception:
+            amt = 0.0
+        if e.kind == "monthly":
+            if e.is_active:
+                monthly_burn += amt
+        else:
+            total_spent += amt
+    total_spent_all_time = total_spent + sum(
+        (float(e.amount_usd or 0) if (e.kind == "monthly") else 0.0)
+        for e in expenses
+    )
+
     return templates.TemplateResponse(
         request,
         "account_detail.html",
@@ -971,8 +994,90 @@ def account_detail(request: Request, account_id: int, session: Session = Depends
             "request": request,
             "account": account,
             "message": request.query_params.get("message"),
+            "expenses": expenses,
+            "total_spent_all_time": total_spent_all_time,
+            "monthly_burn": monthly_burn,
         },
     )
+
+
+@app.post("/accounts/{account_id}/expenses/new")
+def add_account_expense(
+    account_id: int,
+    name: str = Form(...),
+    amount_usd: str = Form("0"),
+    kind: str = Form("one_time"),
+    start_date: str = Form(""),
+    notes: str = Form(""),
+    session: Session = Depends(get_session),
+):
+    account = session.get(Account, account_id)
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    cleaned_name = (name or "").strip()
+    if not cleaned_name:
+        raise HTTPException(status_code=400, detail="Name is required")
+
+    try:
+        amt = round(float(str(amount_usd).strip() or "0"), 2)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid amount")
+
+    kind = (kind or "one_time").strip().lower()
+    if kind not in {"one_time", "monthly"}:
+        raise HTTPException(status_code=400, detail="Invalid kind")
+
+    parsed_date = None
+    if start_date.strip():
+        try:
+            from datetime import datetime
+
+            parsed_date = datetime.strptime(start_date.strip(), "%Y-%m-%d").date()
+        except Exception:
+            raise HTTPException(status_code=400, detail="Invalid start_date (use YYYY-MM-DD)")
+
+    row = AccountExpense(
+        account_id=account_id,
+        name=cleaned_name,
+        amount_usd=amt,
+        kind=kind,
+        start_date=parsed_date,
+        notes=notes.strip() or None,
+        is_active=True,
+    )
+    session.add(row)
+    session.commit()
+
+    return RedirectResponse(url=f"/accounts/{account_id}?message=Expense added", status_code=303)
+
+
+@app.post("/accounts/{account_id}/expenses/{expense_id}/toggle")
+def toggle_account_expense(
+    account_id: int,
+    expense_id: int,
+    session: Session = Depends(get_session),
+):
+    row = session.get(AccountExpense, expense_id)
+    if not row or row.account_id != account_id:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    row.is_active = not bool(row.is_active)
+    session.commit()
+    return RedirectResponse(url=f"/accounts/{account_id}?message=Expense updated", status_code=303)
+
+
+@app.post("/accounts/{account_id}/expenses/{expense_id}/delete")
+def delete_account_expense(
+    account_id: int,
+    expense_id: int,
+    session: Session = Depends(get_session),
+):
+    row = session.get(AccountExpense, expense_id)
+    if not row or row.account_id != account_id:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    session.delete(row)
+    session.commit()
+    return RedirectResponse(url=f"/accounts/{account_id}?message=Expense deleted", status_code=303)
 
 
 @app.get("/accounts/{account_id}/edit", response_class=HTMLResponse)
