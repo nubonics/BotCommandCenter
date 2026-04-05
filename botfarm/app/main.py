@@ -97,6 +97,18 @@ def register_hw_routes(app: FastAPI) -> None:
 
         cpu = psutil.cpu_percent(interval=None)
         vm = psutil.virtual_memory()
+        sm = psutil.swap_memory()
+        commit_used = None
+        commit_limit = None
+        commit_pct = None
+        try:
+            # Windows: commit = RAM + pagefile. psutil exposes pagefile via swap.
+            commit_used = int(vm.total - vm.available + sm.used)
+            commit_limit = int(vm.total + sm.total)
+            if commit_limit > 0:
+                commit_pct = float(commit_used) / float(commit_limit) * 100.0
+        except Exception:
+            pass
 
         # Pick a stable path for disk usage.
         # On Windows, this will resolve to the drive containing the current working dir.
@@ -122,18 +134,31 @@ def register_hw_routes(app: FastAPI) -> None:
             busy_pct = None
 
         gpu = _try_get_nvidia_gpu()
+        gpu_util = None
+        gpu_mem_pct = None
+        gpu_temp_c = None
+        if gpu:
+            gpu_util = gpu.get("util_percent")
+            gpu_mem_pct = gpu.get("mem_percent")
+            gpu_temp_c = gpu.get("temp_c")
 
         payload = {
             "cpu_percent": round(float(cpu), 1),
             "ram_percent": round(float(vm.percent), 1),
             "ram_used_gb": round(_bytes_to_gb(vm.used), 2),
             "ram_total_gb": round(_bytes_to_gb(vm.total), 2),
+            "commit_percent": None if commit_pct is None else round(float(commit_pct), 1),
+            "commit_used_gb": None if commit_used is None else round(_bytes_to_gb(commit_used), 2),
+            "commit_limit_gb": None if commit_limit is None else round(_bytes_to_gb(commit_limit), 2),
             "disk_full_percent": round(float(disk.percent), 1),
             "disk_used_gb": round(_bytes_to_gb(disk.used), 2),
             "disk_total_gb": round(_bytes_to_gb(disk.total), 2),
             "disk_path": disk_path,
             "disk_busy_percent": None if busy_pct is None else round(float(busy_pct), 1),
             "gpu": gpu,
+            "gpu_util_percent": gpu_util,
+            "gpu_mem_percent": gpu_mem_pct,
+            "gpu_temp_c": gpu_temp_c,
         }
         return JSONResponse(payload)
 

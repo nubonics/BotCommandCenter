@@ -398,9 +398,11 @@
                 <div class="hwbar" id="hwbar" aria-label="Hardware usage">
                     <span class="pill"><span>CPU</span> <strong id="hwCpu">-</strong></span>
                     <span class="pill"><span>RAM</span> <strong id="hwRam">-</strong></span>
+                    <span class="pill"><span>Commit</span> <strong id="hwCommit">-</strong></span>
                     <span class="pill"><span>Disk Full</span> <strong id="hwDiskFull">-</strong></span>
                     <span class="pill"><span>Disk Busy</span> <strong id="hwDiskBusy">-</strong></span>
                     <span class="pill" id="hwGpuPill" style="display:none;"><span>GPU</span> <strong id="hwGpu">-</strong></span>
+                    <span class="pill" id="hwGpuMemPill" style="display:none;"><span>VRAM</span> <strong id="hwGpuMem">-</strong></span>
                 </div>
             </div>
         </div>
@@ -433,16 +435,30 @@
 
             const cpu = Number(data.cpu_percent ?? 0);
             const ram = Number(data.ram_percent ?? 0);
+            const commit = data.commit_percent;
             const diskFull = Number(data.disk_full_percent ?? 0);
             const diskBusy = data.disk_busy_percent;
 
             const cpuEl = document.getElementById('hwCpu');
             const ramEl = document.getElementById('hwRam');
+            const commitEl = document.getElementById('hwCommit');
             const diskFullEl = document.getElementById('hwDiskFull');
             const diskBusyEl = document.getElementById('hwDiskBusy');
 
             cpuEl.textContent = `${cpu.toFixed(0)}%`;
             ramEl.textContent = `${ram.toFixed(0)}%`;
+            if (commit === null || commit === undefined) {
+                commitEl.textContent = `?`;
+                commitEl.parentElement.classList.remove('warn', 'bad');
+            } else {
+                commitEl.textContent = `${Number(commit).toFixed(0)}%`;
+                classifyPill(commitEl.parentElement, Number(commit));
+                const used = data.commit_used_gb;
+                const limit = data.commit_limit_gb;
+                if (used !== null && used !== undefined && limit !== null && limit !== undefined) {
+                    commitEl.parentElement.title = `Commit ${used} / ${limit} GB`;
+                }
+            }
             diskFullEl.textContent = `${diskFull.toFixed(0)}%`;
             if (diskBusy === null || diskBusy === undefined) {
                 diskBusyEl.textContent = `?`;
@@ -462,14 +478,29 @@
             const gpu = data.gpu;
             const gpuPill = document.getElementById('hwGpuPill');
             const gpuEl = document.getElementById('hwGpu');
+            const gpuMemPill = document.getElementById('hwGpuMemPill');
+            const gpuMemEl = document.getElementById('hwGpuMem');
             if (gpu && gpuPill && gpuEl) {
                 gpuPill.style.display = '';
                 const util = Number(gpu.util_percent ?? 0);
                 gpuEl.textContent = `${util.toFixed(0)}%`;
                 classifyPill(gpuPill, util);
                 gpuPill.title = `${gpu.name || 'GPU'} | mem ${gpu.mem_percent ?? '?'}% | ${gpu.temp_c ?? '?'}C`;
+
+                if (gpuMemPill && gpuMemEl) {
+                    const mp = gpu.mem_percent;
+                    if (mp === null || mp === undefined) {
+                        gpuMemPill.style.display = 'none';
+                    } else {
+                        gpuMemPill.style.display = '';
+                        gpuMemEl.textContent = `${Number(mp).toFixed(0)}%`;
+                        classifyPill(gpuMemPill, Number(mp));
+                        gpuMemPill.title = `${gpu.mem_used_mb ?? '?'} / ${gpu.mem_total_mb ?? '?'} MB`;
+                    }
+                }
             } else if (gpuPill) {
                 gpuPill.style.display = 'none';
+                if (gpuMemPill) gpuMemPill.style.display = 'none';
             }
         } catch (e) {
             // ignore
