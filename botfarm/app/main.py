@@ -89,30 +89,31 @@ def _try_get_nvidia_gpu() -> dict | None:
         return None
 
 
-@app.get("/api/health/hw")
-def hw_health() -> JSONResponse:
-    """Hardware usage snapshot for the navbar."""
+def register_hw_routes(app: FastAPI) -> None:
+    @app.get("/api/health/hw")
+    def hw_health() -> JSONResponse:
+        """Hardware usage snapshot for the navbar."""
 
-    cpu = psutil.cpu_percent(interval=None)
-    vm = psutil.virtual_memory()
+        cpu = psutil.cpu_percent(interval=None)
+        vm = psutil.virtual_memory()
 
-    # Pick a stable path for disk usage.
-    # On Windows, this will resolve to the drive containing the current working dir.
-    disk = psutil.disk_usage(str(Path.cwd().anchor or Path.cwd()))
+        # Pick a stable path for disk usage.
+        # On Windows, this will resolve to the drive containing the current working dir.
+        disk = psutil.disk_usage(str(Path.cwd().anchor or Path.cwd()))
 
-    gpu = _try_get_nvidia_gpu()
+        gpu = _try_get_nvidia_gpu()
 
-    payload = {
-        "cpu_percent": round(float(cpu), 1),
-        "ram_percent": round(float(vm.percent), 1),
-        "ram_used_gb": round(_bytes_to_gb(vm.used), 2),
-        "ram_total_gb": round(_bytes_to_gb(vm.total), 2),
-        "disk_percent": round(float(disk.percent), 1),
-        "disk_used_gb": round(_bytes_to_gb(disk.used), 2),
-        "disk_total_gb": round(_bytes_to_gb(disk.total), 2),
-        "gpu": gpu,
-    }
-    return JSONResponse(payload)
+        payload = {
+            "cpu_percent": round(float(cpu), 1),
+            "ram_percent": round(float(vm.percent), 1),
+            "ram_used_gb": round(_bytes_to_gb(vm.used), 2),
+            "ram_total_gb": round(_bytes_to_gb(vm.total), 2),
+            "disk_percent": round(float(disk.percent), 1),
+            "disk_used_gb": round(_bytes_to_gb(disk.used), 2),
+            "disk_total_gb": round(_bytes_to_gb(disk.total), 2),
+            "gpu": gpu,
+        }
+        return JSONResponse(payload)
 
 
 def format_gp(value) -> str:
@@ -189,6 +190,8 @@ app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 templates.env.filters["gp"] = format_gp
 templates.env.filters["mask_secret"] = mask_secret
+
+register_hw_routes(app)
 
 app.state.templates = templates
 app.include_router(planner_router)
