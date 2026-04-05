@@ -84,11 +84,14 @@ async def lifespan(_: FastAPI):
             pass
     win_user = win_user or "nubonix"
 
+    # Safety: disable auto-killing OSClient by default.
+    # The watchdog can produce false positives and kill every client; keep the log tailing
+    # running, but require an explicit opt-in to kill processes.
     cfg = WatchdogConfig(
         logs_dir=Path(rf"C:\Users\{win_user}\Botting Hub\Client\Logs\Script"),
         pattern="*@*.txt",
-        kill_osclient=True,
-        terminate_sandbox=True,
+        kill_osclient=(os.environ.get("WATCHDOG_KILL_OSCLIENT", "0") == "1"),
+        terminate_sandbox=(os.environ.get("WATCHDOG_TERMINATE_SANDBOX", "0") == "1"),
     )
     watchdog_task = asyncio.create_task(watchdog_loop(cfg))
 
