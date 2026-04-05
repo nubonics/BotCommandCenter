@@ -90,6 +90,43 @@
             gap: 10px;
         }
 
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .hwbar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .pill {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.03);
+            white-space: nowrap;
+        }
+
+        .pill strong {
+            color: var(--text);
+            font-weight: 800;
+        }
+
+        .pill.bad strong { color: var(--bad); }
+        .pill.warn strong { color: var(--warn); }
+
         .nav a {
             padding: 10px 14px;
             border-radius: 12px;
@@ -347,15 +384,24 @@
                 <h1>Bot Command Center</h1>
                 <p>Items, methods, and account tracking</p>
             </div>
-            <nav class="nav">
-                <a href="/">Money Makers</a>
-                <a href="/planner_core/plans">Planner</a>
-                <a href="/items">Items</a>
-                <a href="/accounts">Accounts</a>
-                <a href="/client-wall">Client Wall</a>
-                <a href="/window-spreader">Window Spreader</a>
-                <a href="/watchdog">Watchdog</a>
-            </nav>
+            <div class="topbar-right">
+                <nav class="nav">
+                    <a href="/">Money Makers</a>
+                    <a href="/planner_core/plans">Planner</a>
+                    <a href="/items">Items</a>
+                    <a href="/accounts">Accounts</a>
+                    <a href="/client-wall">Client Wall</a>
+                    <a href="/window-spreader">Window Spreader</a>
+                    <a href="/watchdog">Watchdog</a>
+                </nav>
+
+                <div class="hwbar" id="hwbar" aria-label="Hardware usage">
+                    <span class="pill"><span>CPU</span> <strong id="hwCpu">-</strong></span>
+                    <span class="pill"><span>RAM</span> <strong id="hwRam">-</strong></span>
+                    <span class="pill"><span>Disk</span> <strong id="hwDisk">-</strong></span>
+                    <span class="pill" id="hwGpuPill" style="display:none;"><span>GPU</span> <strong id="hwGpu">-</strong></span>
+                </div>
+            </div>
         </div>
 
         {% if message %}
@@ -371,6 +417,54 @@
         if (!el) return;
         el.classList.toggle("revealed");
     }
+
+    function classifyPill(pillEl, pct) {
+        pillEl.classList.remove('warn', 'bad');
+        if (pct >= 95) pillEl.classList.add('bad');
+        else if (pct >= 85) pillEl.classList.add('warn');
+    }
+
+    async function refreshHwbar() {
+        try {
+            const resp = await fetch('/api/health/hw', { cache: 'no-store' });
+            if (!resp.ok) return;
+            const data = await resp.json();
+
+            const cpu = Number(data.cpu_percent ?? 0);
+            const ram = Number(data.ram_percent ?? 0);
+            const disk = Number(data.disk_percent ?? 0);
+
+            const cpuEl = document.getElementById('hwCpu');
+            const ramEl = document.getElementById('hwRam');
+            const diskEl = document.getElementById('hwDisk');
+
+            cpuEl.textContent = `${cpu.toFixed(0)}%`;
+            ramEl.textContent = `${ram.toFixed(0)}%`;
+            diskEl.textContent = `${disk.toFixed(0)}%`;
+
+            classifyPill(cpuEl.parentElement, cpu);
+            classifyPill(ramEl.parentElement, ram);
+            classifyPill(diskEl.parentElement, disk);
+
+            const gpu = data.gpu;
+            const gpuPill = document.getElementById('hwGpuPill');
+            const gpuEl = document.getElementById('hwGpu');
+            if (gpu && gpuPill && gpuEl) {
+                gpuPill.style.display = '';
+                const util = Number(gpu.util_percent ?? 0);
+                gpuEl.textContent = `${util.toFixed(0)}%`;
+                classifyPill(gpuPill, util);
+                gpuPill.title = `${gpu.name || 'GPU'} | mem ${gpu.mem_percent ?? '?'}% | ${gpu.temp_c ?? '?'}C`;
+            } else if (gpuPill) {
+                gpuPill.style.display = 'none';
+            }
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    refreshHwbar();
+    setInterval(refreshHwbar, 2000);
     </script>
 </body>
 </html>

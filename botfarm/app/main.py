@@ -6,6 +6,8 @@ import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import psutil
+
 from fastapi import Depends, FastAPI, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -32,6 +34,85 @@ from .services import (
 )
 
 BASE_DIR = Path(__file__).resolve().parent
+
+
+def _bytes_to_gb(n: float) -> float:
+    return float(n) / (1024.0 ** 3)
+
+
+def _try_get_nvidia_gpu() -> dict | None:
+    """Best-effort NVIDIA GPU stats.
+
+    Returns None if nvidia-smi is not available.
+    """
+    import shutil
+    import subprocess
+
+    exe = shutil.which("nvidia-smi")
+    if not exe:
+        return None
+
+    try:
+        # util.gpu, memory.used, memory.total (percent not directly provided)
+        out = subprocess.check_output(
+            [
+                exe,
+                "--query-gpu=utilization.gpu,memory.used,memory.total,temperature.gpu,name",
+                "--format=csv,noheader,nounits",
+            ],
+            stderr=subprocess.DEVNULL,
+            timeout=2,
+            text=True,
+        ).strip()
+        if not out:
+            return None
+        # Take first GPU only for now.
+        line = out.splitlines()[0]
+        parts = [p.strip() for p in line.split(",")]
+        if len(parts) < 5:
+            return None
+        util = float(parts[0])
+        mem_used = float(parts[1])
+        mem_total = float(parts[2])
+        temp = float(parts[3])
+        name = parts[4]
+        mem_pct = (mem_used / mem_total * 100.0) if mem_total > 0 else 0.0
+        return {
+            "name": name,
+            "util_percent": round(util, 1),
+            "mem_used_mb": round(mem_used, 0),
+            "mem_total_mb": round(mem_total, 0),
+            "mem_percent": round(mem_pct, 1),
+            "temp_c": round(temp, 0),
+        }
+    except Exception:
+        return None
+
+
+@app.get("/api/health/hw")
+def hw_health() -> JSONResponse:
+    """Hardware usage snapshot for the navbar."""
+
+    cpu = psutil.cpu_percent(interval=None)
+    vm = psutil.virtual_memory()
+
+    # Pick a stable path for disk usage.
+    # On Windows, this will resolve to the drive containing the current working dir.
+    disk = psutil.disk_usage(str(Path.cwd().anchor or Path.cwd()))
+
+    gpu = _try_get_nvidia_gpu()
+
+    payload = {
+        "cpu_percent": round(float(cpu), 1),
+        "ram_percent": round(float(vm.percent), 1),
+        "ram_used_gb": round(_bytes_to_gb(vm.used), 2),
+        "ram_total_gb": round(_bytes_to_gb(vm.total), 2),
+        "disk_percent": round(float(disk.percent), 1),
+        "disk_used_gb": round(_bytes_to_gb(disk.used), 2),
+        "disk_total_gb": round(_bytes_to_gb(disk.total), 2),
+        "gpu": gpu,
+    }
+    return JSONResponse(payload)
 
 
 def format_gp(value) -> str:
