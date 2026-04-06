@@ -155,6 +155,7 @@ def _compute_progress_rows(progress: AccountProgress, goal: AccountGoal) -> tupl
     cur_xp = dict(_safe_json_loads(progress.skills_xp_json, {}))
     base_xp = dict(_safe_json_loads(goal.baseline_skills_xp_json, {}))
     tgt_xp = dict(_safe_json_loads(goal.target_skills_xp_json, {}))
+    tgt_quests = list(_safe_json_loads(getattr(goal, "target_quests_json", "[]"), []))
 
     rows: list[dict] = []
     percents: list[float] = []
@@ -188,6 +189,23 @@ def _compute_progress_rows(progress: AccountProgress, goal: AccountGoal) -> tupl
         pct = max(0.0, min(1.0, (c - b) / float(denom)))
         percents.append(pct)
         rows.append({"kind": "gp", "pct": pct, "baseline_gp": b, "current_gp": c, "target_gp": t})
+
+    # Manual quest-goal progress (specific quests).
+    if tgt_quests:
+        completed = set(_safe_json_loads(progress.completed_quests_json, []))
+        target_set = {str(x) for x in tgt_quests}
+        done = len([q for q in target_set if q in completed])
+        total = len(target_set)
+        pct = (done / float(total)) if total > 0 else 0.0
+        percents.append(pct)
+        rows.append(
+            {
+                "kind": "quests",
+                "pct": max(0.0, min(1.0, pct)),
+                "done": done,
+                "total": total,
+            }
+        )
 
     overall = sum(percents) / float(len(percents)) if percents else 0.0
     return rows, overall
@@ -339,6 +357,12 @@ def progress_page(request: Request, account_id: int, session: Session = Depends(
     current_levels = {s: xp_to_level(int(skills_xp.get(s, 0))) for s in SKILLS}
 
     completed_set = set(_safe_json_loads(progress.completed_quests_json, []))
+    goal_target_quests: list[str] = []
+    if goal is not None:
+        try:
+            goal_target_quests = list(_safe_json_loads(getattr(goal, "target_quests_json", "[]"), []))
+        except Exception:
+            goal_target_quests = []
 
     # Quest/miniquest meta comes from the wiki-generated dataset.
     miniquests: set[str] = set()
@@ -424,7 +448,9 @@ def progress_page(request: Request, account_id: int, session: Session = Depends(
             "baseline_mode": baseline_mode,
             "weights_ui": weights_ui,
             "quest_rows": quest_rows,
+            "quests_rows": quest_rows,
             "completed_set": completed_set,
+            "goal_target_quests": goal_target_quests,
             "rows": rows,
             "overall": overall,
             "plan": plan,
@@ -908,6 +934,8 @@ async def set_goal(
     name: str = Form(""),
     target_gp: str = Form(""),
     target_skills_mode: str = Form("levels"),
+    # Manual quest goals: checkboxes in the goal form.
+    target_quests: list[str] = Form(default=[]),
     use_current_as_baseline: str = Form("true"),
     xp_weight: float = Form(1.0),
     gp_weight: float = Form(1.0),
@@ -960,6 +988,7 @@ async def set_goal(
         is_active=True,
         baseline_skills_xp_json=_json_dumps(baseline_xp),
         baseline_gp=baseline_gp,
+        target_quests_json=_json_dumps([str(x) for x in (target_quests or [])]),
         target_skills_xp_json=_json_dumps(target_xp),
         target_gp=parsed_target_gp,
         planner_weights_json=weights_json,

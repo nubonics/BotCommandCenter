@@ -4,6 +4,7 @@ from datetime import date, datetime
 from typing import Optional
 
 from sqlalchemy import (
+    Boolean,
     Date,
     DateTime,
     ForeignKey,
@@ -11,6 +12,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    Numeric,
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -124,6 +126,42 @@ class Account(Base):
         cascade="all, delete-orphan",
     )
 
+    expenses: Mapped[list["AccountExpense"]] = relationship(
+        back_populates="account",
+        cascade="all, delete-orphan",
+    )
+
+
+class AccountExpense(Base):
+    __tablename__ = "account_expense"
+    __table_args__ = (
+        Index("ix_account_expense_account_created", "account_id", "created_at"),
+        Index("ix_account_expense_account_active", "account_id", "is_active"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    account_id: Mapped[int] = mapped_column(ForeignKey("account.id"), index=True)
+
+    name: Mapped[str] = mapped_column(String(255))
+    # Always store as USD for now.
+    amount_usd: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
+
+    # one_time or monthly
+    kind: Mapped[str] = mapped_column(String(20), default="one_time")
+    start_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="1")
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    account: Mapped["Account"] = relationship(back_populates="expenses")
+
 
 class AccountProgress(Base):
     __tablename__ = "account_progress"
@@ -161,6 +199,10 @@ class AccountGoal(Base):
 
     baseline_skills_xp_json: Mapped[str] = mapped_column(Text, default="{}")
     baseline_gp: Mapped[int] = mapped_column(Integer, default=0)
+
+    # Optional quest targets (manual): list of quest/miniquest names.
+    # These names should match the wiki dataset names used in completed_quests_json.
+    target_quests_json: Mapped[str] = mapped_column(Text, default="[]")
 
     target_skills_xp_json: Mapped[str] = mapped_column(Text, default="{}")
     target_gp: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)

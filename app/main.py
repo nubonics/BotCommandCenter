@@ -6,6 +6,8 @@ import os
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
+import subprocess
+import threading
 
 import psutil
 
@@ -22,7 +24,7 @@ from .osclient_wall.app import mount as mount_osclient_wall
 from .watchdog import WATCHDOG_STATUS, WatchdogConfig, update_watchdog_config, watchdog_loop
 from . import models  # noqa: F401
 from .database import create_db_and_tables, get_session
-from .models import Account, Item, MoneyMaker, MoneyMakerComponent
+from .models import Account, AccountExpense, Item, MoneyMaker, MoneyMakerComponent
 from .services import (
     ensure_item_catalog,
     evaluate_money_maker,
@@ -35,6 +37,50 @@ from .services import (
 )
 
 BASE_DIR = Path(__file__).resolve().parent
+
+
+# --- Repo self-update (dev / git) ---
+_UPDATE_LOCK = threading.Lock()
+
+
+def _repo_root() -> Path:
+    # app/ lives under the repo root.
+    return BASE_DIR.parent
+
+
+def _run_git(args: list[str], timeout: float = 8.0) -> tuple[int, str, str]:
+    try:
+        proc = subprocess.run(
+            ["git", *args],
+            cwd=str(_repo_root()),
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+        return int(proc.returncode), (proc.stdout or ""), (proc.stderr or "")
+    except Exception as e:
+        return 1, "", str(e)
+
+
+def _git_head() -> str:
+    code, out, _err = _run_git(["rev-parse", "--short", "HEAD"], timeout=4.0)
+    return out.strip() if code == 0 else "-"
+
+
+def _git_branch() -> str:
+    code, out, _err = _run_git(["rev-parse", "--abbrev-ref", "HEAD"], timeout=4.0)
+    return out.strip() if code == 0 else "-"
+
+
+def _git_behind(remote_ref: str = "origin/master") -> int | None:
+    # Returns how many commits local is behind remote_ref, or None if unknown.
+    code, out, _err = _run_git(["rev-list", "--count", f"HEAD..{remote_ref}"])
+    if code != 0:
+        return None
+    try:
+        return int(out.strip() or "0")
+    except Exception:
+        return None
 
 
 def _bytes_to_gb(n: float) -> float:
@@ -221,6 +267,52 @@ def register_hw_routes(app: FastAPI) -> None:
         return JSONResponse(payload)
 
 
+def register_update_routes(app: FastAPI) -> None:
+    """Dev-only repo update helpers.
+
+    Assumes this app is run from a git checkout.
+    """
+
+    @app.get("/api/update/status")
+    def update_status() -> JSONResponse:
+        # Try a fetch, but keep it non-fatal/fast.
+        _run_git(["fetch", "origin", "master"], timeout=6.0)
+        branch = _git_branch()
+        head = _git_head()
+        behind = _git_behind("origin/master")
+        return JSONResponse(
+            {
+                "ok": True,
+                "branch": branch,
+                "head": head,
+                "remote": "origin/master",
+                "behind": behind,
+                "can_update": (behind is not None and behind > 0),
+            }
+        )
+
+    @app.post("/api/update/pull")
+    def update_pull() -> JSONResponse:
+        # Prevent concurrent pulls.
+        with _UPDATE_LOCK:
+            # Ensure we only fast-forward (safer for a local app).
+            _run_git(["fetch", "origin", "master"], timeout=10.0)
+            code, out, err = _run_git(["pull", "--ff-only", "origin", "master"], timeout=30.0)
+            head = _git_head()
+            behind = _git_behind("origin/master")
+            return JSONResponse(
+                {
+                    "ok": (code == 0),
+                    "head": head,
+                    "behind": behind,
+                    "stdout": (out or "").strip(),
+                    "stderr": (err or "").strip(),
+                    "restart_required": True,
+                    "restart_cmd": "uvicorn app.main:app --port 8025",
+                }
+            )
+
+
 def format_gp(value) -> str:
     if value is None:
         return "0"
@@ -297,6 +389,7 @@ templates.env.filters["gp"] = format_gp
 templates.env.filters["mask_secret"] = mask_secret
 
 register_hw_routes(app)
+register_update_routes(app)
 
 app.state.templates = templates
 app.include_router(planner_router)
@@ -309,7 +402,7 @@ mount_osclient_wall(app, prefix="/wall")
 # --- Control-UI compatibility ---
 # The OSClient Wall frontend (served at /wall) fetches /api/stats and
 # /api/layout at the server root. The actual implementations live in
-# botfarm.app.osclient_wall.app under a router mounted at /wall, so we add
+# app.osclient_wall.app under a router mounted at /wall, so we add
 # thin pass-through routes here to avoid 404s.
 
 
@@ -964,6 +1057,29 @@ def account_detail(request: Request, account_id: int, session: Session = Depends
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
 
+    expenses = session.scalars(
+        select(AccountExpense)
+        .where(AccountExpense.account_id == account_id)
+        .order_by(AccountExpense.created_at.desc())
+    ).all()
+
+    total_spent = 0.0
+    monthly_burn = 0.0
+    for e in expenses:
+        try:
+            amt = float(e.amount_usd or 0)
+        except Exception:
+            amt = 0.0
+        if e.kind == "monthly":
+            if e.is_active:
+                monthly_burn += amt
+        else:
+            total_spent += amt
+    total_spent_all_time = total_spent + sum(
+        (float(e.amount_usd or 0) if (e.kind == "monthly") else 0.0)
+        for e in expenses
+    )
+
     return templates.TemplateResponse(
         request,
         "account_detail.html",
@@ -971,8 +1087,90 @@ def account_detail(request: Request, account_id: int, session: Session = Depends
             "request": request,
             "account": account,
             "message": request.query_params.get("message"),
+            "expenses": expenses,
+            "total_spent_all_time": total_spent_all_time,
+            "monthly_burn": monthly_burn,
         },
     )
+
+
+@app.post("/accounts/{account_id}/expenses/new")
+def add_account_expense(
+    account_id: int,
+    name: str = Form(...),
+    amount_usd: str = Form("0"),
+    kind: str = Form("one_time"),
+    start_date: str = Form(""),
+    notes: str = Form(""),
+    session: Session = Depends(get_session),
+):
+    account = session.get(Account, account_id)
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    cleaned_name = (name or "").strip()
+    if not cleaned_name:
+        raise HTTPException(status_code=400, detail="Name is required")
+
+    try:
+        amt = round(float(str(amount_usd).strip() or "0"), 2)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid amount")
+
+    kind = (kind or "one_time").strip().lower()
+    if kind not in {"one_time", "monthly"}:
+        raise HTTPException(status_code=400, detail="Invalid kind")
+
+    parsed_date = None
+    if start_date.strip():
+        try:
+            from datetime import datetime
+
+            parsed_date = datetime.strptime(start_date.strip(), "%Y-%m-%d").date()
+        except Exception:
+            raise HTTPException(status_code=400, detail="Invalid start_date (use YYYY-MM-DD)")
+
+    row = AccountExpense(
+        account_id=account_id,
+        name=cleaned_name,
+        amount_usd=amt,
+        kind=kind,
+        start_date=parsed_date,
+        notes=notes.strip() or None,
+        is_active=True,
+    )
+    session.add(row)
+    session.commit()
+
+    return RedirectResponse(url=f"/accounts/{account_id}?message=Expense added", status_code=303)
+
+
+@app.post("/accounts/{account_id}/expenses/{expense_id}/toggle")
+def toggle_account_expense(
+    account_id: int,
+    expense_id: int,
+    session: Session = Depends(get_session),
+):
+    row = session.get(AccountExpense, expense_id)
+    if not row or row.account_id != account_id:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    row.is_active = not bool(row.is_active)
+    session.commit()
+    return RedirectResponse(url=f"/accounts/{account_id}?message=Expense updated", status_code=303)
+
+
+@app.post("/accounts/{account_id}/expenses/{expense_id}/delete")
+def delete_account_expense(
+    account_id: int,
+    expense_id: int,
+    session: Session = Depends(get_session),
+):
+    row = session.get(AccountExpense, expense_id)
+    if not row or row.account_id != account_id:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    session.delete(row)
+    session.commit()
+    return RedirectResponse(url=f"/accounts/{account_id}?message=Expense deleted", status_code=303)
 
 
 @app.get("/accounts/{account_id}/edit", response_class=HTMLResponse)
