@@ -20,7 +20,7 @@ from sqlalchemy.orm import Session
 
 from .planner import router as planner_router
 from .progression_web import router as progression_router
-from .osclient_wall.app import mount as mount_osclient_wall
+from .osclient_wall.router import include_wall as include_osclient_wall
 from .watchdog import WATCHDOG_STATUS, WatchdogConfig, update_watchdog_config, watchdog_loop
 from . import models  # noqa: F401
 from .database import create_db_and_tables, get_session
@@ -396,40 +396,39 @@ app.include_router(planner_router)
 app.include_router(progression_router)
 
 # OSClient Wall (dashboard)
-mount_osclient_wall(app, prefix="/wall")
+include_osclient_wall(app, prefix="/wall")
 
 
 # --- Control-UI compatibility ---
-# The OSClient Wall frontend (served at /wall) fetches /api/stats and
-# /api/layout at the server root. The actual implementations live in
-# app.osclient_wall.app under a router mounted at /wall, so we add
-# thin pass-through routes here to avoid 404s.
+# The OSClient Wall now runs inside the main FastAPI app under /wall.
+# Some older frontend code still expects root-level /api/* routes, so
+# we keep thin pass-through routes here for compatibility.
 
 
 @app.get("/api/stats")
 def wall_api_stats() -> JSONResponse:
-    from .osclient_wall.app import manager
+    from .osclient_wall.router import manager
 
     return JSONResponse(manager.get_stats())
 
 
 @app.get("/api/layout")
 def wall_api_layout() -> JSONResponse:
-    from .osclient_wall.app import manager
+    from .osclient_wall.router import manager
 
     return JSONResponse(manager.get_layout())
 
 
 @app.get("/api/windows")
 def wall_api_windows() -> JSONResponse:
-    from .osclient_wall.app import manager
+    from .osclient_wall.router import manager
 
     return JSONResponse(manager.get_windows())
 
 
 @app.post("/api/focus/{hwnd}")
 def wall_api_focus(hwnd: int) -> JSONResponse:
-    from .osclient_wall.app import focus_window, flash_manager, manager
+    from .osclient_wall.router import focus_window, flash_manager, manager
 
     windows = {item["hwnd"] for item in manager.get_windows()}
     if hwnd not in windows:
@@ -441,7 +440,7 @@ def wall_api_focus(hwnd: int) -> JSONResponse:
 
 @app.post("/api/settings/fps")
 def wall_api_set_fps(payload: dict) -> JSONResponse:
-    from .osclient_wall.app import manager
+    from .osclient_wall.router import manager
 
     fps = int(payload.get("fps", 5))
     applied = manager.set_target_fps(fps)
@@ -450,7 +449,7 @@ def wall_api_set_fps(payload: dict) -> JSONResponse:
 
 @app.post("/api/settings/cols")
 def wall_api_set_cols(payload: dict) -> JSONResponse:
-    from .osclient_wall.app import manager
+    from .osclient_wall.router import manager
 
     cols = int(payload.get("cols", 8))
     applied = manager.set_grid_cols(cols)

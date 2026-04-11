@@ -1,13 +1,17 @@
 # OSClient Wall
 
-A Windows-focused FastAPI app that:
+A Windows-focused wall view that is mounted inside the main BotCommandCenter FastAPI app.
+
+It:
 
 - finds visible `osclient.exe` windows
 - captures them with `mss`
 - scales them into a single live 1920x1080 mosaic
-- serves the result in a browser UI
+- serves the result at `/wall/` inside the main app
 
 ## Install
+
+Use the project root dependencies:
 
 ```bash
 pip install -r requirements.txt
@@ -15,14 +19,17 @@ pip install -r requirements.txt
 
 ## Run
 
+Start the main app from the repository root:
+
 ```bash
-python -m uvicorn app:app --host 127.0.0.1 --port 8000
+uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Then open:
+Then open either:
 
 ```text
-http://127.0.0.1:8000
+http://127.0.0.1:8000/wall/
+http://127.0.0.1:8000/client-wall
 ```
 
 ## Environment variables
