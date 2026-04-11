@@ -4,37 +4,30 @@
 <div class="page-header">
     <div>
         <h2>Accounts</h2>
-        <p>Track RuneScape and proxy credentials.</p>
+        <p>RuneScape accounts and proxy credentials</p>
     </div>
     <div class="actions">
-        <a href="/accounts/progress"><button type="button" class="secondary">Overall Progress</button></a>
-        <a href="/accounts/new"><button type="button">New Account</button></a>
+        <a href="/accounts/progress"><button type="button" class="secondary">Progress Overview</button></a>
+        <a href="/accounts/new"><button>+ New Account</button></a>
     </div>
 </div>
 
 <div class="card">
-    <h3 style="margin-top: 0;">Import From Botting Hub</h3>
+    <h3 style="margin-top:0; margin-bottom:12px;">Import from Botting Hub</h3>
     <form action="/accounts/import-botting-hub" method="post" class="inline-form">
-        <input
-            type="text"
-            name="db_path"
-            value="C:\Users\nubonix\Botting Hub\Manager\Data\database.db"
-            placeholder="Botting Hub database path"
-            style="min-width: 460px;"
-            required
-        >
-        <button type="submit">Import Botting Hub Accounts</button>
+        <input type="text" name="db_path" value="C:\Users\nubonix\Botting Hub\Manager\Data\database.db" placeholder="Botting Hub database path" style="flex:1; min-width:300px;" required>
+        <button type="submit" class="secondary">Import</button>
     </form>
 </div>
 
-<div class="card">
+<div class="card" style="padding: 14px 18px;">
     <form method="get" action="/accounts" class="inline-form">
-        <input type="text" name="q" value="{{ q }}" placeholder="Search label, email, RS email, proxy IP, RSN">
-        <button type="submit">Search</button>
+        <input type="text" name="q" value="{{ q }}" placeholder="Search label, email, proxy IP, RSN…" style="flex:1; min-width:200px;">
+        <button type="submit" class="secondary">Search</button>
     </form>
 </div>
 
-<div class="card">
+<div class="card" style="padding:0; overflow:hidden;">
     <table>
         <thead>
             <tr>
@@ -49,30 +42,24 @@
         <tbody>
             {% for account in accounts %}
             <tr>
-                <td><a href="/accounts/{{ account.id }}">{{ account.label }}</a></td>
-                <td>{{ account.rsn or "-" }}</td>
-                <td>
-                    {% if account.proxy_ip %}
-                        {{ account.proxy_ip }}{% if account.proxy_port %}:{{ account.proxy_port }}{% endif %}
-                    {% else %}
-                        -
-                    {% endif %}
+                <td><a href="/accounts/{{ account.id }}"><strong>{{ account.label }}</strong></a></td>
+                <td class="mono" style="color:var(--text-2);">{{ account.rsn or "–" }}</td>
+                <td class="mono" style="color:var(--muted); font-size:0.85em;">
+                    {% if account.proxy_ip %}{{ account.proxy_ip }}{% if account.proxy_port %}:{{ account.proxy_port }}{% endif %}{% else %}–{% endif %}
                 </td>
-                <td>{{ account.status or "-" }}</td>
-                <td>{% if account.banned %}Yes{% else %}No{% endif %}</td>
-                <td class="actions">
-                    <a href="/accounts/{{ account.id }}/edit">
-                        <button type="button" class="secondary tiny-btn">Edit</button>
-                    </a>
-                    <form action="/accounts/{{ account.id }}/delete" method="post" onsubmit="return confirm('Delete this account?');">
-                        <button type="submit" class="danger tiny-btn">Delete</button>
-                    </form>
+                <td>{{ account.status or "–" }}</td>
+                <td>{% if account.banned %}<span style="color:var(--red);">Yes</span>{% else %}No{% endif %}</td>
+                <td>
+                    <div class="actions" style="justify-content:flex-end;">
+                        <a href="/accounts/{{ account.id }}/edit"><button type="button" class="secondary tiny-btn">Edit</button></a>
+                        <form action="/accounts/{{ account.id }}/delete" method="post" style="margin:0;" onsubmit="return confirm('Delete this account?');">
+                            <button type="submit" class="danger tiny-btn">Del</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             {% else %}
-            <tr>
-                <td colspan="6">No accounts yet.</td>
-            </tr>
+            <tr><td colspan="6" class="muted" style="text-align:center; padding:40px 0;">No accounts yet.</td></tr>
             {% endfor %}
         </tbody>
     </table>

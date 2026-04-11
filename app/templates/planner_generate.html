@@ -4,91 +4,30 @@
 <div class="page-header">
     <div>
         <h2>Generate Plans</h2>
-        <p>Create randomized daily plans for one or more accounts using your planner task library.</p>
+        <p>Create randomized daily plans for selected accounts.</p>
     </div>
 </div>
 
-<div class="card">
+<div class="card" style="max-width:1000px;">
     <form action="/planner_core/generate" method="post">
         <div class="form-grid">
-            <div class="form-group form-group-full">
-                <label for="base_name">Base Plan Name</label>
-                <input type="text" name="base_name" id="base_name" value="Generated Daily Plan" required>
-            </div>
+            <div class="form-group form-group-full"><label>Base Plan Name</label><input type="text" name="base_name" value="Generated Daily Plan" required></div>
 
-            <div class="form-group">
-                <label for="account_ids">Accounts</label>
-                <select name="account_ids" id="account_ids" multiple size="10" required>
-                    {% for account in accounts %}
-                    <option value="{{ account.id }}">{{ account.label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+            <div class="form-group"><label>Accounts</label><select name="account_ids" multiple size="8" required>{% for a in accounts %}<option value="{{ a.id }}">{{ a.label }}</option>{% endfor %}</select></div>
+            <div class="form-group"><label>Allowed Tasks</label><select name="task_ids" multiple size="8" required>{% for t in tasks %}<option value="{{ t.id }}">{{ t.name }} ({% if t.members_only %}P2P{% else %}F2P{% endif %})</option>{% endfor %}</select></div>
 
-            <div class="form-group">
-                <label for="task_ids">Allowed Tasks</label>
-                <select name="task_ids" id="task_ids" multiple size="10" required>
-                    {% for task in tasks %}
-                    <option value="{{ task.id }}">{{ task.name }} ({% if task.members_only %}P2P{% else %}F2P{% endif %})</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="total_active_minutes">Total Active Minutes</label>
-                <input type="number" name="total_active_minutes" id="total_active_minutes" min="1" value="240" required>
-            </div>
-
-            <div class="form-group">
-                <label for="max_continuous_minutes">Max Continuous Minutes</label>
-                <input type="number" name="max_continuous_minutes" id="max_continuous_minutes" min="1" value="90" required>
-            </div>
-
-            <div class="form-group">
-                <label for="min_task_minutes">Min Task Minutes</label>
-                <input type="number" name="min_task_minutes" id="min_task_minutes" min="1" value="20" required>
-            </div>
-
-            <div class="form-group">
-                <label for="max_task_minutes">Max Task Minutes</label>
-                <input type="number" name="max_task_minutes" id="max_task_minutes" min="1" value="60" required>
-            </div>
-
-            <div class="form-group">
-                <label for="min_break_minutes">Min Break Minutes</label>
-                <input type="number" name="min_break_minutes" id="min_break_minutes" min="1" value="5" required>
-            </div>
-
-            <div class="form-group">
-                <label for="max_break_minutes">Max Break Minutes</label>
-                <input type="number" name="max_break_minutes" id="max_break_minutes" min="1" value="15" required>
-            </div>
-
-            <div class="form-group">
-                <label for="max_repeats_per_task">Max Repeats Per Task</label>
-                <input type="number" name="max_repeats_per_task" id="max_repeats_per_task" min="1" value="2" required>
-            </div>
-
-            <div class="form-group">
-                <label for="auto_assign">Auto Assign To Accounts</label>
-                <select name="auto_assign" id="auto_assign">
-                    <option value="true" selected>Yes</option>
-                    <option value="false">No</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="assign_date">Assignment Date</label>
-                <input type="date" name="assign_date" id="assign_date">
-            </div>
-
-            <div class="form-group">
-                <label for="start_time">Planned Start Time</label>
-                <input type="text" name="start_time" id="start_time" placeholder="Example: 08:45">
-            </div>
+            <div class="form-group"><label>Total Active Min</label><input type="number" name="total_active_minutes" min="1" value="240" required></div>
+            <div class="form-group"><label>Max Continuous Min</label><input type="number" name="max_continuous_minutes" min="1" value="90" required></div>
+            <div class="form-group"><label>Min Task Min</label><input type="number" name="min_task_minutes" min="1" value="20" required></div>
+            <div class="form-group"><label>Max Task Min</label><input type="number" name="max_task_minutes" min="1" value="60" required></div>
+            <div class="form-group"><label>Min Break Min</label><input type="number" name="min_break_minutes" min="1" value="5" required></div>
+            <div class="form-group"><label>Max Break Min</label><input type="number" name="max_break_minutes" min="1" value="15" required></div>
+            <div class="form-group"><label>Max Repeats / Task</label><input type="number" name="max_repeats_per_task" min="1" value="2" required></div>
+            <div class="form-group"><label>Auto Assign</label><select name="auto_assign"><option value="true" selected>Yes</option><option value="false">No</option></select></div>
+            <div class="form-group"><label>Assign Date</label><input type="date" name="assign_date"></div>
+            <div class="form-group"><label>Start Time</label><input type="text" name="start_time" placeholder="08:45"></div>
         </div>
-
-        <div class="actions">
+        <div class="actions" style="margin-top:20px;">
             <a href="/planner_core/plans"><button type="button" class="secondary">Cancel</button></a>
             <button type="submit">Generate Plans</button>
         </div>

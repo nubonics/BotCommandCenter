@@ -4,48 +4,39 @@
 <div class="page-header">
     <div>
         <h2>Plans</h2>
-        <p>Manual and generated daily plans.</p>
+        <p>Manual and generated daily plans</p>
     </div>
     <div class="actions">
         <a href="/planner_core/tasks"><button type="button" class="secondary">Tasks</button></a>
         <a href="/planner_core/assignments"><button type="button" class="secondary">Assignments</button></a>
-        <a href="/planner_core/generate"><button type="button" class="secondary">Generate Plans</button></a>
-        <a href="/planner_core/plans/new"><button type="button">New Plan</button></a>
+        <a href="/planner_core/generate"><button type="button" class="secondary">Generate</button></a>
+        <a href="/planner_core/plans/new"><button>+ New Plan</button></a>
     </div>
 </div>
 
-<div class="card">
+<div class="card" style="padding:0; overflow:hidden;">
     <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Generated</th>
-                <th>Target Active Min</th>
-                <th>Steps</th>
-                <th>Updated</th>
-                <th></th>
-            </tr>
-        </thead>
+        <thead><tr><th>Name</th><th>Generated</th><th style="text-align:right;">Target Min</th><th style="text-align:right;">Steps</th><th>Updated</th><th></th></tr></thead>
         <tbody>
-            {% for plan in plans %}
-            <tr>
-                <td><a href="/planner_core/plans/{{ plan.id }}">{{ plan.name }}</a></td>
-                <td>{% if plan.is_generated %}Yes{% else %}No{% endif %}</td>
-                <td>{{ plan.target_active_minutes or "-" }}</td>
-                <td>{{ plan.steps | length }}</td>
-                <td>{{ plan.updated_at }}</td>
-                <td class="actions">
+        {% for plan in plans %}
+        <tr>
+            <td><a href="/planner_core/plans/{{ plan.id }}"><strong>{{ plan.name }}</strong></a></td>
+            <td>{% if plan.is_generated %}<span style="color:var(--cyan);">Yes</span>{% else %}No{% endif %}</td>
+            <td class="mono" style="text-align:right;">{{ plan.target_active_minutes or "–" }}</td>
+            <td class="mono" style="text-align:right;">{{ plan.steps | length }}</td>
+            <td class="muted" style="font-size:0.85rem;">{{ plan.updated_at }}</td>
+            <td>
+                <div class="actions" style="justify-content:flex-end;">
                     <a href="/planner_core/plans/{{ plan.id }}/edit"><button type="button" class="secondary tiny-btn">Edit</button></a>
-                    <form action="/planner_core/plans/{{ plan.id }}/delete" method="post" onsubmit="return confirm('Delete this plan?');">
-                        <button type="submit" class="danger tiny-btn">Delete</button>
+                    <form action="/planner_core/plans/{{ plan.id }}/delete" method="post" style="margin:0;" onsubmit="return confirm('Delete?');">
+                        <button type="submit" class="danger tiny-btn">Del</button>
                     </form>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="6">No plans yet.</td>
-            </tr>
-            {% endfor %}
+                </div>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="muted" style="text-align:center; padding:40px 0;">No plans yet.</td></tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>

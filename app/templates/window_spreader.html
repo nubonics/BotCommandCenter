@@ -1,189 +1,118 @@
 {% extends "base.html" %}
-
 {% block content %}
+
 <div class="page-header">
-  <div>
-    <h2>Window Spreader</h2>
-    <p>Automatically assigns new OSRS client windows to the next available slot.</p>
-  </div>
+    <div>
+        <h2>Window Spreader</h2>
+        <p>Auto-assigns OSRS client windows to monitor slots. Drag windows onto slots to pin.</p>
+    </div>
 </div>
 
 <div class="grid-2">
-  <div class="card">
-    <h3 style="margin-top:0;">Controls</h3>
+    <div class="card">
+        <h3 style="margin-top:0;">Controls</h3>
 
-    <div class="form-group">
-      <label>Auto-assign (polls every 5 seconds)</label>
-      <div class="inline-form">
-        <button id="startBtn" type="button">Start</button>
-        <button id="stopBtn" type="button" class="secondary">Stop</button>
-        <span id="status" class="muted">Status: unknown</span>
-      </div>
-      <p class="muted" style="margin:6px 0 0 0;">Vacated slots have a 2-minute cooldown before they can be reused.</p>
+        <div class="form-group" style="margin-bottom:16px;">
+            <label>Auto-assign (polls every 5s)</label>
+            <div class="actions" style="margin-top:6px;">
+                <button id="startBtn" type="button">Start</button>
+                <button id="stopBtn" type="button" class="secondary">Stop</button>
+                <span id="status" class="muted" style="font-size:0.85rem;">Status: unknown</span>
+            </div>
+            <p class="muted" style="margin:6px 0 0; font-size:0.85rem;">Vacated slots have a 2-minute cooldown.</p>
+        </div>
+
+        <div class="form-group" style="margin-bottom:16px;">
+            <label>Manual</label>
+            <div class="actions">
+                <button id="tickBtn" type="button" class="secondary">Run one tick</button>
+                <button id="refreshBtn" type="button" class="secondary">Refresh</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Last action</label>
+            <pre id="lastAction" class="mono" style="white-space:pre-wrap; margin:0; padding:12px; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-input); min-height:60px; font-size:0.85rem; color:var(--text-2);"></pre>
+        </div>
     </div>
 
-    <div class="form-group">
-      <label>One-shot</label>
-      <div class="inline-form">
-        <button id="tickBtn" type="button" class="secondary">Run one assignment tick</button>
-        <button id="refreshBtn" type="button" class="secondary">Refresh status</button>
-      </div>
+    <div class="card">
+        <h3 style="margin-top:0;">Slots &amp; Windows</h3>
+        <div class="grid-2" style="gap:12px;">
+            <div>
+                <div class="muted" style="font-weight:800; margin-bottom:8px; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Detected Windows</div>
+                <div id="windows" class="mono" style="font-size:0.85rem;"></div>
+            </div>
+            <div>
+                <div class="muted" style="font-weight:800; margin-bottom:8px; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Slots</div>
+                <div id="slots" class="mono" style="font-size:0.85rem;"></div>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-      <label>Last action</label>
-      <pre id="lastAction" class="mono" style="white-space: pre-wrap; margin:0; padding:12px; border:1px solid var(--border); border-radius:12px; background: rgba(255,255,255,0.03); min-height: 60px;"></pre>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3 style="margin-top:0;">Slots</h3>
-    <p class="muted" style="margin-top:0;">Drag windows onto slots to pin them. Auto-assign runs first; pinning overrides.</p>
-    <div class="grid-2" style="gap:12px;">
-      <div>
-        <div class="muted" style="font-weight:800; margin-bottom:8px;">Detected windows</div>
-        <div id="windows" class="mono" style="font-size: 0.9rem;"></div>
-      </div>
-      <div>
-        <div class="muted" style="font-weight:800; margin-bottom:8px;">Slots</div>
-        <div id="slots" class="mono" style="font-size: 0.9rem;"></div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <script>
-async function apiGet(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(await r.text());
-  return await r.json();
-}
-async function apiPost(url) {
-  const r = await fetch(url, { method: 'POST' });
-  if (!r.ok) throw new Error(await r.text());
-  return await r.json();
-}
-
-async function apiPostJson(url, body) {
-  const r = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return await r.json();
-}
-
-async function apiGetOptional(url) {
-  const r = await fetch(url);
-  if (!r.ok) return null;
-  return await r.json();
-}
+async function apiGet(url) { const r = await fetch(url); if (!r.ok) throw new Error(await r.text()); return r.json(); }
+async function apiPost(url) { const r = await fetch(url, { method: 'POST' }); if (!r.ok) throw new Error(await r.text()); return r.json(); }
+async function apiPostJson(url, body) { const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); if (!r.ok) throw new Error(await r.text()); return r.json(); }
 
 function renderSlots(data) {
-  const root = document.getElementById('slots');
-  if (!root) return;
-  const slots = data.slots || [];
-  if (!slots.length) {
-    root.textContent = 'No slots configured.';
-    return;
-  }
-
-  root.innerHTML = '';
-  for (const s of slots) {
-    const div = document.createElement('div');
-    div.style.padding = '10px 10px';
-    div.style.border = '1px solid var(--border)';
-    div.style.borderRadius = '12px';
-    div.style.background = 'rgba(255,255,255,0.03)';
-    div.style.marginBottom = '8px';
-
-    const occ = s.occupied ? `hwnd=${s.hwnd}` : 'empty';
-    const pin = s.pinned ? ' pinned' : '';
-    const cd = s.cooldown_remaining_s > 0 ? ` cooldown=${s.cooldown_remaining_s}s` : '';
-    div.textContent = `#${s.slot_index}: ${occ}${pin} @ (${s.x},${s.y})${cd}`;
-
-    div.dataset.slotIndex = String(s.slot_index);
-    div.addEventListener('dragover', (e) => { e.preventDefault(); });
-    div.addEventListener('drop', async (e) => {
-      e.preventDefault();
-      const hwnd = e.dataTransfer?.getData('text/plain');
-      if (!hwnd) return;
-      await apiPostJson('/api/window-spreader/pin', { slot_index: Number(div.dataset.slotIndex), hwnd: Number(hwnd) });
-      await refresh();
-    });
-
-    // Click to unpin if pinned
-    div.addEventListener('click', async () => {
-      if (!s.pinned) return;
-      await apiPostJson('/api/window-spreader/pin', { slot_index: Number(div.dataset.slotIndex), hwnd: null });
-      await refresh();
-    });
-
-    root.appendChild(div);
-  }
+    const root = document.getElementById('slots');
+    if (!root) return;
+    const slots = data.slots || [];
+    if (!slots.length) { root.textContent = 'No slots configured.'; return; }
+    root.innerHTML = '';
+    for (const s of slots) {
+        const div = document.createElement('div');
+        div.style.cssText = 'padding:8px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-input); margin-bottom:6px; cursor:pointer; transition:background 0.15s;';
+        const occ = s.occupied ? `hwnd=${s.hwnd}` : 'empty';
+        const pin = s.pinned ? ' 📌' : '';
+        const cd = s.cooldown_remaining_s > 0 ? ` ⏳${s.cooldown_remaining_s}s` : '';
+        div.textContent = `#${s.slot_index}: ${occ}${pin} @ (${s.x},${s.y})${cd}`;
+        div.dataset.slotIndex = String(s.slot_index);
+        div.addEventListener('dragover', e => e.preventDefault());
+        div.addEventListener('drop', async e => { e.preventDefault(); const hwnd = e.dataTransfer?.getData('text/plain'); if (hwnd) { await apiPostJson('/api/window-spreader/pin', { slot_index: Number(div.dataset.slotIndex), hwnd: Number(hwnd) }); await refresh(); } });
+        div.addEventListener('click', async () => { if (s.pinned) { await apiPostJson('/api/window-spreader/pin', { slot_index: Number(div.dataset.slotIndex), hwnd: null }); await refresh(); } });
+        root.appendChild(div);
+    }
 }
 
 function renderWindows(winData) {
-  const root = document.getElementById('windows');
-  if (!root) return;
-  const windows = (winData && (winData.windows || winData)) || [];
-  if (!windows.length) {
-    root.textContent = 'No windows.';
-    return;
-  }
-  root.innerHTML = '';
-  for (const w of windows) {
-    const div = document.createElement('div');
-    div.style.padding = '10px 10px';
-    div.style.border = '1px solid var(--border)';
-    div.style.borderRadius = '12px';
-    div.style.background = 'rgba(255,255,255,0.03)';
-    div.style.marginBottom = '8px';
-    div.style.cursor = 'grab';
-    div.draggable = true;
-    div.textContent = `hwnd=${w.hwnd} | ${w.title || ''} | (${w.left},${w.top}) ${w.width}x${w.height}`;
-    div.addEventListener('dragstart', (e) => {
-      e.dataTransfer?.setData('text/plain', String(w.hwnd));
-    });
-    root.appendChild(div);
-  }
+    const root = document.getElementById('windows');
+    if (!root) return;
+    const windows = (winData?.windows || winData) || [];
+    if (!windows.length) { root.textContent = 'No windows.'; return; }
+    root.innerHTML = '';
+    for (const w of windows) {
+        const div = document.createElement('div');
+        div.style.cssText = 'padding:8px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-input); margin-bottom:6px; cursor:grab;';
+        div.draggable = true;
+        div.textContent = `hwnd=${w.hwnd} | ${w.title || ''} | (${w.left},${w.top}) ${w.width}×${w.height}`;
+        div.addEventListener('dragstart', e => e.dataTransfer?.setData('text/plain', String(w.hwnd)));
+        root.appendChild(div);
+    }
 }
 
 async function refresh() {
-  const statusEl = document.getElementById('status');
-  const lastEl = document.getElementById('lastAction');
-  try {
-    const data = await apiGet('/api/window-spreader/status');
-    const winData = await apiGetOptional('/api/window-spreader/windows');
-    statusEl.textContent = `Status: ${data.running ? 'running' : 'stopped'}`;
-    lastEl.textContent = data.last_action || '';
-    renderSlots(data);
-    if (winData) renderWindows(winData);
-  } catch (e) {
-    statusEl.textContent = 'Status: error';
-    if (lastEl) lastEl.textContent = String(e);
-  }
+    const statusEl = document.getElementById('status');
+    const lastEl = document.getElementById('lastAction');
+    try {
+        const data = await apiGet('/api/window-spreader/status');
+        let winData = null; try { winData = await apiGet('/api/window-spreader/windows'); } catch(e){}
+        statusEl.textContent = `Status: ${data.running ? 'running' : 'stopped'}`;
+        lastEl.textContent = data.last_action || '';
+        renderSlots(data);
+        if (winData) renderWindows(winData);
+    } catch (e) { statusEl.textContent = 'Status: error'; if (lastEl) lastEl.textContent = String(e); }
 }
 
-document.getElementById('startBtn')?.addEventListener('click', async () => {
-  await apiPost('/api/window-spreader/start');
-  await refresh();
-});
-
-document.getElementById('stopBtn')?.addEventListener('click', async () => {
-  await apiPost('/api/window-spreader/stop');
-  await refresh();
-});
-
-document.getElementById('tickBtn')?.addEventListener('click', async () => {
-  await apiPost('/api/window-spreader/tick');
-  await refresh();
-});
-
+document.getElementById('startBtn')?.addEventListener('click', async () => { await apiPost('/api/window-spreader/start'); await refresh(); });
+document.getElementById('stopBtn')?.addEventListener('click', async () => { await apiPost('/api/window-spreader/stop'); await refresh(); });
+document.getElementById('tickBtn')?.addEventListener('click', async () => { await apiPost('/api/window-spreader/tick'); await refresh(); });
 document.getElementById('refreshBtn')?.addEventListener('click', refresh);
 
 refresh();
 setInterval(refresh, 5000);
 </script>
+
 {% endblock %}

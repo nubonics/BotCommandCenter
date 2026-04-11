@@ -4,45 +4,34 @@
 <div class="page-header">
     <div>
         <h2>Planner Tasks</h2>
-        <p>Reusable tasks the planner can use in manual and generated plans.</p>
+        <p>Reusable tasks for manual and generated plans</p>
     </div>
-    <div class="actions">
-        <a href="/planner_core/tasks/new"><button type="button">New Planner Task</button></a>
-    </div>
+    <a href="/planner_core/tasks/new"><button>+ New Task</button></a>
 </div>
 
-<div class="card">
+<div class="card" style="padding:0; overflow:hidden;">
     <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Enabled</th>
-                <th>Notes</th>
-                <th></th>
-            </tr>
-        </thead>
+        <thead><tr><th>Name</th><th>Category</th><th>Type</th><th>Enabled</th><th>Notes</th><th></th></tr></thead>
         <tbody>
-            {% for task in tasks %}
-            <tr>
-                <td>{{ task.name }}</td>
-                <td>{{ task.category }}</td>
-                <td>{% if task.members_only %}P2P{% else %}F2P{% endif %}</td>
-                <td>{% if task.enabled %}Yes{% else %}No{% endif %}</td>
-                <td>{{ task.notes or "-" }}</td>
-                <td class="actions">
+        {% for task in tasks %}
+        <tr>
+            <td><strong>{{ task.name }}</strong></td>
+            <td><span class="pill">{{ task.category }}</span></td>
+            <td><span class="pill">{% if task.members_only %}P2P{% else %}F2P{% endif %}</span></td>
+            <td>{% if task.enabled %}<span style="color:var(--green);">Yes</span>{% else %}<span class="muted">No</span>{% endif %}</td>
+            <td class="muted" style="font-size:0.9rem;">{{ task.notes or "–" }}</td>
+            <td>
+                <div class="actions" style="justify-content:flex-end;">
                     <a href="/planner_core/tasks/{{ task.id }}/edit"><button type="button" class="secondary tiny-btn">Edit</button></a>
-                    <form action="/planner_core/tasks/{{ task.id }}/delete" method="post" onsubmit="return confirm('Delete this planner task?');">
-                        <button type="submit" class="danger tiny-btn">Delete</button>
+                    <form action="/planner_core/tasks/{{ task.id }}/delete" method="post" style="margin:0;" onsubmit="return confirm('Delete?');">
+                        <button type="submit" class="danger tiny-btn">Del</button>
                     </form>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="6">No planner tasks yet.</td>
-            </tr>
-            {% endfor %}
+                </div>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="muted" style="text-align:center; padding:40px 0;">No tasks yet.</td></tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>

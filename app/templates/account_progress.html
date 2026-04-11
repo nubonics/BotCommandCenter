@@ -4,88 +4,67 @@
 <div class="page-header">
     <div>
         <h2>Progress · {{ account.label }}</h2>
-        <p class="muted" style="margin: 0;">RSN: <strong>{{ account.rsn or "-" }}</strong></p>
-        <p>Goals, current state, and plan preview.</p>
-        {% if active_assignment %}
-            <p class="muted" style="margin: 6px 0 0 0;">
-                Active scheduled plan:
-                <a href="/planner_core/plans/{{ active_assignment.plan_id }}">Plan #{{ active_assignment.plan_id }}</a>
-            </p>
-        {% endif %}
+        <p>RSN: <strong class="mono">{{ account.rsn or "–" }}</strong>
+        {% if active_assignment %} · Active plan: <a href="/planner_core/plans/{{ active_assignment.plan_id }}">Plan #{{ active_assignment.plan_id }}</a>{% endif %}
+        </p>
     </div>
     <div class="actions">
-        <a href="/accounts/{{ account.id }}">
-            <button type="button" class="secondary">Back</button>
-        </a>
+        <a href="/accounts/{{ account.id }}"><button type="button" class="secondary">Back</button></a>
         {% if goal and plan and plan.steps %}
-        <a href="/accounts/{{ account.id }}/progress/simulate">
-            <button type="button" class="secondary">Simulate Plan</button>
-        </a>
-        <form action="/accounts/{{ account.id }}/progress/push-plan" method="post"
-              onsubmit="return confirm('Create a scheduled plan from the current progression plan and assign it?');">
-            <button type="submit">Push Plan to Planner</button>
+        <a href="/accounts/{{ account.id }}/progress/simulate"><button type="button" class="secondary">Simulate</button></a>
+        <form action="/accounts/{{ account.id }}/progress/push-plan" method="post" style="margin:0;" onsubmit="return confirm('Push plan to planner?');">
+            <button type="submit">Push Plan</button>
         </form>
         {% endif %}
     </div>
 </div>
 
 {% if goal %}
-<div class="card">
-    <div class="grid-2" style="align-items: center;">
-        <div>
-            <h3 style="margin-top: 0;">Active goal{% if goal.name %}: {{ goal.name }}{% endif %}</h3>
-            <p class="muted" style="margin: 0;">
-                Created {{ goal.created_at }} · Baseline GP {{ goal.baseline_gp | gp }}
-                {% if goal.target_gp is not none %}· Target GP {{ goal.target_gp | gp }}{% endif %}
-            </p>
-        </div>
-        <div>
-            <h3 style="margin-top: 0;">Overall completion</h3>
-            <div style="border:1px solid var(--border); border-radius: 12px; overflow:hidden; background: rgba(255,255,255,0.03);">
-                <div style="width: {{ (overall * 100) | round(0) }}%; padding: 10px 12px; background: rgba(124,140,255,0.25);">
-                    <strong>{{ (overall * 100) | round(0) }}%</strong>
-                </div>
+<!-- Overall + breakdown -->
+<div class="grid-2" style="margin-bottom:20px;">
+    <div class="card">
+        <h3 style="margin-top:0;">Active Goal{% if goal.name %}: {{ goal.name }}{% endif %}</h3>
+        <p class="muted" style="margin:0; font-size:0.85rem;">
+            Created {{ goal.created_at }} · Baseline GP {{ goal.baseline_gp | gp }}
+            {% if goal.target_gp is not none %}· Target GP {{ goal.target_gp | gp }}{% endif %}
+        </p>
+    </div>
+    <div class="card">
+        <h3 style="margin-top:0;">Overall</h3>
+        <div class="progress-track">
+            <div class="progress-fill progress-fill-gold" style="width: {{ (overall * 100) | round(0) }}%;">
+                {{ (overall * 100) | round(0) }}%
             </div>
         </div>
     </div>
 </div>
 
-<div class="card">
-    <h3 style="margin-top: 0;">Goal breakdown</h3>
+<div class="card" style="padding:0; overflow:hidden;">
+    <div style="padding:16px 20px; border-bottom:1px solid var(--border);"><h3 style="margin:0;">Goal Breakdown</h3></div>
     <table>
-        <thead>
-        <tr>
-            <th>Goal</th>
-            <th>Baseline</th>
-            <th>Current</th>
-            <th>Target</th>
-            <th>Completion</th>
-        </tr>
-        </thead>
+        <thead><tr><th>Goal</th><th>Baseline</th><th>Current</th><th>Target</th><th style="min-width:180px;">Completion</th></tr></thead>
         <tbody>
         {% for row in rows %}
         <tr>
             {% if row.kind == "skill" %}
                 <td><strong>{{ row.skill }}</strong></td>
-                <td>Lvl {{ row.baseline_level }} ({{ row.baseline_xp }})</td>
-                <td>Lvl {{ row.current_level }} ({{ row.current_xp }})</td>
-                <td>Lvl {{ row.target_level }} ({{ row.target_xp }})</td>
+                <td class="mono muted">Lv{{ row.baseline_level }}</td>
+                <td class="mono">Lv{{ row.current_level }}</td>
+                <td class="mono">Lv{{ row.target_level }}</td>
             {% elif row.kind == "quests" %}
                 <td><strong>Quests</strong></td>
-                <td>-</td>
-                <td>{{ row.done }} / {{ row.total }}</td>
-                <td>{{ row.total }}</td>
+                <td>–</td>
+                <td class="mono">{{ row.done }} / {{ row.total }}</td>
+                <td class="mono">{{ row.total }}</td>
             {% else %}
                 <td><strong>GP</strong></td>
-                <td>{{ row.baseline_gp | gp }}</td>
-                <td>{{ row.current_gp | gp }}</td>
-                <td>{{ row.target_gp | gp }}</td>
+                <td class="mono muted">{{ row.baseline_gp | gp }}</td>
+                <td class="mono">{{ row.current_gp | gp }}</td>
+                <td class="mono">{{ row.target_gp | gp }}</td>
             {% endif %}
-            <td style="min-width: 220px;">
-                <div style="border:1px solid var(--border); border-radius: 12px; overflow:hidden; background: rgba(255,255,255,0.03);">
-                    <div style="width: {{ (row.pct * 100) | round(0) }}%; padding: 8px 10px; background: rgba(88,214,141,0.18);">
-                        {{ (row.pct * 100) | round(0) }}%
-                    </div>
+            <td>
+                <div class="progress-track">
+                    <div class="progress-fill progress-fill-green" style="width:{{ (row.pct * 100) | round(0) }}%;">{{ (row.pct * 100) | round(0) }}%</div>
                 </div>
             </td>
         </tr>
@@ -94,325 +73,242 @@
     </table>
 </div>
 
+<!-- Plan preview -->
 {% if goal and not show_plan %}
 <div class="card">
-    <h3 style="margin-top: 0;">Plan preview</h3>
-    <p class="muted">Plan preview can be slow; generate it on demand.</p>
-    <a href="/accounts/{{ account.id }}/progress?plan=1"><button type="button" class="secondary">Generate plan preview</button></a>
+    <h3 style="margin-top:0;">Plan Preview</h3>
+    <p class="muted">Generate on demand (can be slow for large goals).</p>
+    <a href="/accounts/{{ account.id }}/progress?plan=1"><button type="button" class="secondary">Generate Preview</button></a>
 </div>
 {% elif plan %}
-<div class="card">
-    <h3 style="margin-top: 0;">Plan preview</h3>
-    <p class="muted">
+<div class="card" style="padding:0; overflow:hidden;">
+    <div style="padding:16px 20px; border-bottom:1px solid var(--border);">
+        <h3 style="margin:0; display:inline;">Plan Preview</h3>
         {% if plan.success %}
-            Estimated total time: <strong>{{ plan_hours | round(2) }} hours</strong>
+            <span class="pill" style="margin-left:10px;"><strong>{{ plan_hours | round(1) }}h</strong> total</span>
         {% else %}
-            Planner could not complete the goal: <strong>{{ plan.reason }}</strong>
+            <span style="color:var(--red); margin-left:10px; font-size:0.9rem;">{{ plan.reason }}</span>
         {% endif %}
-    </p>
+    </div>
 
     {% if not plan.success and plan_blockers %}
-        <div style="margin-top: 10px;">
-            <p class="muted" style="margin: 0 0 8px 0;"><strong>Common blockers</strong> (across activities):</p>
-            <ul class="muted" style="margin: 0; padding-left: 18px;">
-                {% for b in plan_blockers %}
-                    <li>{{ b.reason }} <span class="mono">(x{{ b.count }})</span></li>
-                {% endfor %}
-            </ul>
-        </div>
+    <div style="padding:14px 20px; border-bottom:1px solid var(--border); background:var(--red-soft);">
+        <strong style="font-size:0.85rem;">Common blockers:</strong>
+        {% for b in plan_blockers %}
+        <span class="pill" style="margin:4px 2px;">{{ b.reason }} <strong>×{{ b.count }}</strong></span>
+        {% endfor %}
+    </div>
     {% endif %}
 
     {% if plan.steps %}
     <table>
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>Activity</th>
-            <th>Category</th>
-            <th>Hours</th>
-        </tr>
-        </thead>
+        <thead><tr><th>#</th><th>Activity</th><th>Category</th><th style="text-align:right;">Hours</th></tr></thead>
         <tbody>
         {% for step in plan.steps %}
         <tr>
-            <td>{{ loop.index }}</td>
+            <td class="mono muted">{{ loop.index }}</td>
             <td>
                 <strong>{{ step.activity_name }}</strong>
                 {% set dbg = plan_step_debug[loop.index0] if plan_step_debug and (loop.index0 < (plan_step_debug|length)) else none %}
                 {% if dbg and dbg.score %}
-                    <div class="muted mono" style="margin-top:6px; font-size:0.85rem; line-height:1.25;">
-                        score/hr={{ dbg.score.score_per_hour | round(2) }} · dur={{ dbg.score.duration | round(2) }}h
-                        · xp={{ dbg.score.xp_value | round(0) }}
-                        · gp={{ dbg.score.gp_value | gp }}
-                        · unlock_xp={{ dbg.score.unlock_xp | round(0) }}
-                        · unlock_gp={{ dbg.score.unlock_gp | gp }}
-                        {% set direct = (dbg.score.xp_value + dbg.score.gp_value) %}
-                        {% set unlock = (dbg.score.unlock_xp + dbg.score.unlock_gp) %}
-                        {% if unlock > 0 and unlock > direct %}
-                            <div style="margin-top:4px;">
-                                why: unlock benefit dominates (this step is mainly to unlock better future XP/GP)
-                            </div>
-                        {% endif %}
-                    </div>
+                <div class="mono muted" style="margin-top:4px; font-size:0.8rem; line-height:1.3;">
+                    score={{ dbg.score.score_per_hour | round(2) }}/hr · xp={{ dbg.score.xp_value | round(0) }} · gp={{ dbg.score.gp_value | gp }} · unlock_xp={{ dbg.score.unlock_xp | round(0) }}
+                </div>
                 {% endif %}
             </td>
-            <td>{{ step.category }}</td>
-            <td>{{ step.hours | round(2) }}</td>
+            <td><span class="pill">{{ step.category }}</span></td>
+            <td class="mono" style="text-align:right;">{{ step.hours | round(2) }}</td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
     {% else %}
-        <p>No steps were produced.</p>
+    <p class="muted" style="padding:24px 20px; margin:0;">No steps produced.</p>
     {% endif %}
 </div>
 {% endif %}
+
 {% else %}
 <div class="card">
-    <h3 style="margin-top: 0;">No goal set</h3>
-    <p class="muted">Set a goal below to see progress and a plan preview.</p>
+    <h3 style="margin-top:0;">No Goal Set</h3>
+    <p class="muted">Set a goal below to see progress tracking and a plan preview.</p>
 </div>
 {% endif %}
 
+<!-- State + Goal forms -->
 <div class="grid-2">
+    <!-- Update state -->
     <div class="card">
-        <h3 style="margin-top: 0;">Update current state</h3>
+        <h3 style="margin-top:0;">Update Current State</h3>
         <form action="/accounts/{{ account.id }}/progress/state" method="post">
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:14px;">
                 <label>GP</label>
                 <input type="number" name="gp" value="{{ progress.gp or 0 }}">
             </div>
 
-            <div class="form-group">
-                <label>Import skills from OSRS highscores (overwrites skills)</label>
-                <div class="inline-form">
-                    <button type="submit" formaction="/accounts/{{ account.id }}/progress/import-hiscores" formmethod="post" class="secondary">Fetch</button>
-                </div>
-                <p class="muted" style="margin:6px 0 0 0;">Uses the official lite endpoint; keeps GP/unlocks/quests unchanged.</p>
+            <div class="actions" style="margin-bottom:14px; gap:8px;">
+                <button type="submit" formaction="/accounts/{{ account.id }}/progress/import-hiscores" formmethod="post" class="secondary tiny-btn">Fetch Hiscores</button>
+                <button type="submit" formaction="/accounts/progress/import-hiscores" formmethod="post" class="secondary tiny-btn">Bulk Fetch All</button>
             </div>
 
-            <div class="form-group">
-                <label>Update all accounts via OSRS highscores (uses each account's RSN)</label>
-                <div class="inline-form">
-                    <button type="submit" formaction="/accounts/progress/import-hiscores" formmethod="post" class="secondary">Run bulk update</button>
-                    <span class="muted">(togglable)</span>
-                </div>
-            </div>
-
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:14px;">
                 <label>Skills input mode</label>
-                <select name="skills_mode">
-                    <option value="levels">Levels (converted to XP)</option>
-                    <option value="xp">XP (raw)</option>
-                </select>
+                <select name="skills_mode"><option value="levels">Levels</option><option value="xp">Raw XP</option></select>
             </div>
 
-            <div class="form-group">
-                <label>Skills</label>
-                <div style="display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;">
-                    {% for s in skills %}
-                        <div>
-                            <label class="muted" style="font-weight:700; font-size:0.85rem;">{{ s }}</label>
-                            <input type="number" name="skill_{{ s }}" value="{{ current_levels.get(s, 1) }}" min="1" max="99">
-                        </div>
-                    {% endfor %}
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-bottom:14px;">
+                {% for s in skills %}
+                <div>
+                    <label class="muted" style="font-size:0.75rem; font-weight:700;">{{ s }}</label>
+                    <input type="number" name="skill_{{ s }}" value="{{ current_levels.get(s, 1) }}" min="1" max="99" style="padding:8px 10px;">
                 </div>
-                <p class="muted" style="margin:8px 0 0 0;">Tip: keep input mode = Levels unless you want raw XP.</p>
+                {% endfor %}
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:14px;">
                 <label>Unlocks JSON</label>
-                <textarea name="unlocks_json" rows="3">{{ progress.unlocks_json or "[]" }}</textarea>
+                <textarea name="unlocks_json" rows="2" style="min-height:60px;">{{ progress.unlocks_json or "[]" }}</textarea>
             </div>
 
-            <div class="form-group">
-                <label>Completed quests</label>
-                <div class="inline-form">
-                    <input type="text" id="questFilter" placeholder="Filter quests..." oninput="filterQuests()">
-                    <select id="questMembership" onchange="filterQuests()" style="max-width: 180px;">
-                        <option value="all" selected>All</option>
-                        <option value="f2p">F2P</option>
-                        <option value="p2p">P2P</option>
+            <div class="form-group" style="margin-bottom:14px;">
+                <label>Completed Quests</label>
+                <div class="inline-form" style="margin-bottom:8px;">
+                    <input type="text" id="questFilter" placeholder="Filter…" style="flex:1;" oninput="filterQuests()">
+                    <select id="questMembership" onchange="filterQuests()" style="max-width:120px;">
+                        <option value="all">All</option><option value="f2p">F2P</option><option value="p2p">P2P</option>
                     </select>
                 </div>
-                <div class="actions" style="margin-top:10px;">
+                <div class="actions" style="margin-bottom:8px; gap:6px;">
                     <button type="button" class="secondary tiny-btn" onclick="setVisibleQuests(true)">Select visible</button>
-                    <button type="button" class="secondary tiny-btn" onclick="setVisibleQuests(false)">Select none</button>
-                    <label class="muted" style="display:flex; align-items:center; gap:8px;">
-                        <input type="checkbox" id="onlyUnmet" onchange="filterQuests()">
-                        Show only unmet prereqs
+                    <button type="button" class="secondary tiny-btn" onclick="setVisibleQuests(false)">Deselect</button>
+                    <label class="muted" style="display:flex; align-items:center; gap:6px; font-size:0.85rem;">
+                        <input type="checkbox" id="onlyUnmet" onchange="filterQuests()"> Unmet only
                     </label>
                 </div>
 
-                <div id="questChecklist" class="grid-2" style="margin-top:10px;">
-                    <div style="border:1px solid var(--border); border-radius:12px; padding:10px; background: rgba(255,255,255,0.02); max-height:260px; overflow:auto;">
-                        <div class="muted" style="font-weight:800; margin: 4px 0 8px 0;">Quests</div>
+                <div id="questChecklist" class="grid-2" style="gap:12px;">
+                    <div style="border:1px solid var(--border); border-radius:var(--radius); padding:10px; max-height:240px; overflow:auto; background:var(--bg-input);">
+                        <div class="muted" style="font-weight:800; margin:0 0 6px; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Quests</div>
                         {% for row in quest_rows if not row.is_miniquest %}
-                            {% set q = row.name %}
-                            {% set unmet = row.unmet %}
-                            {% set qid = 'cq_q_' ~ loop.index %}
-                            <div class="quest-row" data-kind="quest" data-membership="{{ row.membership }}" data-qp="{{ row.qp }}" data-unmet="{{ 1 if unmet and (unmet|length) > 0 else 0 }}" title="{% if unmet and (unmet|length) > 0 %}unmet: {{ unmet|join(', ') }}{% endif %}" style="display:flex; gap:10px; align-items:flex-start; padding:6px 4px; border-bottom:1px solid rgba(255,255,255,0.05);">
-                                <input id="{{ qid }}" type="checkbox" name="completed_quests" value="{{ q }}" style="margin-top:4px; flex:0 0 auto; width:18px; height:18px;" onchange="updateQuestPoints()" {% if q in completed_set %}checked{% endif %}>
-                                <label for="{{ qid }}" class="quest-name" style="cursor:pointer; flex:1; min-width:0; line-height:1.2; padding-top:1px; overflow-wrap:anywhere;">{{ q }}</label>
-                            </div>
+                        {% set q = row.name %}{% set qid = 'cq_q_' ~ loop.index %}
+                        <div class="quest-row" data-kind="quest" data-membership="{{ row.membership }}" data-qp="{{ row.qp }}" data-unmet="{{ 1 if row.unmet and (row.unmet|length) > 0 else 0 }}" style="display:flex; gap:8px; align-items:flex-start; padding:4px 2px; border-bottom:1px solid rgba(255,255,255,0.04);">
+                            <input id="{{ qid }}" type="checkbox" name="completed_quests" value="{{ q }}" style="margin-top:3px; flex:0 0 auto;" onchange="updateQuestPoints()" {% if q in completed_set %}checked{% endif %}>
+                            <label for="{{ qid }}" class="quest-name" style="cursor:pointer; font-size:0.85rem; line-height:1.3;">{{ q }}</label>
+                        </div>
                         {% endfor %}
                     </div>
-
-                    <div style="border:1px solid var(--border); border-radius:12px; padding:10px; background: rgba(255,255,255,0.02); max-height:260px; overflow:auto;">
-                        <div class="muted" style="font-weight:800; margin: 4px 0 8px 0;">Miniquests</div>
+                    <div style="border:1px solid var(--border); border-radius:var(--radius); padding:10px; max-height:240px; overflow:auto; background:var(--bg-input);">
+                        <div class="muted" style="font-weight:800; margin:0 0 6px; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Miniquests</div>
                         {% for row in quest_rows if row.is_miniquest %}
-                            {% set q = row.name %}
-                            {% set unmet = row.unmet %}
-                            {% set qid = 'cq_mq_' ~ loop.index %}
-                            <div class="quest-row" data-kind="miniquest" data-membership="{{ row.membership }}" data-qp="{{ row.qp }}" data-unmet="{{ 1 if unmet and (unmet|length) > 0 else 0 }}" title="{% if unmet and (unmet|length) > 0 %}unmet: {{ unmet|join(', ') }}{% endif %}" style="display:flex; gap:10px; align-items:flex-start; padding:6px 4px; border-bottom:1px solid rgba(255,255,255,0.05);">
-                                <input id="{{ qid }}" type="checkbox" name="completed_quests" value="{{ q }}" style="margin-top:4px; flex:0 0 auto; width:18px; height:18px;" onchange="updateQuestPoints()" {% if q in completed_set %}checked{% endif %}>
-                                <label for="{{ qid }}" class="quest-name" style="cursor:pointer; flex:1; min-width:0; line-height:1.2; padding-top:1px; overflow-wrap:anywhere;">{{ q }}</label>
-                            </div>
+                        {% set q = row.name %}{% set qid = 'cq_mq_' ~ loop.index %}
+                        <div class="quest-row" data-kind="miniquest" data-membership="{{ row.membership }}" data-qp="{{ row.qp }}" data-unmet="{{ 1 if row.unmet and (row.unmet|length) > 0 else 0 }}" style="display:flex; gap:8px; align-items:flex-start; padding:4px 2px; border-bottom:1px solid rgba(255,255,255,0.04);">
+                            <input id="{{ qid }}" type="checkbox" name="completed_quests" value="{{ q }}" style="margin-top:3px; flex:0 0 auto;" onchange="updateQuestPoints()" {% if q in completed_set %}checked{% endif %}>
+                            <label for="{{ qid }}" class="quest-name" style="cursor:pointer; font-size:0.85rem; line-height:1.3;">{{ q }}</label>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
-                <p class="muted" style="margin:8px 0 0 0;">This list is generated from OSRS Wiki quest/miniquest tables. It does not auto-sync with your account yet.</p>
             </div>
 
-            <div class="form-group">
-                <label>Quest points</label>
+            <div class="form-group" style="margin-bottom:14px;">
+                <label>Quest Points</label>
                 <input type="number" name="quest_points" value="{{ progress.quest_points or 0 }}">
             </div>
 
-            <div class="actions">
-                <button type="submit">Save state</button>
-            </div>
+            <button type="submit">Save State</button>
         </form>
     </div>
 
+    <!-- Set goal -->
     <div class="card">
-        <h3 style="margin-top: 0;">Set or update goal</h3>
+        <h3 style="margin-top:0;">Set / Update Goal</h3>
         <form action="/accounts/{{ account.id }}/progress/goal" method="post">
-            <div class="form-group">
-                <label>Goal name</label>
+            <div class="form-group" style="margin-bottom:14px;">
+                <label>Goal Name</label>
                 <input type="text" name="name" value="{{ goal.name if goal and goal.name else '' }}">
             </div>
 
-            <div class="form-group">
-                <label>Target GP (optional)</label>
-                <input type="text" name="target_gp" placeholder="Example: 5000000" value="{{ goal.target_gp if goal and goal.target_gp is not none else '' }}">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+                <div class="form-group">
+                    <label>Target GP</label>
+                    <input type="text" name="target_gp" placeholder="e.g. 5000000" value="{{ goal.target_gp if goal and goal.target_gp is not none else '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Target skills mode</label>
+                    <select name="target_skills_mode"><option value="levels">Levels</option><option value="xp">Raw XP</option></select>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Target skills mode</label>
-                <select name="target_skills_mode">
-                    <option value="levels">Levels (converted to XP)</option>
-                    <option value="xp">XP (raw)</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Target skills</label>
-                <div style="display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;">
+            <div class="form-group" style="margin-bottom:14px;">
+                <label>Target Skills</label>
+                <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;">
                     {% for s in skills %}
-                        <div>
-                            <label class="muted" style="font-weight:700; font-size:0.85rem;">{{ s }}</label>
-                            <input type="number" name="goal_{{ s }}" value="{{ goal_levels.get(s, 1) }}" min="1" max="99">
-                        </div>
+                    <div>
+                        <label class="muted" style="font-size:0.75rem; font-weight:700;">{{ s }}</label>
+                        <input type="number" name="goal_{{ s }}" value="{{ goal_levels.get(s, 1) }}" min="1" max="99" style="padding:8px 10px;">
+                    </div>
                     {% endfor %}
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Target quests (manual)</label>
-                {% set goal_target_quests = (goal_target_quests or []) %}
-                <div class="muted" style="margin-bottom: 8px;">Select specific quests/miniquests you want this account to complete. Progress is tracked against your manual completed-quests checklist above.</div>
-                <div style="max-height: 260px; overflow:auto; border:1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px;">
-                    <div class="muted" style="font-weight:800; margin: 2px 0 8px 0;">Quest goal list</div>
+            <div class="form-group" style="margin-bottom:14px;">
+                <label>Target Quests</label>
+                <div style="max-height:200px; overflow:auto; border:1px solid var(--border); border-radius:var(--radius); padding:10px; background:var(--bg-input);">
                     {% for row in quests_rows %}
-                        {% set q = row.name %}
-                        {% set qid = 'gq_' ~ loop.index %}
-                        <div class="quest-row" style="display:flex; gap:10px; align-items:flex-start; padding:6px 4px; border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <input id="{{ qid }}" type="checkbox" name="target_quests" value="{{ q }}" style="margin-top:4px; flex:0 0 auto; width:18px; height:18px;" {% if q in goal_target_quests %}checked{% endif %}>
-                            <label for="{{ qid }}" class="quest-name" style="cursor:pointer; flex:1; min-width:0; line-height:1.2; padding-top:1px; overflow-wrap:anywhere;">{{ q }}</label>
-                        </div>
+                    {% set q = row.name %}{% set qid = 'gq_' ~ loop.index %}
+                    <div style="display:flex; gap:8px; align-items:flex-start; padding:4px 2px; border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <input id="{{ qid }}" type="checkbox" name="target_quests" value="{{ q }}" style="margin-top:3px;" {% if q in goal_target_quests %}checked{% endif %}>
+                        <label for="{{ qid }}" style="cursor:pointer; font-size:0.85rem; line-height:1.3;">{{ q }}</label>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:14px;">
                 <label>Baseline</label>
                 <select name="use_current_as_baseline">
-                    <option value="true" {% if baseline_mode == 'true' %}selected{% endif %}>Use current state as baseline</option>
+                    <option value="true" {% if baseline_mode == 'true' %}selected{% endif %}>Use current state</option>
                     <option value="false" {% if baseline_mode == 'false' %}selected{% endif %}>Baseline = 0</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label>Planner weights</label>
-                <div style="display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;">
-                    <div>
-                        <label class="muted" style="font-weight:700; font-size:0.85rem;">XP</label>
-                        <input type="number" step="0.05" name="xp_weight" value="{{ weights_ui.xp_weight }}">
-                    </div>
-                    <div>
-                        <label class="muted" style="font-weight:700; font-size:0.85rem;">GP</label>
-                        <input type="number" step="0.05" name="gp_weight" value="{{ weights_ui.gp_weight }}">
-                    </div>
-                    <div>
-                        <label class="muted" style="font-weight:700; font-size:0.85rem;">Unlock</label>
-                        <input type="number" step="0.05" name="unlock_weight" value="{{ weights_ui.unlock_weight }}">
-                    </div>
-                    <div>
-                        <label class="muted" style="font-weight:700; font-size:0.85rem;">Quest</label>
-                        <input type="number" step="0.05" name="quest_weight" value="{{ weights_ui.quest_weight }}">
-                    </div>
+            <div class="form-group" style="margin-bottom:14px;">
+                <label>Planner Weights</label>
+                <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;">
+                    <div><label class="muted" style="font-size:0.75rem;">XP</label><input type="number" step="0.05" name="xp_weight" value="{{ weights_ui.xp_weight }}" style="padding:8px 10px;"></div>
+                    <div><label class="muted" style="font-size:0.75rem;">GP</label><input type="number" step="0.05" name="gp_weight" value="{{ weights_ui.gp_weight }}" style="padding:8px 10px;"></div>
+                    <div><label class="muted" style="font-size:0.75rem;">Unlock</label><input type="number" step="0.05" name="unlock_weight" value="{{ weights_ui.unlock_weight }}" style="padding:8px 10px;"></div>
+                    <div><label class="muted" style="font-size:0.75rem;">Quest</label><input type="number" step="0.05" name="quest_weight" value="{{ weights_ui.quest_weight }}" style="padding:8px 10px;"></div>
                 </div>
-                <div class="inline-form" style="margin-top:10px;">
-                    <label class="muted" style="font-weight:700; font-size:0.85rem;">Top-K shortlist</label>
-                    <input type="number" name="top_k" value="{{ weights_ui.top_k }}" min="10" max="500" style="max-width: 140px;">
-                    <span class="muted">(speed vs quality)</span>
+                <div class="inline-form" style="margin-top:10px; gap:8px;">
+                    <label class="muted" style="font-size:0.85rem;">Top-K</label>
+                    <input type="number" name="top_k" value="{{ weights_ui.top_k }}" min="10" max="500" style="max-width:100px; padding:8px 10px;">
+                    <label class="muted" style="display:flex; align-items:center; gap:6px; font-size:0.85rem;">
+                        <input type="checkbox" name="allow_manual" value="true" {% if weights_ui.allow_manual %}checked{% endif %}> Allow manual
+                    </label>
                 </div>
-                <label class="muted" style="display:flex; align-items:center; gap:8px; margin-top:10px;">
-                    <input type="checkbox" name="allow_manual" value="true" {% if weights_ui.allow_manual %}checked{% endif %}>
-                    Allow manual (non-quest) activities
-                </label>
-                <p class="muted" style="margin:8px 0 0 0;">Quests are always manual and are never penalized. Manual skilling/combat is lightly penalized when enabled.</p>
             </div>
 
-            <div class="actions">
-                <button type="submit">Save goal</button>
-            </div>
+            <button type="submit">Save Goal</button>
         </form>
     </div>
 </div>
 
 <script>
 function filterQuests() {
-    const input = document.getElementById('questFilter');
-    const q = (input?.value || '').toLowerCase();
-    const onlyUnmet = document.getElementById('onlyUnmet');
-    const wantUnmet = !!onlyUnmet?.checked;
-
-    const membershipSel = document.getElementById('questMembership');
-    const wantMembership = (membershipSel?.value || 'all');
-
-    const root = document.getElementById('questChecklist');
-    if (!root) return;
-
-    for (const row of root.querySelectorAll('.quest-row')) {
-        const nameEl = row.querySelector('.quest-name');
-        const name = (nameEl?.textContent || '').toLowerCase();
-        const isUnmet = row.getAttribute('data-unmet') === '1';
-        const membership = row.getAttribute('data-membership') || 'p2p';
-
-        const matchText = name.includes(q);
-        const matchUnmet = !wantUnmet || isUnmet;
-        const matchMembership = (wantMembership === 'all') || (wantMembership === membership);
-
-        row.style.display = (matchText && matchUnmet && matchMembership) ? '' : 'none';
+    const q = (document.getElementById('questFilter')?.value || '').toLowerCase();
+    const wantUnmet = !!document.getElementById('onlyUnmet')?.checked;
+    const membership = document.getElementById('questMembership')?.value || 'all';
+    for (const row of document.querySelectorAll('#questChecklist .quest-row')) {
+        const name = (row.querySelector('.quest-name')?.textContent || '').toLowerCase();
+        const isUnmet = row.dataset.unmet === '1';
+        const mem = row.dataset.membership || 'p2p';
+        row.style.display = (name.includes(q) && (!wantUnmet || isUnmet) && (membership === 'all' || membership === mem)) ? '' : 'none';
     }
 }
 
 function setVisibleQuests(checked) {
-    const root = document.getElementById('questChecklist');
-    if (!root) return;
-    for (const row of root.querySelectorAll('.quest-row')) {
+    for (const row of document.querySelectorAll('#questChecklist .quest-row')) {
         if (row.style.display === 'none') continue;
         const cb = row.querySelector('input[type="checkbox"]');
         if (cb) cb.checked = !!checked;
@@ -421,18 +317,13 @@ function setVisibleQuests(checked) {
 }
 
 function updateQuestPoints() {
-    const root = document.getElementById('questChecklist');
     const qpInput = document.querySelector('input[name="quest_points"]');
-    if (!root || !qpInput) return;
-
+    if (!qpInput) return;
     let total = 0;
-    for (const row of root.querySelectorAll('.quest-row')) {
+    for (const row of document.querySelectorAll('#questChecklist .quest-row')) {
         const cb = row.querySelector('input[type="checkbox"]');
-        if (!cb || !cb.checked) continue;
-        const qp = parseInt(row.getAttribute('data-qp') || '0', 10);
-        if (!Number.isNaN(qp)) total += qp;
+        if (cb?.checked) total += parseInt(row.dataset.qp || '0', 10);
     }
-
     qpInput.value = total;
 }
 

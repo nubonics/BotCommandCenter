@@ -9,7 +9,7 @@
     <div class="actions">
         <a href="/accounts/{{ account.id }}/progress"><button type="button" class="secondary">Progress</button></a>
         <a href="/accounts/{{ account.id }}/edit"><button type="button" class="secondary">Edit</button></a>
-        <form action="/accounts/{{ account.id }}/delete" method="post" onsubmit="return confirm('Delete this account?');">
+        <form action="/accounts/{{ account.id }}/delete" method="post" style="margin:0;" onsubmit="return confirm('Delete this account?');">
             <button type="submit" class="danger">Delete</button>
         </form>
     </div>
@@ -17,186 +17,130 @@
 
 <div class="grid-2">
     <div class="card">
-        <h3>Email</h3>
+        <h3 style="margin-top:0;">Email</h3>
         <dl>
-            <dt>Email Address</dt>
-            <dd>{{ account.email_address or "-" }}</dd>
-
-            <dt>Email Password</dt>
+            <dt>Address</dt><dd>{{ account.email_address or "–" }}</dd>
+            <dt>Password</dt>
             <dd>
                 {% if account.email_password %}
                 <div class="secret-box">
-                    <span>{{ account.email_password | mask_secret }}</span>
-                    <button type="button" class="secondary tiny-btn" onclick="toggleSecret('email-password')">Reveal</button>
-                    <span id="email-password" class="secret mono">{{ account.email_password }}</span>
+                    <span class="mono" style="color:var(--muted);">{{ account.email_password | mask_secret }}</span>
+                    <button type="button" class="secondary tiny-btn" onclick="toggleSecret('ep')">Reveal</button>
+                    <span id="ep" class="secret">{{ account.email_password }}</span>
                 </div>
-                {% else %}
-                -
-                {% endif %}
+                {% else %}–{% endif %}
             </dd>
         </dl>
     </div>
 
     <div class="card">
-        <h3>RuneScape</h3>
+        <h3 style="margin-top:0;">RuneScape</h3>
         <dl>
-            <dt>RS Email / Login</dt>
-            <dd>{{ account.rs_email or "-" }}</dd>
-
-            <dt>RS Password</dt>
+            <dt>Login</dt><dd>{{ account.rs_email or "–" }}</dd>
+            <dt>Password</dt>
             <dd>
                 {% if account.rs_password %}
                 <div class="secret-box">
-                    <span>{{ account.rs_password | mask_secret }}</span>
-                    <button type="button" class="secondary tiny-btn" onclick="toggleSecret('rs-password')">Reveal</button>
-                    <span id="rs-password" class="secret mono">{{ account.rs_password }}</span>
+                    <span class="mono" style="color:var(--muted);">{{ account.rs_password | mask_secret }}</span>
+                    <button type="button" class="secondary tiny-btn" onclick="toggleSecret('rp')">Reveal</button>
+                    <span id="rp" class="secret">{{ account.rs_password }}</span>
                 </div>
-                {% else %}
-                -
-                {% endif %}
+                {% else %}–{% endif %}
             </dd>
-
-            <dt>RSN</dt>
-            <dd>{{ account.rsn or "-" }}</dd>
-
-            <dt>Banned</dt>
-            <dd>{% if account.banned %}Yes{% else %}No{% endif %}</dd>
+            <dt>RSN</dt><dd class="mono">{{ account.rsn or "–" }}</dd>
+            <dt>Banned</dt><dd>{% if account.banned %}<span style="color:var(--red);">Yes</span>{% else %}No{% endif %}</dd>
         </dl>
     </div>
 </div>
 
 <div class="grid-2">
     <div class="card">
-        <h3>Proxy</h3>
+        <h3 style="margin-top:0;">Proxy</h3>
         <dl>
-            <dt>Proxy IP</dt>
-            <dd>{{ account.proxy_ip or "-" }}</dd>
-
-            <dt>Proxy Port</dt>
-            <dd>{{ account.proxy_port or "-" }}</dd>
-
-            <dt>Proxy Username</dt>
-            <dd>{{ account.proxy_username or "-" }}</dd>
-
-            <dt>Proxy Password</dt>
+            <dt>IP</dt><dd class="mono">{{ account.proxy_ip or "–" }}</dd>
+            <dt>Port</dt><dd class="mono">{{ account.proxy_port or "–" }}</dd>
+            <dt>Username</dt><dd class="mono">{{ account.proxy_username or "–" }}</dd>
+            <dt>Password</dt>
             <dd>
                 {% if account.proxy_password %}
                 <div class="secret-box">
-                    <span>{{ account.proxy_password | mask_secret }}</span>
-                    <button type="button" class="secondary tiny-btn" onclick="toggleSecret('proxy-password')">Reveal</button>
-                    <span id="proxy-password" class="secret mono">{{ account.proxy_password }}</span>
+                    <span class="mono" style="color:var(--muted);">{{ account.proxy_password | mask_secret }}</span>
+                    <button type="button" class="secondary tiny-btn" onclick="toggleSecret('pp')">Reveal</button>
+                    <span id="pp" class="secret">{{ account.proxy_password }}</span>
                 </div>
-                {% else %}
-                -
-                {% endif %}
+                {% else %}–{% endif %}
             </dd>
         </dl>
     </div>
 
     <div class="card">
-        <h3>Botting Hub Info</h3>
+        <h3 style="margin-top:0;">Botting Hub</h3>
         <dl>
-            <dt>Config ID</dt>
-            <dd>{{ account.botting_hub_config_id or "-" }}</dd>
-
-            <dt>Account ID</dt>
-            <dd>{{ account.botting_hub_account_id or "-" }}</dd>
-
-            <dt>Proxy ID</dt>
-            <dd>{{ account.botting_hub_proxy_id or "-" }}</dd>
-
-            <dt>Status</dt>
-            <dd>{{ account.status or "-" }}</dd>
+            <dt>Config ID</dt><dd class="mono">{{ account.botting_hub_config_id or "–" }}</dd>
+            <dt>Account ID</dt><dd class="mono">{{ account.botting_hub_account_id or "–" }}</dd>
+            <dt>Proxy ID</dt><dd class="mono">{{ account.botting_hub_proxy_id or "–" }}</dd>
+            <dt>Status</dt><dd>{{ account.status or "–" }}</dd>
         </dl>
     </div>
 </div>
 
 <div class="card">
-    <h3>Notes</h3>
-    <p style="white-space: pre-line;">{{ account.notes or "No notes yet." }}</p>
+    <h3 style="margin-top:0;">Notes</h3>
+    <p style="white-space:pre-line; color:var(--text-2);">{{ account.notes or "No notes yet." }}</p>
 </div>
 
+<!-- Expenses -->
 <div class="card">
-    <div class="grid-2" style="align-items: start;">
+    <div class="grid-2" style="align-items:start;">
         <div>
-            <h3 style="margin-top: 0;">Spending</h3>
-            <p class="muted" style="margin: 0;">Track real-money spend per account (one-time + monthly).</p>
-            <div style="margin-top: 10px; display:flex; gap:16px; flex-wrap: wrap;">
-                <div class="pill"><span>Total (all time)</span> <strong>${{ '%.2f'|format(total_spent_all_time or 0) }}</strong></div>
-                <div class="pill"><span>Monthly burn (active)</span> <strong>${{ '%.2f'|format(monthly_burn or 0) }}</strong></div>
+            <h3 style="margin-top:0;">Spending</h3>
+            <p class="muted" style="margin:0 0 12px;">Track real-money spend per account.</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <span class="pill"><span>Total</span> <strong>${{ '%.2f'|format(total_spent_all_time or 0) }}</strong></span>
+                <span class="pill"><span>Monthly burn</span> <strong>${{ '%.2f'|format(monthly_burn or 0) }}</strong></span>
             </div>
         </div>
         <div>
-            <h3 style="margin-top: 0;">Add expense</h3>
+            <h3 style="margin-top:0;">Add Expense</h3>
             <form action="/accounts/{{ account.id }}/expenses/new" method="post">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" name="name" placeholder="Proxy / Sub / Bonds / etc" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Amount (USD)</label>
-                        <input type="number" step="0.01" name="amount_usd" value="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Type</label>
-                        <select name="kind">
-                            <option value="one_time">One-time</option>
-                            <option value="monthly">Monthly</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Start date (optional)</label>
-                        <input type="date" name="start_date">
-                    </div>
-                    <div class="form-group-full">
-                        <label>Notes (optional)</label>
-                        <input type="text" name="notes" placeholder="provider, invoice id, etc">
-                    </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+                    <div class="form-group"><label>Name</label><input type="text" name="name" placeholder="Proxy / Bond / etc" required></div>
+                    <div class="form-group"><label>Amount (USD)</label><input type="number" step="0.01" name="amount_usd" value="0" required></div>
+                    <div class="form-group"><label>Type</label><select name="kind"><option value="one_time">One-time</option><option value="monthly">Monthly</option></select></div>
+                    <div class="form-group"><label>Start date</label><input type="date" name="start_date"></div>
                 </div>
-                <div class="actions">
-                    <button type="submit">Add expense</button>
-                </div>
+                <div class="form-group" style="margin-bottom:14px;"><label>Notes</label><input type="text" name="notes" placeholder="Optional"></div>
+                <button type="submit" class="secondary">Add Expense</button>
             </form>
         </div>
     </div>
 
-    <h3 style="margin-top: 18px;">Expenses</h3>
-    {% if not expenses or expenses|length == 0 %}
-        <p class="muted">No expenses yet.</p>
-    {% else %}
+    {% if expenses and expenses|length > 0 %}
+    <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:16px;">
         <table>
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Active</th>
-                <th>Created</th>
-                <th></th>
-            </tr>
-            </thead>
+            <thead><tr><th>Name</th><th>Type</th><th style="text-align:right;">Amount</th><th>Active</th><th>Created</th><th></th></tr></thead>
             <tbody>
             {% for e in expenses %}
             <tr>
-                <td><strong>{{ e.name }}</strong>{% if e.notes %}<div class="muted" style="margin-top: 2px;">{{ e.notes }}</div>{% endif %}</td>
-                <td>{{ 'Monthly' if e.kind == 'monthly' else 'One-time' }}</td>
-                <td>${{ '%.2f'|format(e.amount_usd or 0) }}</td>
+                <td><strong>{{ e.name }}</strong>{% if e.notes %}<div class="muted" style="font-size:0.85rem;">{{ e.notes }}</div>{% endif %}</td>
+                <td><span class="pill">{{ 'Monthly' if e.kind == 'monthly' else 'One-time' }}</span></td>
+                <td class="mono" style="text-align:right;">${{ '%.2f'|format(e.amount_usd or 0) }}</td>
                 <td>
-                    <form action="/accounts/{{ account.id }}/expenses/{{ e.id }}/toggle" method="post">
+                    <form action="/accounts/{{ account.id }}/expenses/{{ e.id }}/toggle" method="post" style="margin:0;">
                         <button type="submit" class="secondary tiny-btn">{% if e.is_active %}On{% else %}Off{% endif %}</button>
                     </form>
                 </td>
-                <td class="mono">{{ e.created_at }}</td>
+                <td class="muted" style="font-size:0.85rem;">{{ e.created_at }}</td>
                 <td>
-                    <form action="/accounts/{{ account.id }}/expenses/{{ e.id }}/delete" method="post" onsubmit="return confirm('Delete this expense?');">
-                        <button type="submit" class="danger tiny-btn">Delete</button>
+                    <form action="/accounts/{{ account.id }}/expenses/{{ e.id }}/delete" method="post" style="margin:0;" onsubmit="return confirm('Delete?');">
+                        <button type="submit" class="danger tiny-btn">Del</button>
                     </form>
                 </td>
             </tr>
             {% endfor %}
             </tbody>
         </table>
+    </div>
     {% endif %}
 </div>
 

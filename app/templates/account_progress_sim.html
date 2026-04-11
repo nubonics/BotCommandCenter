@@ -4,73 +4,50 @@
 <div class="page-header">
     <div>
         <h2>Simulation · {{ account.label }}</h2>
-        <p>Step-by-step application of the current plan preview (time-chunked).</p>
+        <p>Step-by-step time-chunked simulation of the current plan preview.</p>
     </div>
     <div class="actions">
-        <a href="/accounts/{{ account.id }}/progress"><button type="button" class="secondary">Back to Progress</button></a>
+        <a href="/accounts/{{ account.id }}/progress"><button type="button" class="secondary">Back</button></a>
     </div>
 </div>
 
-<div class="card">
-    <h3 style="margin-top:0;">Summary</h3>
-    <p class="muted" style="margin:0;">
-        Simulated time: <strong>{{ total_hours | round(2) }}h</strong>
-        · steps: <strong>{{ steps_count }}</strong>
-        · chunks: <strong>{{ chunks | length }}</strong>
-    </p>
+<div class="grid-3" style="margin-bottom:20px;">
+    <div class="stat-card"><h3>Total Time</h3><div class="big-number">{{ total_hours | round(2) }}h</div></div>
+    <div class="stat-card"><h3>Plan Steps</h3><div class="big-number">{{ steps_count }}</div></div>
+    <div class="stat-card"><h3>Chunks</h3><div class="big-number">{{ chunks | length }}</div></div>
 </div>
 
-<div class="card">
-    <h3 style="margin-top:0;">Timeline</h3>
+<div class="card" style="padding:0; overflow:hidden;">
+    <div style="padding:16px 20px; border-bottom:1px solid var(--border);"><h3 style="margin:0;">Timeline</h3></div>
     {% if chunks %}
     <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Time</th>
-                <th>Activity</th>
-                <th>Hours</th>
-                <th>Δ XP</th>
-                <th>Δ GP</th>
-                <th>Unlocks</th>
-            </tr>
-        </thead>
+        <thead><tr><th>#</th><th>Time</th><th>Activity</th><th style="text-align:right;">Hours</th><th>Δ XP</th><th style="text-align:right;">Δ GP</th><th>Unlocks</th></tr></thead>
         <tbody>
-            {% for c in chunks %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td class="mono">{{ c.t_start | round(2) }} → {{ c.t_end | round(2) }}</td>
-                <td><strong>{{ c.activity_name }}</strong></td>
-                <td>{{ c.hours | round(2) }}</td>
-                <td class="mono">
-                    {% if c.xp_gained %}
-                        {% for k, v in c.xp_gained.items() %}
-                            {{ k }}:+{{ v }}{% if not loop.last %}, {% endif %}
-                        {% endfor %}
-                    {% else %}-{% endif %}
-                </td>
-                <td class="mono">{{ c.gp_gained | gp }}</td>
-                <td class="mono">
-                    {% if c.unlocks_gained %}
-                        {% for u in c.unlocks_gained %}{{ u }}{% if not loop.last %}, {% endif %}{% endfor %}
-                    {% else %}-{% endif %}
-                </td>
-            </tr>
-            {% endfor %}
+        {% for c in chunks %}
+        <tr>
+            <td class="mono muted">{{ loop.index }}</td>
+            <td class="mono" style="font-size:0.85em;">{{ c.t_start | round(2) }} → {{ c.t_end | round(2) }}</td>
+            <td><strong>{{ c.activity_name }}</strong></td>
+            <td class="mono" style="text-align:right;">{{ c.hours | round(2) }}</td>
+            <td class="mono" style="font-size:0.85em;">{% if c.xp_gained %}{% for k, v in c.xp_gained.items() %}{{ k }}:+{{ v }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}–{% endif %}</td>
+            <td class="mono" style="text-align:right;">{{ c.gp_gained | gp }}</td>
+            <td class="mono" style="font-size:0.85em;">{% if c.unlocks_gained %}{% for u in c.unlocks_gained %}{{ u }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}–{% endif %}</td>
+        </tr>
+        {% endfor %}
         </tbody>
     </table>
     {% else %}
-        <p class="muted">No chunks produced.</p>
+    <p class="muted" style="padding:32px 20px; margin:0; text-align:center;">No chunks produced.</p>
     {% endif %}
 </div>
 
 <div class="card">
-    <h3 style="margin-top:0;">Final state</h3>
+    <h3 style="margin-top:0;">Final State</h3>
     <dl>
         <dt>GP</dt><dd class="mono">{{ final_state.gp | gp }}</dd>
-        <dt>Quest points</dt><dd class="mono">{{ final_state.quest_points }}</dd>
-        <dt>Unlocks</dt><dd class="mono">{{ final_state.unlocks | list | sort | join(", ") }}</dd>
-        <dt>Completed quests</dt><dd class="mono">{{ final_state.completed_quests | list | sort | join(", ") }}</dd>
+        <dt>Quest Points</dt><dd class="mono">{{ final_state.quest_points }}</dd>
+        <dt>Unlocks</dt><dd class="mono" style="font-size:0.85em;">{{ final_state.unlocks | list | sort | join(", ") or "–" }}</dd>
+        <dt>Quests Done</dt><dd class="mono" style="font-size:0.85em;">{{ final_state.completed_quests | list | sort | join(", ") or "–" }}</dd>
     </dl>
 </div>
 

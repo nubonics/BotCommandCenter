@@ -1,167 +1,130 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h2>Watchdog</h2>
 
-<p>
-  <strong>Status:</strong>
-  {% if status.running %}Running{% else %}Not running{% endif %}
-</p>
-
-<ul>
-  <li><strong>Logs dir:</strong> {{ status.logs_dir }}</li>
-  <li><strong>Pattern:</strong> {{ status.pattern }}</li>
-  <li><strong>Poll interval:</strong> <span id="pollInterval">{{ status.poll_interval }}</span>s</li>
-  <li><strong>Window:</strong> {{ status.files[0].window_seconds if status.files and status.files[0] else "?" }}s</li>
-  <li><strong>Thresholds:</strong> none_arrays ≥ {{ status.threshold_none_arrays }}, withdraws ≥ {{ status.threshold_withdraws }}</li>
-  <li><strong>Cooldown:</strong> {{ status.cooldown_seconds }}s</li>
-  <li><strong>Bootstrap scan:</strong> <span id="bootstrapBytes">{{ status.bootstrap_bytes }}</span> bytes</li>
-  <li><strong>Bootstrap refresh:</strong> <span id="bootstrapRefresh">{{ status.bootstrap_refresh_seconds }}</span>s</li>
-</ul>
-
-<div class="card">
-  <h3 style="margin-top:0;">Config</h3>
-  <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;">
-    <label>Bootstrap bytes
-      <input id="cfg_bootstrap_bytes" type="number" min="100000" step="100000" value="{{ status.bootstrap_bytes }}" style="width:180px;">
-    </label>
-    <label>Bootstrap refresh (s)
-      <input id="cfg_bootstrap_refresh" type="number" min="0" step="1" value="{{ status.bootstrap_refresh_seconds }}" style="width:180px;">
-    </label>
-    <label>Window (s)
-      <input id="cfg_window" type="number" min="30" step="1" value="{{ status.files[0].window_seconds if status.files and status.files[0] else 180 }}" style="width:140px;">
-    </label>
-    <label>None arrays threshold
-      <input id="cfg_none" type="number" min="1" step="1" value="{{ status.threshold_none_arrays }}" style="width:160px;">
-    </label>
-    <label>Withdraws threshold
-      <input id="cfg_withdraws" type="number" min="1" step="1" value="{{ status.threshold_withdraws }}" style="width:160px;">
-    </label>
-    <label>Cooldown (s)
-      <input id="cfg_cooldown" type="number" min="0" step="1" value="{{ status.cooldown_seconds }}" style="width:140px;">
-    </label>
-    <button class="btn" onclick="applyConfig()">Apply</button>
-    <span id="cfg_msg" style="color:#666;"></span>
-  </div>
+<div class="page-header">
+    <div>
+        <h2>Watchdog</h2>
+        <p>Monitors bot logs for stuck withdraw loops and takes corrective action.</p>
+    </div>
 </div>
 
-<h3>Files</h3>
+<div class="grid-3" style="margin-bottom:20px;">
+    <div class="stat-card">
+        <h3>Status</h3>
+        <div class="big-number" style="color:{% if status.running %}var(--green){% else %}var(--red){% endif %};">
+            {% if status.running %}Running{% else %}Stopped{% endif %}
+        </div>
+    </div>
+    <div class="stat-card">
+        <h3>Files Tracked</h3>
+        <div class="big-number">{{ (status.files or []) | length }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Thresholds</h3>
+        <div style="font-family:var(--font-mono); font-size:0.9rem; color:var(--text-2); line-height:1.8;">
+            none_arrays ≥ {{ status.threshold_none_arrays }}<br>
+            withdraws ≥ {{ status.threshold_withdraws }}
+        </div>
+    </div>
+</div>
 
 <div class="card">
-  <p style="margin-top:0;">
-    Tip: JSON view at <a href="/watchdog/status">/watchdog/status</a>
-  </p>
-  <p style="margin-top:0; color:#666;">
-    Auto-refreshing every 2s.
-  </p>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Log</th>
-        <th>PID</th>
-        <th>Sandbox</th>
-        <th>Last item</th>
-        <th>None arrays</th>
-        <th>Withdraws</th>
-        <th>Last action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for f in (status.files or []) %}
-      <tr>
-        <td style="max-width:520px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ f.path }}">{{ f.path }}</td>
-        <td>{{ f.inferred_pid or "-" }}</td>
-        <td>{{ f.inferred_sandbox or "-" }}</td>
-        <td>{{ f.last_withdraw_item or "-" }}</td>
-        <td>{{ f.none_arrays }}</td>
-        <td>{{ f.withdraws }}</td>
-        <td>
-          {% if f.last_action %}
-            {{ f.last_action_at or "" }} — {{ f.last_action }}
-          {% else %}
-            -
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <h3 style="margin-top:0;">Configuration</h3>
+    <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:end; margin-bottom:14px;">
+        <div class="form-group" style="min-width:160px;"><label>Bootstrap bytes</label><input id="cfg_bootstrap_bytes" type="number" min="100000" step="100000" value="{{ status.bootstrap_bytes }}"></div>
+        <div class="form-group" style="min-width:160px;"><label>Bootstrap refresh (s)</label><input id="cfg_bootstrap_refresh" type="number" min="0" step="1" value="{{ status.bootstrap_refresh_seconds }}"></div>
+        <div class="form-group" style="min-width:120px;"><label>Window (s)</label><input id="cfg_window" type="number" min="30" step="1" value="{{ status.files[0].window_seconds if status.files and status.files[0] else 180 }}"></div>
+        <div class="form-group" style="min-width:140px;"><label>None arrays thr.</label><input id="cfg_none" type="number" min="1" step="1" value="{{ status.threshold_none_arrays }}"></div>
+        <div class="form-group" style="min-width:140px;"><label>Withdraws thr.</label><input id="cfg_withdraws" type="number" min="1" step="1" value="{{ status.threshold_withdraws }}"></div>
+        <div class="form-group" style="min-width:120px;"><label>Cooldown (s)</label><input id="cfg_cooldown" type="number" min="0" step="1" value="{{ status.cooldown_seconds }}"></div>
+    </div>
+    <div class="actions">
+        <button onclick="applyConfig()">Apply</button>
+        <span id="cfg_msg" class="muted" style="font-size:0.85rem;"></span>
+    </div>
+    <div class="muted" style="margin-top:12px; font-size:0.85rem;">
+        Logs dir: <span class="mono">{{ status.logs_dir }}</span> · Pattern: <span class="mono">{{ status.pattern }}</span> ·
+        Poll: <span class="mono" id="pollInterval">{{ status.poll_interval }}</span>s ·
+        JSON: <a href="/watchdog/status">/watchdog/status</a>
+    </div>
+</div>
+
+<div class="card" style="padding:0; overflow:hidden;">
+    <div style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0;">Tracked Files</h3>
+        <span class="muted" style="font-size:0.8rem;">Auto-refreshing every 2s</span>
+    </div>
+    <table class="table">
+        <thead>
+            <tr><th>Log</th><th>PID</th><th>Sandbox</th><th>Last Item</th><th style="text-align:right;">None Arrays</th><th style="text-align:right;">Withdraws</th><th>Last Action</th></tr>
+        </thead>
+        <tbody>
+        {% for f in (status.files or []) %}
+        <tr>
+            <td class="mono" style="max-width:400px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.85em;" title="{{ f.path }}">{{ f.path }}</td>
+            <td class="mono">{{ f.inferred_pid or "–" }}</td>
+            <td class="mono">{{ f.inferred_sandbox or "–" }}</td>
+            <td>{{ f.last_withdraw_item or "–" }}</td>
+            <td class="mono" style="text-align:right;">{{ f.none_arrays }}</td>
+            <td class="mono" style="text-align:right;">{{ f.withdraws }}</td>
+            <td style="font-size:0.85rem;">{% if f.last_action %}{{ f.last_action_at or "" }} — {{ f.last_action }}{% else %}–{% endif %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <script>
-  async function refreshWatchdog() {
+async function refreshWatchdog() {
     try {
-      const res = await fetch('/watchdog/status', { cache: 'no-store' });
-      if (!res.ok) return;
-      const data = await res.json();
+        const res = await fetch('/watchdog/status', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
 
-      // Update config display
-      const pollEl = document.getElementById('pollInterval');
-      if (pollEl) pollEl.textContent = data.poll_interval;
-      const bb = document.getElementById('bootstrapBytes');
-      if (bb) bb.textContent = data.bootstrap_bytes;
-      const br = document.getElementById('bootstrapRefresh');
-      if (br) br.textContent = data.bootstrap_refresh_seconds;
+        const pi = document.getElementById('pollInterval');
+        if (pi) pi.textContent = data.poll_interval;
 
-      // Update status line
-      const statusEl = document.querySelector('p strong');
-      // Table rebuild (simple + robust)
-      const tbody = document.querySelector('table.table tbody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
+        const tbody = document.querySelector('table.table tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
 
-      const files = data.files || [];
-      for (const f of files) {
-        const tr = document.createElement('tr');
+        for (const f of (data.files || [])) {
+            const tr = document.createElement('tr');
+            const near = (f.none_arrays >= Math.max(1, data.threshold_none_arrays - 1)) && (f.withdraws >= Math.max(1, data.threshold_withdraws - 1));
+            if (near) tr.style.background = 'rgba(245, 158, 11, 0.08)';
+            const action = f.last_action ? `${f.last_action_at || ''} — ${f.last_action}` : '–';
+            tr.innerHTML = `
+                <td class="mono" style="max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.85em;" title="${f.path}">${f.path}</td>
+                <td class="mono">${f.inferred_pid ?? '–'}</td>
+                <td class="mono">${f.inferred_sandbox ?? '–'}</td>
+                <td>${f.last_withdraw_item ?? '–'}</td>
+                <td class="mono" style="text-align:right;">${f.none_arrays ?? 0}</td>
+                <td class="mono" style="text-align:right;">${f.withdraws ?? 0}</td>
+                <td style="font-size:0.85rem;">${action}</td>`;
+            tbody.appendChild(tr);
+        }
+    } catch (e) {}
+}
 
-        // Highlight when close to triggering
-        const near = (f.none_arrays >= Math.max(1, data.threshold_none_arrays - 1)) &&
-                     (f.withdraws >= Math.max(1, data.threshold_withdraws - 1));
-        if (near) tr.style.background = '#fff8e6';
-
-        const lastAction = f.last_action ? `${f.last_action_at || ''} — ${f.last_action}` : '-';
-
-        tr.innerHTML = `
-          <td style="max-width:520px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${f.path}">${f.path}</td>
-          <td>${f.inferred_pid ?? '-'}</td>
-          <td>${f.inferred_sandbox ?? '-'}</td>
-          <td>${f.last_withdraw_item ?? '-'}</td>
-          <td>${f.none_arrays ?? 0}</td>
-          <td>${f.withdraws ?? 0}</td>
-          <td>${lastAction}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-    } catch (e) {
-      // ignore
-    }
-  }
-
-  async function applyConfig() {
+async function applyConfig() {
     const payload = {
-      bootstrap_bytes: Number(document.getElementById('cfg_bootstrap_bytes').value),
-      bootstrap_refresh_seconds: Number(document.getElementById('cfg_bootstrap_refresh').value),
-      window_seconds: Number(document.getElementById('cfg_window').value),
-      threshold_none_arrays: Number(document.getElementById('cfg_none').value),
-      threshold_withdraws: Number(document.getElementById('cfg_withdraws').value),
-      cooldown_seconds: Number(document.getElementById('cfg_cooldown').value),
+        bootstrap_bytes: Number(document.getElementById('cfg_bootstrap_bytes').value),
+        bootstrap_refresh_seconds: Number(document.getElementById('cfg_bootstrap_refresh').value),
+        window_seconds: Number(document.getElementById('cfg_window').value),
+        threshold_none_arrays: Number(document.getElementById('cfg_none').value),
+        threshold_withdraws: Number(document.getElementById('cfg_withdraws').value),
+        cooldown_seconds: Number(document.getElementById('cfg_cooldown').value),
     };
     const msg = document.getElementById('cfg_msg');
     if (msg) msg.textContent = 'Applying…';
     try {
-      const res = await fetch('/watchdog/config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      if (msg) msg.textContent = res.ok ? 'Applied.' : 'Failed to apply.';
-      await refreshWatchdog();
-    } catch (e) {
-      if (msg) msg.textContent = 'Failed to apply.';
-    }
-  }
+        const res = await fetch('/watchdog/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (msg) msg.textContent = res.ok ? 'Applied.' : 'Failed.';
+        await refreshWatchdog();
+    } catch (e) { if (msg) msg.textContent = 'Failed.'; }
+}
 
-  setInterval(refreshWatchdog, 2000);
+setInterval(refreshWatchdog, 2000);
 </script>
 
 {% endblock %}

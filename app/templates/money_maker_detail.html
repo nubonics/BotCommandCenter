@@ -4,32 +4,30 @@
 <div class="page-header">
     <div>
         <h2>{{ money_maker.name }}</h2>
-        <p>{{ money_maker.category }} · {{ money_maker.units_per_hour }} units/hour</p>
+        <p>{{ money_maker.category }} · {{ money_maker.units_per_hour }} units/hr · {% if money_maker.is_members %}P2P{% else %}F2P{% endif %}</p>
     </div>
     <div class="actions">
         <form action="/money-makers/{{ money_maker.id }}/refresh" method="post">
-            <button type="submit">Refresh This Money Maker</button>
+            <button type="submit" class="secondary">Refresh Prices</button>
         </form>
-        <a href="/money-makers/{{ money_maker.id }}/edit">
-            <button type="button" class="secondary">Edit</button>
-        </a>
+        <a href="/money-makers/{{ money_maker.id }}/edit"><button type="button" class="secondary">Edit</button></a>
         <form action="/money-makers/{{ money_maker.id }}/delete" method="post" onsubmit="return confirm('Delete this money maker?');">
             <button type="submit" class="danger">Delete</button>
         </form>
     </div>
 </div>
 
-<div class="grid-3">
-    <div class="card stat-card">
-        <h3>Input Cost/Hour</h3>
+<div class="grid-3" style="margin-bottom: 20px;">
+    <div class="stat-card">
+        <h3>Input Cost / Hr</h3>
         <div class="big-number">{{ summary.input_cost | gp }}</div>
     </div>
-    <div class="card stat-card">
-        <h3>Output Value/Hour</h3>
+    <div class="stat-card">
+        <h3>Output Value / Hr</h3>
         <div class="big-number">{{ summary.output_value | gp }}</div>
     </div>
-    <div class="card stat-card">
-        <h3>Profit/Hour</h3>
+    <div class="stat-card">
+        <h3>Profit / Hr</h3>
         <div class="big-number {% if summary.profit_per_hour >= 0 %}positive{% else %}negative{% endif %}">
             {{ summary.profit_per_hour | gp }}
         </div>
@@ -38,45 +36,41 @@
 
 <div class="grid-2">
     <div class="card">
-        <h3>Add Component</h3>
+        <h3 style="margin-top:0;">Add Component</h3>
         <form action="/money-makers/{{ money_maker.id }}/components" method="post">
-            <div class="form-row">
-                <label for="item-search">Item</label>
-                <input
-                    type="text"
-                    id="item-search"
-                    placeholder="Type item name, like Iron ore"
-                    autocomplete="off"
-                    required
-                >
+            <div class="form-group" style="margin-bottom:14px;">
+                <label>Item</label>
+                <input type="text" id="item-search" placeholder="Type item name…" autocomplete="off" required>
                 <input type="hidden" name="item_id" id="item-id" required>
                 <div id="item-search-results" class="search-results"></div>
             </div>
 
-            <div class="form-row">
-                <label for="role">Role</label>
-                <select name="role" id="role" required>
-                    <option value="input">Input</option>
-                    <option value="output">Output</option>
-                </select>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" required>
+                        <option value="input">Input</option>
+                        <option value="output">Output</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Qty / Hr</label>
+                    <input type="number" name="quantity_per_hour" min="1" value="1" required>
+                </div>
             </div>
 
-            <div class="form-row">
-                <label for="quantity_per_hour">Quantity per hour</label>
-                <input type="number" name="quantity_per_hour" id="quantity_per_hour" min="1" value="1" required>
-            </div>
-
-            <div class="form-row">
-                <label for="valuation_mode">Valuation mode</label>
-                <select name="valuation_mode" id="valuation_mode" required>
-                    <option value="market">Market</option>
-                    <option value="high_alch">High Alch</option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <label for="notes">Notes</label>
-                <input type="text" name="notes" id="notes" placeholder="Optional notes">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+                <div class="form-group">
+                    <label>Valuation</label>
+                    <select name="valuation_mode" required>
+                        <option value="market">Market</option>
+                        <option value="high_alch">High Alch</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <input type="text" name="notes" placeholder="Optional">
+                </div>
             </div>
 
             <button type="submit">Add Component</button>
@@ -84,170 +78,108 @@
     </div>
 
     <div class="card">
-        <h3>Notes</h3>
-        <p>{{ money_maker.notes or "No notes yet." }}</p>
-        <p><strong>Updated:</strong> {{ money_maker.updated_at or "-" }}</p>
+        <h3 style="margin-top:0;">Notes</h3>
+        <p style="white-space:pre-line; color:var(--text-2);">{{ money_maker.notes or "No notes yet." }}</p>
+        <p class="muted" style="margin:0; font-size:0.85rem;">Updated: {{ money_maker.updated_at or "–" }}</p>
     </div>
 </div>
 
 <div class="grid-2">
-    <div class="card">
-        <h3>Inputs</h3>
+    <div class="card" style="padding:0; overflow:hidden;">
+        <div style="padding:16px 20px; border-bottom:1px solid var(--border);">
+            <h3 style="margin:0;">Inputs</h3>
+        </div>
         <table>
             <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Qty/Hr</th>
-                    <th>Mode</th>
-                    <th>Unit</th>
-                    <th>Total</th>
-                    <th></th>
-                </tr>
+                <tr><th>Item</th><th style="text-align:right;">Qty/Hr</th><th>Mode</th><th style="text-align:right;">Unit</th><th style="text-align:right;">Total</th><th></th></tr>
             </thead>
             <tbody>
-                {% for component in money_maker.components if component.role == 'input' %}
-                {% set unit_price = component.item.high_alch_value if component.valuation_mode == 'high_alch' else (component.item.ge_buy_price or component.item.ge_sell_price or 0) %}
+                {% for c in money_maker.components if c.role == 'input' %}
+                {% set price = c.item.high_alch_value if c.valuation_mode == 'high_alch' else (c.item.ge_buy_price or c.item.ge_sell_price or 0) %}
                 <tr>
-                    <td>{{ component.item.name }}</td>
-                    <td>{{ component.quantity_per_hour }}</td>
-                    <td>{{ component.valuation_mode }}</td>
-                    <td>{{ unit_price | gp }}</td>
-                    <td>{{ (unit_price * component.quantity_per_hour) | gp }}</td>
+                    <td><strong>{{ c.item.name }}</strong></td>
+                    <td class="mono" style="text-align:right;">{{ c.quantity_per_hour }}</td>
+                    <td><span class="pill">{{ c.valuation_mode }}</span></td>
+                    <td class="mono" style="text-align:right;">{{ price | gp }}</td>
+                    <td class="mono" style="text-align:right; font-weight:600;">{{ (price * c.quantity_per_hour) | gp }}</td>
                     <td>
-                        <form action="/components/{{ component.id }}/delete" method="post">
-                            <button type="submit" class="danger">Delete</button>
+                        <form action="/components/{{ c.id }}/delete" method="post" style="margin:0;">
+                            <button type="submit" class="danger tiny-btn">Del</button>
                         </form>
                     </td>
                 </tr>
                 {% else %}
-                <tr>
-                    <td colspan="6">No inputs yet.</td>
-                </tr>
+                <tr><td colspan="6" class="muted" style="text-align:center; padding:24px 0;">No inputs yet.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 
-    <div class="card">
-        <h3>Outputs</h3>
+    <div class="card" style="padding:0; overflow:hidden;">
+        <div style="padding:16px 20px; border-bottom:1px solid var(--border);">
+            <h3 style="margin:0;">Outputs</h3>
+        </div>
         <table>
             <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Qty/Hr</th>
-                    <th>Mode</th>
-                    <th>Unit</th>
-                    <th>Total</th>
-                    <th></th>
-                </tr>
+                <tr><th>Item</th><th style="text-align:right;">Qty/Hr</th><th>Mode</th><th style="text-align:right;">Unit</th><th style="text-align:right;">Total</th><th></th></tr>
             </thead>
             <tbody>
-                {% for component in money_maker.components if component.role == 'output' %}
-                {% set unit_price = component.item.high_alch_value if component.valuation_mode == 'high_alch' else (component.item.ge_sell_price or component.item.ge_buy_price or 0) %}
+                {% for c in money_maker.components if c.role == 'output' %}
+                {% set price = c.item.high_alch_value if c.valuation_mode == 'high_alch' else (c.item.ge_sell_price or c.item.ge_buy_price or 0) %}
                 <tr>
-                    <td>{{ component.item.name }}</td>
-                    <td>{{ component.quantity_per_hour }}</td>
-                    <td>{{ component.valuation_mode }}</td>
-                    <td>{{ unit_price | gp }}</td>
-                    <td>{{ (unit_price * component.quantity_per_hour) | gp }}</td>
+                    <td><strong>{{ c.item.name }}</strong></td>
+                    <td class="mono" style="text-align:right;">{{ c.quantity_per_hour }}</td>
+                    <td><span class="pill">{{ c.valuation_mode }}</span></td>
+                    <td class="mono" style="text-align:right;">{{ price | gp }}</td>
+                    <td class="mono" style="text-align:right; font-weight:600;">{{ (price * c.quantity_per_hour) | gp }}</td>
                     <td>
-                        <form action="/components/{{ component.id }}/delete" method="post">
-                            <button type="submit" class="danger">Delete</button>
+                        <form action="/components/{{ c.id }}/delete" method="post" style="margin:0;">
+                            <button type="submit" class="danger tiny-btn">Del</button>
                         </form>
                     </td>
                 </tr>
                 {% else %}
-                <tr>
-                    <td colspan="6">No outputs yet.</td>
-                </tr>
+                <tr><td colspan="6" class="muted" style="text-align:center; padding:24px 0;">No outputs yet.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
 
-<style>
-.search-results {
-    margin-top: 8px;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px;
-    overflow: hidden;
-    background: rgba(255,255,255,0.03);
-    max-height: 260px;
-    overflow-y: auto;
-}
-
-.search-result-item {
-    padding: 10px 12px;
-    cursor: pointer;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-
-.search-result-item:last-child {
-    border-bottom: none;
-}
-
-.search-result-item:hover,
-.search-result-item.active {
-    background: rgba(255,255,255,0.08);
-}
-</style>
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const itemSearch = document.getElementById("item-search");
-    const itemIdInput = document.getElementById("item-id");
-    const resultsBox = document.getElementById("item-search-results");
-    let searchTimer = null;
+    const search = document.getElementById("item-search");
+    const idInput = document.getElementById("item-id");
+    const results = document.getElementById("item-search-results");
+    let timer = null;
 
-    function clearResults() {
-        resultsBox.innerHTML = "";
-    }
-
-    function selectItem(item) {
-        itemSearch.value = item.name;
-        itemIdInput.value = item.id;
-        clearResults();
-    }
-
-    itemSearch.addEventListener("input", function () {
-        const q = itemSearch.value.trim();
-        itemIdInput.value = "";
-
-        clearTimeout(searchTimer);
-
-        if (q.length < 2) {
-            clearResults();
-            return;
-        }
-
-        searchTimer = setTimeout(async function () {
+    search.addEventListener("input", function () {
+        const q = search.value.trim();
+        idInput.value = "";
+        clearTimeout(timer);
+        if (q.length < 2) { results.innerHTML = ""; return; }
+        timer = setTimeout(async () => {
             try {
-                const response = await fetch(`/item-search?q=${encodeURIComponent(q)}`);
-                const items = await response.json();
-
-                clearResults();
-
+                const resp = await fetch(`/item-search?q=${encodeURIComponent(q)}`);
+                const items = await resp.json();
+                results.innerHTML = "";
                 for (const item of items) {
                     const div = document.createElement("div");
                     div.className = "search-result-item";
                     div.textContent = item.name;
-                    div.addEventListener("click", function () {
-                        selectItem(item);
+                    div.addEventListener("click", () => {
+                        search.value = item.name;
+                        idInput.value = item.id;
+                        results.innerHTML = "";
                     });
-                    resultsBox.appendChild(div);
+                    results.appendChild(div);
                 }
-            } catch (error) {
-                clearResults();
-            }
+            } catch (e) { results.innerHTML = ""; }
         }, 200);
     });
 
-    itemSearch.form.addEventListener("submit", function (event) {
-        if (!itemIdInput.value) {
-            event.preventDefault();
-            alert("Please select a valid item from the search results.");
-        }
+    search.form.addEventListener("submit", function (e) {
+        if (!idInput.value) { e.preventDefault(); alert("Select an item from results."); }
     });
 });
 </script>
