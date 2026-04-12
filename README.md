@@ -1,24 +1,29 @@
-# BotFarmPlanner
+# Bot Command Center
 
-A FastAPI browser app for building and tracking OSRS money making methods using live item data from the OSRS Wiki price API.
+Bot Command Center (BCC) is a FastAPI browser app for operating and tracking OSRS bot accounts in one place.
 
-## Features
+It started with money maker planning, and now also includes account operations, wall visibility, account progress, P&L tracking, global cost allocation, watchdog tooling, and window spreader controls.
 
-- Browser GUI served by FastAPI
-- SQLite database
-- Live OSRS item refresh from the Wiki price API
-- High alch values stored from live item mapping data
-- Create money makers with inputs and outputs
-- Profit per hour calculation
-- Per-money-maker refresh
+## What it does
+
+- Manage OSRS accounts, credentials, proxies, notes, tags, and status
+- Import account data from Botting Hub
+- Track account progress, goals, revenue, and expenses
+- View account P&L and global cost allocation
+- Monitor account hygiene through the Action Center
+- Match accounts to live client wall windows and focus/clear wall hints
+- Use planner tools for progression and money maker planning
+- Refresh live item pricing from the OSRS Wiki price API
+- Run watchdog and window spreader workflows from the web UI
 
 ## Tech
 
 - FastAPI
 - Jinja2 templates
-- SQLModel
+- SQLAlchemy ORM
 - SQLite
 - httpx
+- psutil
 
 ## Run
 
@@ -35,14 +40,17 @@ Open:
 http://127.0.0.1:8000
 ```
 
-## First steps
+## Main areas
 
-1. Go to **Items**.
-2. Click **Refresh All Items**.
-3. Create a money maker.
-4. Add input and output items.
-5. Use valuation mode `high_alch` for output lines that should use high alchemy value instead of market price.
+- **Accounts**: account records, proxy details, bulk updates, wall status
+- **Account P&L**: tracked revenue, cost, and monthly net per account
+- **Action Center**: data gaps, hygiene issues, and system-health summary
+- **Client Wall**: live window matching and wall ops alerts
+- **Planner**: planning and progression workflows
+- **Items / Money Makers**: OSRS item data and money maker calculations
+- **Global Costs**: shared cost allocation across accounts
+- **Watchdog / Spreader**: operations utilities for running the farm
 
 ## Notes
 
-This app uses the OSRS Wiki / RuneLite real-time price API endpoints such as `/mapping` and `/latest`, and it sends a custom `User-Agent`, which the API expects. FastAPI + SQLite follows the official documented patterns for a lightweight SQL-backed app. citeturn241255search1turn241255search4turn364419search0
+This app still contains older planner-oriented naming in a few places because the project grew out of an earlier money-maker planner. The current product direction is Bot Command Center.
