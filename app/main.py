@@ -32,7 +32,7 @@ from .window_spreader import get_spreader
 from .watchdog import WATCHDOG_STATUS, WatchdogConfig, update_watchdog_config, watchdog_loop
 from . import models  # noqa: F401
 from .database import create_db_and_tables, get_session
-from .models import Account, AccountExpense, AccountGoal, AccountProgress, Item, MoneyMaker, MoneyMakerComponent
+from .models import Account, AccountExpense, AccountGoal, AccountProgress, AccountRevenue, Item, MoneyMaker, MoneyMakerComponent
 from .services import (
     ensure_item_catalog,
     evaluate_money_maker,
@@ -718,6 +718,7 @@ def _account_health_snapshot(
         session.scalars(select(AccountGoal.account_id).where(AccountGoal.is_active.is_(True))).all()
     )
     expense_account_ids = set(session.scalars(select(AccountExpense.account_id)).all())
+    revenue_account_ids = set(session.scalars(select(AccountRevenue.account_id)).all())
     money_maker_count = len(session.scalars(select(MoneyMaker.id)).all())
     global_cost_group_count = len(_global_expense_groups(session))
 
@@ -731,6 +732,7 @@ def _account_health_snapshot(
         "missing_progress": 0,
         "missing_goal": 0,
         "missing_costs": 0,
+        "missing_revenue": 0,
         "missing_status": 0,
         "banned": 0,
     }
@@ -752,6 +754,9 @@ def _account_health_snapshot(
         if account.id not in expense_account_ids:
             issues.append("No costs tracked")
             summary["missing_costs"] += 1
+        if account.id not in revenue_account_ids:
+            issues.append("No revenue tracked")
+            summary["missing_revenue"] += 1
         if not (account.status or "").strip():
             issues.append("No status")
             summary["missing_status"] += 1
@@ -794,6 +799,45 @@ def _account_health_snapshot(
     }
 
     return rows, summary, app_health
+
+
+def _money_row_summary(rows: list[object]) -> dict[str, float]:
+    one_time_total = 0.0
+    monthly_total = 0.0
+    tracked_total = 0.0
+
+    for row in rows:
+        try:
+            amount = float(getattr(row, "amount_usd", 0) or 0)
+        except Exception:
+            amount = 0.0
+
+        if getattr(row, "kind", None) == "monthly":
+            tracked_total += amount
+            if bool(getattr(row, "is_active", False)):
+                monthly_total += amount
+        else:
+            one_time_total += amount
+            tracked_total += amount
+
+    return {
+        "one_time_total": one_time_total,
+        "monthly_total": monthly_total,
+        "tracked_total": tracked_total,
+    }
+
+
+def _financial_summary(expenses: list[AccountExpense], revenues: list[AccountRevenue]) -> dict[str, float]:
+    expense_summary = _money_row_summary(expenses)
+    revenue_summary = _money_row_summary(revenues)
+    return {
+        "tracked_revenue": revenue_summary["tracked_total"],
+        "monthly_revenue": revenue_summary["monthly_total"],
+        "tracked_cost": expense_summary["tracked_total"],
+        "monthly_cost": expense_summary["monthly_total"],
+        "tracked_net": revenue_summary["tracked_total"] - expense_summary["tracked_total"],
+        "monthly_net": revenue_summary["monthly_total"] - expense_summary["monthly_total"],
+    }
 
 
 def _add_global_expense(
@@ -1298,6 +1342,60 @@ def list_accounts(request: Request, q: str = "", tag: str = "", session: Session
     )
 
 
+@app.get("/accounts/pnl", response_class=HTMLResponse)
+def accounts_pnl_page(request: Request, session: Session = Depends(get_session)):
+    accounts = session.scalars(select(Account).order_by(Account.label)).all()
+    expenses = session.scalars(select(AccountExpense).order_by(AccountExpense.created_at)).all()
+    revenues = session.scalars(select(AccountRevenue).order_by(AccountRevenue.created_at)).all()
+    health_rows, _summary, _app_health = _account_health_snapshot(session, accounts)
+    health_by_id = {int(row["account"].id): row for row in health_rows}
+
+    expenses_by_account: dict[int, list[AccountExpense]] = {}
+    for row in expenses:
+        expenses_by_account.setdefault(int(row.account_id), []).append(row)
+
+    revenues_by_account: dict[int, list[AccountRevenue]] = {}
+    for row in revenues:
+        revenues_by_account.setdefault(int(row.account_id), []).append(row)
+
+    rows: list[dict[str, object]] = []
+    totals = {
+        "tracked_revenue": 0.0,
+        "monthly_revenue": 0.0,
+        "tracked_cost": 0.0,
+        "monthly_cost": 0.0,
+        "tracked_net": 0.0,
+        "monthly_net": 0.0,
+    }
+    for account in accounts:
+        financials = _financial_summary(
+            expenses_by_account.get(int(account.id), []),
+            revenues_by_account.get(int(account.id), []),
+        )
+        for key in totals:
+            totals[key] += float(financials[key])
+        rows.append(
+            {
+                "account": account,
+                "financials": financials,
+                "health": health_by_id.get(int(account.id)),
+            }
+        )
+
+    rows.sort(key=lambda row: (float(row["financials"]["monthly_net"]), float(row["financials"]["tracked_net"])), reverse=True)
+
+    return templates.TemplateResponse(
+        request,
+        "accounts_pnl.html",
+        {
+            "request": request,
+            "rows": rows,
+            "totals": totals,
+            "message": request.query_params.get("message"),
+        },
+    )
+
+
 @app.post("/accounts/import-botting-hub")
 def import_accounts_from_botting_hub(
         db_path: str = Form(...),
@@ -1442,23 +1540,13 @@ def account_detail(request: Request, account_id: int, session: Session = Depends
         .where(AccountExpense.account_id == account_id)
         .order_by(AccountExpense.created_at.desc())
     ).all()
+    revenues = session.scalars(
+        select(AccountRevenue)
+        .where(AccountRevenue.account_id == account_id)
+        .order_by(AccountRevenue.created_at.desc())
+    ).all()
 
-    total_spent = 0.0
-    monthly_burn = 0.0
-    for e in expenses:
-        try:
-            amt = float(e.amount_usd or 0)
-        except Exception:
-            amt = 0.0
-        if e.kind == "monthly":
-            if e.is_active:
-                monthly_burn += amt
-        else:
-            total_spent += amt
-    total_spent_all_time = total_spent + sum(
-        (float(e.amount_usd or 0) if (e.kind == "monthly") else 0.0)
-        for e in expenses
-    )
+    financials = _financial_summary(expenses, revenues)
 
     return templates.TemplateResponse(
         request,
@@ -1470,8 +1558,8 @@ def account_detail(request: Request, account_id: int, session: Session = Depends
             "all_tags": _all_account_tags(session.scalars(select(Account).order_by(Account.label)).all()),
             "message": request.query_params.get("message"),
             "expenses": expenses,
-            "total_spent_all_time": total_spent_all_time,
-            "monthly_burn": monthly_burn,
+            "revenues": revenues,
+            "financials": financials,
         },
     )
 
@@ -1603,6 +1691,81 @@ def delete_account_expense(
     session.delete(row)
     session.commit()
     return RedirectResponse(url=f"/accounts/{account_id}?message=Expense deleted", status_code=303)
+
+
+@app.post("/accounts/{account_id}/revenues/new")
+def add_account_revenue(
+    account_id: int,
+    name: str = Form(...),
+    amount_usd: str = Form("0"),
+    kind: str = Form("one_time"),
+    start_date: str = Form(""),
+    notes: str = Form(""),
+    session: Session = Depends(get_session),
+):
+    account = session.get(Account, account_id)
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    cleaned_name = (name or "").strip()
+    if not cleaned_name:
+        raise HTTPException(status_code=400, detail="Name is required")
+
+    try:
+        amount = Decimal(str(amount_usd).strip() or "0").quantize(Decimal("0.01"))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid amount")
+
+    if amount < 0:
+        raise HTTPException(status_code=400, detail="Amount must be non-negative")
+
+    kind = (kind or "one_time").strip().lower()
+    if kind not in {"one_time", "monthly"}:
+        raise HTTPException(status_code=400, detail="Invalid kind")
+
+    row = AccountRevenue(
+        account_id=account_id,
+        name=cleaned_name,
+        amount_usd=amount,
+        kind=kind,
+        start_date=_parse_optional_date(start_date),
+        notes=notes.strip() or None,
+        is_active=True,
+    )
+    session.add(row)
+    session.commit()
+
+    return RedirectResponse(url=f"/accounts/{account_id}?message=Revenue added", status_code=303)
+
+
+@app.post("/accounts/{account_id}/revenues/{revenue_id}/toggle")
+def toggle_account_revenue(
+    account_id: int,
+    revenue_id: int,
+    session: Session = Depends(get_session),
+):
+    row = session.get(AccountRevenue, revenue_id)
+    if not row or row.account_id != account_id:
+        raise HTTPException(status_code=404, detail="Revenue not found")
+
+    row.is_active = not bool(row.is_active)
+    session.commit()
+    return RedirectResponse(url=f"/accounts/{account_id}?message=Revenue updated", status_code=303)
+
+
+@app.post("/accounts/{account_id}/revenues/{revenue_id}/delete")
+def delete_account_revenue(
+    account_id: int,
+    revenue_id: int,
+    session: Session = Depends(get_session),
+):
+    row = session.get(AccountRevenue, revenue_id)
+    if not row or row.account_id != account_id:
+        raise HTTPException(status_code=404, detail="Revenue not found")
+
+    session.delete(row)
+    session.commit()
+    return RedirectResponse(url=f"/accounts/{account_id}?message=Revenue deleted", status_code=303)
 
 
 @app.get("/expenses/global", response_class=HTMLResponse)

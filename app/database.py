@@ -28,6 +28,7 @@ def create_db_and_tables():
     Base.metadata.create_all(bind=engine)
     _ensure_account_schema()
     _ensure_account_expense_schema()
+    _ensure_account_revenue_schema()
 
 
 def _ensure_account_schema() -> None:
@@ -96,4 +97,22 @@ def _ensure_account_expense_schema() -> None:
             "SET allocation_scope = COALESCE(allocation_scope, 'account'), "
             "source_amount_usd = COALESCE(source_amount_usd, amount_usd), "
             "allocated_account_count = COALESCE(allocated_account_count, 1)"
+        )
+
+
+def _ensure_account_revenue_schema() -> None:
+    with engine.begin() as conn:
+        try:
+            rows = conn.exec_driver_sql("PRAGMA table_info(account_revenue)").mappings().all()
+        except Exception:
+            return
+
+        if not rows:
+            return
+
+        conn.exec_driver_sql(
+            "CREATE INDEX IF NOT EXISTS ix_account_revenue_account_created ON account_revenue (account_id, created_at)"
+        )
+        conn.exec_driver_sql(
+            "CREATE INDEX IF NOT EXISTS ix_account_revenue_account_active ON account_revenue (account_id, is_active)"
         )

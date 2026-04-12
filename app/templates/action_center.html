@@ -33,6 +33,10 @@
         <h3>No costs tracked</h3>
         <div class="big-number">{{ summary.missing_costs }}</div>
     </div>
+    <div class="stat-card">
+        <h3>No revenue tracked</h3>
+        <div class="big-number">{{ summary.missing_revenue }}</div>
+    </div>
 </div>
 
 <div class="grid-2">
@@ -52,6 +56,7 @@
         <h3 style="margin-top:0;">Quick links</h3>
         <div class="actions">
             <a href="/accounts"><button type="button" class="secondary">Accounts</button></a>
+            <a href="/accounts/pnl"><button type="button" class="secondary">P&amp;L</button></a>
             <a href="/accounts/progress"><button type="button" class="secondary">Progress Overview</button></a>
             <a href="/expenses/global"><button type="button" class="secondary">Global Costs</button></a>
             <a href="/window-spreader"><button type="button" class="secondary">Spreader</button></a>

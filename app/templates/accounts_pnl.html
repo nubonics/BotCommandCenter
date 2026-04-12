@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Account P&amp;L</h2>
+        <p>Tracked revenue minus tracked costs, based only on manual entries you actually record.</p>
+    </div>
+</div>
+
+<div class="grid-3" style="margin-bottom:20px;">
+    <div class="stat-card">
+        <h3>Tracked revenue</h3>
+        <div class="big-number">{{ totals.tracked_revenue | usd }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Tracked costs</h3>
+        <div class="big-number">{{ totals.tracked_cost | usd }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Tracked net</h3>
+        <div class="big-number {% if totals.tracked_net >= 0 %}positive{% else %}negative{% endif %}">{{ totals.tracked_net | usd }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Monthly revenue</h3>
+        <div class="big-number">{{ totals.monthly_revenue | usd }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Monthly costs</h3>
+        <div class="big-number">{{ totals.monthly_cost | usd }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Monthly net</h3>
+        <div class="big-number {% if totals.monthly_net >= 0 %}positive{% else %}negative{% endif %}">{{ totals.monthly_net | usd }}</div>
+    </div>
+</div>
+
+<div class="card" style="padding:0; overflow:hidden;">
+    <table>
+        <thead>
+            <tr>
+                <th>Account</th>
+                <th>Tags</th>
+                <th>Health</th>
+                <th style="text-align:right;">Revenue</th>
+                <th style="text-align:right;">Costs</th>
+                <th style="text-align:right;">Net</th>
+                <th style="text-align:right;">Monthly Rev</th>
+                <th style="text-align:right;">Monthly Cost</th>
+                <th style="text-align:right;">Monthly Net</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td><a href="/accounts/{{ row.account.id }}"><strong>{{ row.account.label }}</strong></a></td>
+                <td>
+                    {% if row.account.tags %}
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        {% for tag in row.account.tags.split(',') %}
+                        <span class="pill">{{ tag.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}–{% endif %}
+                </td>
+                <td>
+                    {% if row.health %}
+                    <span class="pill"><strong>{{ row.health.health_label }}</strong>{% if row.health.issue_count %} · {{ row.health.issue_count }}{% endif %}</span>
+                    {% else %}–{% endif %}
+                </td>
+                <td class="mono" style="text-align:right;">{{ row.financials.tracked_revenue | usd }}</td>
+                <td class="mono" style="text-align:right;">{{ row.financials.tracked_cost | usd }}</td>
+                <td class="mono {% if row.financials.tracked_net >= 0 %}positive{% else %}negative{% endif %}" style="text-align:right; font-weight:700;">{{ row.financials.tracked_net | usd }}</td>
+                <td class="mono" style="text-align:right;">{{ row.financials.monthly_revenue | usd }}</td>
+                <td class="mono" style="text-align:right;">{{ row.financials.monthly_cost | usd }}</td>
+                <td class="mono {% if row.financials.monthly_net >= 0 %}positive{% else %}negative{% endif %}" style="text-align:right; font-weight:700;">{{ row.financials.monthly_net | usd }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="9" class="muted" style="text-align:center; padding:40px 0;">No accounts yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

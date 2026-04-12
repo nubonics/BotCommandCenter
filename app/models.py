@@ -132,6 +132,11 @@ class Account(Base):
         cascade="all, delete-orphan",
     )
 
+    revenues: Mapped[list["AccountRevenue"]] = relationship(
+        back_populates="account",
+        cascade="all, delete-orphan",
+    )
+
 
 class AccountExpense(Base):
     __tablename__ = "account_expense"
@@ -169,6 +174,34 @@ class AccountExpense(Base):
     )
 
     account: Mapped["Account"] = relationship(back_populates="expenses")
+
+
+class AccountRevenue(Base):
+    __tablename__ = "account_revenue"
+    __table_args__ = (
+        Index("ix_account_revenue_account_created", "account_id", "created_at"),
+        Index("ix_account_revenue_account_active", "account_id", "is_active"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    account_id: Mapped[int] = mapped_column(ForeignKey("account.id"), index=True)
+
+    name: Mapped[str] = mapped_column(String(255))
+    amount_usd: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
+    kind: Mapped[str] = mapped_column(String(20), default="one_time")
+    start_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="1")
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    account: Mapped["Account"] = relationship(back_populates="revenues")
 
 
 class AccountProgress(Base):

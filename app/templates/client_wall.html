@@ -35,6 +35,7 @@
             <span class="pill"><span>No progress</span> <strong id="missingProgressCount">{{ summary.missing_progress }}</strong></span>
             <span class="pill"><span>No goal</span> <strong id="missingGoalCount">{{ summary.missing_goal }}</strong></span>
             <span class="pill"><span>No costs</span> <strong id="missingCostsCount">{{ summary.missing_costs }}</strong></span>
+            <span class="pill"><span>No revenue</span> <strong id="missingRevenueCount">{{ summary.missing_revenue }}</strong></span>
         </div>
     </div>
 
@@ -83,6 +84,7 @@ async function refreshWallOpsSummary() {
         setText('missingProgressCount', summary.missing_progress || 0);
         setText('missingGoalCount', summary.missing_goal || 0);
         setText('missingCostsCount', summary.missing_costs || 0);
+        setText('missingRevenueCount', summary.missing_revenue || 0);
         setText('spreaderStatus', spreader.running ? 'Running' : 'Stopped');
         setText('watchdogStatus', appHealth.watchdog_running ? 'Running' : 'Stopped');
 
