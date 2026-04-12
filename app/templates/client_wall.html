@@ -67,6 +67,7 @@
     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
         <span class="pill"><span>Unmatched windows</span> <strong id="unmatchedWindowAlertCount">{{ wall_snapshot.alert_summary.unmatched_windows }}</strong></span>
         <span class="pill"><span>Duplicate coverage</span> <strong id="duplicateCoverageCount">{{ wall_snapshot.alert_summary.duplicate_accounts }}</strong></span>
+        <span class="pill"><span>Stale hints</span> <strong id="staleHintCount">{{ wall_snapshot.alert_summary.stale_wall_hints }}</strong></span>
         <span class="pill"><span>Duplicate hints</span> <strong id="duplicateHintCount">{{ wall_snapshot.alert_summary.duplicate_wall_hints }}</strong></span>
     </div>
     <div id="wallAlertsList" style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -331,6 +332,7 @@ async function refreshWallOpsSummary() {
         setText('wallAlertCount', wallAlertSummary.total || 0);
         setText('unmatchedWindowAlertCount', wallAlertSummary.unmatched_windows || 0);
         setText('duplicateCoverageCount', wallAlertSummary.duplicate_accounts || 0);
+        setText('staleHintCount', wallAlertSummary.stale_wall_hints || 0);
         setText('duplicateHintCount', wallAlertSummary.duplicate_wall_hints || 0);
         setText('issueAccountCount', summary.accounts_with_issues || 0);
         setText('missingProxyCount', summary.missing_proxy || 0);

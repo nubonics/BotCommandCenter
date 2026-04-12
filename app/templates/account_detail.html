@@ -114,6 +114,9 @@
         {% if wall_status.visible and wall_status.primary_hwnd %}
         <button type="button" class="secondary tiny-btn" id="focusAccountWallBtn" data-account-id="{{ account.id }}">Focus matched window</button>
         {% endif %}
+        {% if account.wall_hint %}
+        <button type="button" class="secondary tiny-btn" id="clearAccountWallHintBtn" data-account-id="{{ account.id }}">Clear wall hint</button>
+        {% endif %}
         <a href="/accounts?wall={% if wall_status.visible %}on{% else %}missing{% endif %}"><button type="button" class="secondary tiny-btn">View {% if wall_status.visible %}on-wall{% else %}missing{% endif %} accounts</button></a>
         {% if wall_status.alerts %}
         <a href="/accounts?wall=alerts"><button type="button" class="secondary tiny-btn">View wall alerts</button></a>
@@ -148,10 +151,35 @@ async function focusAccountWall(accountId) {
     }
 }
 
+async function clearAccountWallHint(accountId) {
+    if (!confirm('Clear the saved wall hint for this account?')) return;
+    try {
+        const resp = await fetch(`/api/ops/accounts/${Number(accountId)}/clear-wall-hint`, {
+            method: 'POST',
+            cache: 'no-store',
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Failed to clear wall hint');
+        }
+        window.location.reload();
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Failed to clear wall hint');
+    }
+}
+
 document.addEventListener('click', (event) => {
     const button = event.target.closest('#focusAccountWallBtn');
-    if (!button) return;
-    focusAccountWall(button.dataset.accountId);
+    if (button) {
+        focusAccountWall(button.dataset.accountId);
+        return;
+    }
+
+    const clearButton = event.target.closest('#clearAccountWallHintBtn');
+    if (clearButton) {
+        clearAccountWallHint(clearButton.dataset.accountId);
+    }
 });
 </script>
 

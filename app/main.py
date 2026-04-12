@@ -1000,6 +1000,20 @@ def _wall_window_snapshot(
             }
         )
 
+    stale_hint_accounts = [
+        row for row in account_rows if not bool(row["visible"]) and str(row.get("wall_hint") or "").strip()
+    ]
+    for row in stale_hint_accounts:
+        alert_rows.append(
+            {
+                "kind": "stale_wall_hint",
+                "severity": "warn",
+                "label": "Stale wall hint",
+                "detail": f"{row['label']} has hint '{row['wall_hint']}' but no matched window",
+                "account_id": int(row["id"]),
+            }
+        )
+
     hint_groups: dict[str, list[Account]] = {}
     for account in accounts:
         normalized_hint = _normalize_match_text(account.wall_hint)
@@ -1037,6 +1051,7 @@ def _wall_window_snapshot(
             "total": len(alert_rows),
             "unmatched_windows": len(unmatched_windows),
             "duplicate_accounts": len(duplicate_accounts),
+            "stale_wall_hints": len(stale_hint_accounts),
             "duplicate_wall_hints": len(duplicate_hint_groups),
         },
         "matched_count": matched_count,
@@ -1328,6 +1343,26 @@ def ops_focus_account_wall(account_id: int, session: Session = Depends(get_sessi
             "account_id": int(account.id),
             "hwnd": hwnd,
             "message": f"Focused wall window for {account.label}",
+        }
+    )
+
+
+@app.post("/api/ops/accounts/{account_id}/clear-wall-hint")
+def ops_clear_account_wall_hint(account_id: int, session: Session = Depends(get_session)) -> JSONResponse:
+    account = session.get(Account, account_id)
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    if not (account.wall_hint or "").strip():
+        raise HTTPException(status_code=400, detail="Account has no wall hint to clear")
+
+    account.wall_hint = None
+    session.commit()
+    return JSONResponse(
+        {
+            "ok": True,
+            "account_id": int(account.id),
+            "message": f"Cleared wall hint for {account.label}",
         }
     )
 
@@ -1663,6 +1698,8 @@ def list_accounts(request: Request, q: str = "", tag: str = "", wall: str = "", 
                 include = not bool(wall_row.get("visible"))
             elif selected_wall == "alerts":
                 include = bool(alerts)
+            elif selected_wall == "stale":
+                include = any(str(alert.get("kind") or "") == "stale_wall_hint" for alert in alerts)
             elif selected_wall == "hinted":
                 include = bool((account.wall_hint or "").strip())
             if include:

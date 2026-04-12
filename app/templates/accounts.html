@@ -60,6 +60,9 @@
         <a href="/accounts?wall=alerts{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}">
             <button type="button" class="tiny-btn {% if selected_wall != 'alerts' %}secondary{% endif %}">Alerts</button>
         </a>
+        <a href="/accounts?wall=stale{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}">
+            <button type="button" class="tiny-btn {% if selected_wall != 'stale' %}secondary{% endif %}">Stale hints</button>
+        </a>
         <a href="/accounts?wall=hinted{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}">
             <button type="button" class="tiny-btn {% if selected_wall != 'hinted' %}secondary{% endif %}">Has hint</button>
         </a>
@@ -184,6 +187,9 @@
                         {% if wall and wall.visible and wall.primary_hwnd %}
                         <button type="button" class="secondary tiny-btn account-wall-focus-btn" data-account-id="{{ account.id }}">Focus</button>
                         {% endif %}
+                        {% if account.wall_hint %}
+                        <button type="button" class="secondary tiny-btn account-wall-clear-btn" data-account-id="{{ account.id }}">Clear hint</button>
+                        {% endif %}
                         <a href="/accounts/{{ account.id }}/edit"><button type="button" class="secondary tiny-btn">Edit</button></a>
                         <form action="/accounts/{{ account.id }}/delete" method="post" style="margin:0;" onsubmit="return confirm('Delete this account?');">
                             <button type="submit" class="danger tiny-btn">Del</button>
@@ -214,6 +220,24 @@ async function focusAccountWall(accountId) {
     } catch (err) {
         console.error(err);
         alert(err.message || 'Failed to focus wall window');
+    }
+}
+
+async function clearAccountWallHint(accountId) {
+    if (!confirm('Clear the saved wall hint for this account?')) return;
+    try {
+        const resp = await fetch(`/api/ops/accounts/${Number(accountId)}/clear-wall-hint`, {
+            method: 'POST',
+            cache: 'no-store',
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Failed to clear wall hint');
+        }
+        window.location.reload();
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Failed to clear wall hint');
     }
 }
 
@@ -251,8 +275,15 @@ refreshSelectedCount();
 
 document.addEventListener('click', (event) => {
     const button = event.target.closest('.account-wall-focus-btn');
-    if (!button) return;
-    focusAccountWall(button.dataset.accountId);
+    if (button) {
+        focusAccountWall(button.dataset.accountId);
+        return;
+    }
+
+    const clearButton = event.target.closest('.account-wall-clear-btn');
+    if (clearButton) {
+        clearAccountWallHint(clearButton.dataset.accountId);
+    }
 });
 </script>
 
