@@ -540,7 +540,10 @@ class CaptureManager:
             return board, layout
 
         avg_window_aspect = max(0.1, average_window_aspect(windows))
-        cols = max(1, min(len(windows), grid_cols))
+        # Keep tile sizing based on the configured grid, even when fewer
+        # windows are open. Otherwise a single client expands to fill the
+        # entire board width, which defeats the wall layout.
+        cols = max(1, grid_cols)
         rows = math.ceil(len(windows) / cols)
         cell_w = max(1, BOARD_WIDTH // cols)
         thumb_w = max(1, cell_w - TILE_GAP * 2)
