@@ -398,7 +398,7 @@ async def lifespan(_: FastAPI):
             await watchdog_task
 
 
-app = FastAPI(title="BotFarmPlanner", lifespan=lifespan)
+app = FastAPI(title="Bot Command Center", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 templates.env.filters["gp"] = format_gp

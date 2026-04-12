@@ -18,7 +18,7 @@ URLS = {
 }
 
 
-UA = {"User-Agent": "BotFarmPlanner quest builder"}
+UA = {"User-Agent": "Bot Command Center quest builder"}
 
 
 def fetch(url: str) -> str:

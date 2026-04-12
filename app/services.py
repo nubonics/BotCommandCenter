@@ -15,7 +15,7 @@ MAPPING_URL = "https://prices.runescape.wiki/api/v1/osrs/mapping"
 LATEST_URL = "https://prices.runescape.wiki/api/v1/osrs/latest"
 
 HEADERS = {
-    "User-Agent": "OSRS Money Maker App - local development",
+    "User-Agent": "Bot Command Center - local development",
 }
 
 
