@@ -1300,6 +1300,22 @@ def action_center_page(
     if request.url.query:
         current_action_center_url += f"?{request.url.query}"
 
+    preserved_action_health_query = ""
+    if q.strip():
+        preserved_action_health_query += f"&q={quote_plus(q.strip())}"
+    if selected_issue:
+        preserved_action_health_query += f"&issue={quote_plus(selected_issue)}"
+    if selected_tag:
+        preserved_action_health_query += f"&tag={quote_plus(selected_tag)}"
+
+    preserved_action_issue_query = ""
+    if q.strip():
+        preserved_action_issue_query += f"&q={quote_plus(q.strip())}"
+    if selected_health:
+        preserved_action_issue_query += f"&health={quote_plus(selected_health)}"
+    if selected_tag:
+        preserved_action_issue_query += f"&tag={quote_plus(selected_tag)}"
+
     return templates.TemplateResponse(
         request,
         "action_center.html",
@@ -1316,6 +1332,8 @@ def action_center_page(
             "all_tags": _all_account_tags(accounts),
             "q": q,
             "current_action_center_url": current_action_center_url,
+            "preserved_action_health_query": preserved_action_health_query,
+            "preserved_action_issue_query": preserved_action_issue_query,
             "message": request.query_params.get("message"),
         },
     )
