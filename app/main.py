@@ -1788,6 +1788,30 @@ def list_accounts(request: Request, q: str = "", tag: str = "", wall: str = "", 
     if request.url.query:
         current_list_url += f"?{request.url.query}"
 
+    preserved_tag_query = ""
+    if q.strip():
+        preserved_tag_query += f"&q={quote_plus(q.strip())}"
+    if selected_wall:
+        preserved_tag_query += f"&wall={quote_plus(selected_wall)}"
+    if selected_health:
+        preserved_tag_query += f"&health={quote_plus(selected_health)}"
+
+    preserved_health_query = ""
+    if q.strip():
+        preserved_health_query += f"&q={quote_plus(q.strip())}"
+    if selected_tag:
+        preserved_health_query += f"&tag={quote_plus(selected_tag)}"
+    if selected_wall:
+        preserved_health_query += f"&wall={quote_plus(selected_wall)}"
+
+    preserved_wall_query = ""
+    if q.strip():
+        preserved_wall_query += f"&q={quote_plus(q.strip())}"
+    if selected_tag:
+        preserved_wall_query += f"&tag={quote_plus(selected_tag)}"
+    if selected_health:
+        preserved_wall_query += f"&health={quote_plus(selected_health)}"
+
     return templates.TemplateResponse(
         request,
         "accounts.html",
@@ -1803,6 +1827,9 @@ def list_accounts(request: Request, q: str = "", tag: str = "", wall: str = "", 
             "selected_wall": selected_wall,
             "selected_health": selected_health,
             "current_list_url": current_list_url,
+            "preserved_tag_query": preserved_tag_query,
+            "preserved_health_query": preserved_health_query,
+            "preserved_wall_query": preserved_wall_query,
             "message": request.query_params.get("message"),
         },
     )

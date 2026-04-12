@@ -65,7 +65,7 @@
             <button type="button" class="tiny-btn {% if selected_tag %}secondary{% endif %}">All</button>
         </a>
         {% for tag in all_tags %}
-        <a href="/accounts?tag={{ tag | urlencode }}{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_wall %}&wall={{ selected_wall | urlencode }}{% endif %}{% if selected_health %}&health={{ selected_health | urlencode }}{% endif %}">
+        <a href="/accounts?tag={{ tag | urlencode }}{{ preserved_tag_query }}">
             <button type="button" class="tiny-btn {% if selected_tag != tag %}secondary{% endif %}">{{ tag }}</button>
         </a>
         {% endfor %}
@@ -79,19 +79,19 @@
         <a href="/accounts{% if q or selected_tag or selected_wall %}?{% if q %}q={{ q | urlencode }}{% endif %}{% if q and (selected_tag or selected_wall) %}&{% endif %}{% if selected_tag %}tag={{ selected_tag | urlencode }}{% endif %}{% if selected_tag and selected_wall %}&{% endif %}{% if selected_wall %}wall={{ selected_wall | urlencode }}{% endif %}{% endif %}">
             <button type="button" class="tiny-btn {% if selected_health %}secondary{% endif %}">All</button>
         </a>
-        <a href="/accounts?health=issues{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}{% if selected_wall %}&wall={{ selected_wall | urlencode }}{% endif %}">
+        <a href="/accounts?health=issues{{ preserved_health_query }}">
             <button type="button" class="tiny-btn {% if selected_health != 'issues' %}secondary{% endif %}">Any issue</button>
         </a>
-        <a href="/accounts?health=clean{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}{% if selected_wall %}&wall={{ selected_wall | urlencode }}{% endif %}">
+        <a href="/accounts?health=clean{{ preserved_health_query }}">
             <button type="button" class="tiny-btn {% if selected_health != 'clean' %}secondary{% endif %}">Clean</button>
         </a>
-        <a href="/accounts?health=watch{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}{% if selected_wall %}&wall={{ selected_wall | urlencode }}{% endif %}">
+        <a href="/accounts?health=watch{{ preserved_health_query }}">
             <button type="button" class="tiny-btn {% if selected_health != 'watch' %}secondary{% endif %}">Watch</button>
         </a>
-        <a href="/accounts?health=needs+work{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}{% if selected_wall %}&wall={{ selected_wall | urlencode }}{% endif %}">
+        <a href="/accounts?health=needs+work{{ preserved_health_query }}">
             <button type="button" class="tiny-btn {% if selected_health != 'needs work' %}secondary{% endif %}">Needs work</button>
         </a>
-        <a href="/accounts?health=banned{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}{% if selected_wall %}&wall={{ selected_wall | urlencode }}{% endif %}">
+        <a href="/accounts?health=banned{{ preserved_health_query }}">
             <button type="button" class="tiny-btn {% if selected_health != 'banned' %}secondary{% endif %}">Banned</button>
         </a>
     </div>
@@ -103,19 +103,19 @@
         <a href="/accounts{% if q or selected_tag or selected_health %}?{% if q %}q={{ q | urlencode }}{% endif %}{% if q and (selected_tag or selected_health) %}&{% endif %}{% if selected_tag %}tag={{ selected_tag | urlencode }}{% endif %}{% if selected_tag and selected_health %}&{% endif %}{% if selected_health %}health={{ selected_health | urlencode }}{% endif %}{% endif %}">
             <button type="button" class="tiny-btn {% if selected_wall %}secondary{% endif %}">All</button>
         </a>
-        <a href="/accounts?wall=on{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}{% if selected_health %}&health={{ selected_health | urlencode }}{% endif %}">
+        <a href="/accounts?wall=on{{ preserved_wall_query }}">
             <button type="button" class="tiny-btn {% if selected_wall != 'on' %}secondary{% endif %}">On wall</button>
         </a>
-        <a href="/accounts?wall=missing{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}{% if selected_health %}&health={{ selected_health | urlencode }}{% endif %}">
+        <a href="/accounts?wall=missing{{ preserved_wall_query }}">
             <button type="button" class="tiny-btn {% if selected_wall != 'missing' %}secondary{% endif %}">Missing</button>
         </a>
-        <a href="/accounts?wall=alerts{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}{% if selected_health %}&health={{ selected_health | urlencode }}{% endif %}">
+        <a href="/accounts?wall=alerts{{ preserved_wall_query }}">
             <button type="button" class="tiny-btn {% if selected_wall != 'alerts' %}secondary{% endif %}">Alerts</button>
         </a>
-        <a href="/accounts?wall=stale{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}{% if selected_health %}&health={{ selected_health | urlencode }}{% endif %}">
+        <a href="/accounts?wall=stale{{ preserved_wall_query }}">
             <button type="button" class="tiny-btn {% if selected_wall != 'stale' %}secondary{% endif %}">Stale hints</button>
         </a>
-        <a href="/accounts?wall=hinted{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}{% if selected_health %}&health={{ selected_health | urlencode }}{% endif %}">
+        <a href="/accounts?wall=hinted{{ preserved_wall_query }}">
             <button type="button" class="tiny-btn {% if selected_wall != 'hinted' %}secondary{% endif %}">Has hint</button>
         </a>
     </div>
