@@ -208,7 +208,7 @@
                     {% if account.tags %}
                     <div style="display:flex; gap:6px; flex-wrap:wrap;">
                         {% for tag in account.tags.split(',') %}
-                        <a href="/accounts?tag={{ tag.strip() | urlencode }}"><span class="pill">{{ tag.strip() }}</span></a>
+                        <a href="/accounts?tag={{ tag.strip() | urlencode }}{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_wall %}&wall={{ selected_wall | urlencode }}{% endif %}{% if selected_health %}&health={{ selected_health | urlencode }}{% endif %}"><span class="pill">{{ tag.strip() }}</span></a>
                         {% endfor %}
                     </div>
                     {% else %}–{% endif %}
