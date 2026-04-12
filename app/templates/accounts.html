@@ -190,6 +190,13 @@
             <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('clearHints')">Clear wall hints</button>
             <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('markBanned')">Mark banned</button>
             <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('markNotBanned')">Mark not banned</button>
+        </div>
+        <div class="actions" style="margin-top:8px;">
+            <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('tagFresh')">+ fresh</button>
+            <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('tagTraining')">+ training</button>
+            <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('tagNeedsReview')">+ needs-review</button>
+            <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('untagFresh')">- fresh</button>
+            <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('untagTraining')">- training</button>
             <span id="bulkPresetHint" class="muted" style="font-size:0.82rem;"></span>
         </div>
     </div>
@@ -302,11 +309,15 @@ function applyBulkPreset(preset) {
     const statusField = form.querySelector('select[name="bulk_status"]');
     const bannedField = form.querySelector('select[name="banned_state"]');
     const wallHintField = form.querySelector('select[name="bulk_wall_hint_action"]');
+    const addTagsField = form.querySelector('input[name="bulk_tags_add"]');
+    const removeTagsField = form.querySelector('input[name="bulk_tags_remove"]');
     const hint = document.getElementById('bulkPresetHint');
 
     if (statusField) statusField.value = '';
     if (bannedField) bannedField.value = 'keep';
     if (wallHintField) wallHintField.value = '';
+    if (addTagsField) addTagsField.value = '';
+    if (removeTagsField) removeTagsField.value = '';
     if (hint) hint.textContent = '';
 
     if (preset === 'review' && statusField) {
@@ -332,6 +343,26 @@ function applyBulkPreset(preset) {
     if (preset === 'markNotBanned' && bannedField) {
         bannedField.value = 'not_banned';
         if (hint) hint.textContent = 'Preset loaded: mark selected accounts as not banned';
+    }
+    if (preset === 'tagFresh' && addTagsField) {
+        addTagsField.value = 'fresh';
+        if (hint) hint.textContent = 'Preset loaded: add tag fresh';
+    }
+    if (preset === 'tagTraining' && addTagsField) {
+        addTagsField.value = 'training';
+        if (hint) hint.textContent = 'Preset loaded: add tag training';
+    }
+    if (preset === 'tagNeedsReview' && addTagsField) {
+        addTagsField.value = 'needs-review';
+        if (hint) hint.textContent = 'Preset loaded: add tag needs-review';
+    }
+    if (preset === 'untagFresh' && removeTagsField) {
+        removeTagsField.value = 'fresh';
+        if (hint) hint.textContent = 'Preset loaded: remove tag fresh';
+    }
+    if (preset === 'untagTraining' && removeTagsField) {
+        removeTagsField.value = 'training';
+        if (hint) hint.textContent = 'Preset loaded: remove tag training';
     }
 }
 
