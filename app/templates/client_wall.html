@@ -39,6 +39,8 @@
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <span class="pill"><span>Spreader</span> <strong id="spreaderStatus">{% if app_health.spreader_running %}Running{% else %}Stopped{% endif %}</strong></span>
             <span class="pill"><span>Watchdog</span> <strong id="watchdogStatus">{% if app_health.watchdog_running %}Running{% else %}Stopped{% endif %}</strong></span>
+            <span class="pill"><span>Accounts on wall</span> <strong id="coveredAccountCount">{{ wall_snapshot.covered_account_count }}</strong></span>
+            <span class="pill"><span>Accounts missing</span> <strong id="missingAccountCount">{{ wall_snapshot.missing_account_count }}</strong></span>
             <span class="pill"><span>No status</span> <strong id="missingStatusCount">{{ summary.missing_status }}</strong></span>
             <span class="pill"><span>No progress</span> <strong id="missingProgressCount">{{ summary.missing_progress }}</strong></span>
             <span class="pill"><span>No goal</span> <strong id="missingGoalCount">{{ summary.missing_goal }}</strong></span>
@@ -54,6 +56,30 @@
             <a href="/accounts/{{ row.account.id }}"><span class="pill"><strong>{{ row.account.label }}</strong> · {{ row.issue_count }}</span></a>
             {% else %}
             <span class="muted">No account issues right now.</span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="grid-2" style="margin-bottom:20px; align-items:start;">
+    <div class="card">
+        <h3 style="margin-top:0;">Accounts on wall now</h3>
+        <div id="wallCoveredAccounts" style="display:flex; gap:8px; flex-wrap:wrap;">
+            {% for row in wall_snapshot.accounts if row.visible %}
+            <a href="/accounts/{{ row.id }}"><span class="pill"><strong>{{ row.label }}</strong>{% if row.matched_window_count > 1 %} · {{ row.matched_window_count }} windows{% endif %}</span></a>
+            {% else %}
+            <span class="muted">No accounts are currently matched to wall windows.</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0;">Accounts missing from wall</h3>
+        <div id="wallMissingAccounts" style="display:flex; gap:8px; flex-wrap:wrap;">
+            {% for row in wall_snapshot.accounts if not row.visible %}
+            <a href="/accounts/{{ row.id }}"><span class="pill"><strong>{{ row.label }}</strong>{% if row.health_label %} · {{ row.health_label }}{% endif %}</span></a>
+            {% else %}
+            <span class="muted">Every account is currently represented on the wall.</span>
             {% endfor %}
         </div>
     </div>
@@ -162,6 +188,23 @@ function renderWallWindows(rows) {
     }).join('');
 }
 
+function renderWallCoverage(rows) {
+    const coveredWrap = document.getElementById('wallCoveredAccounts');
+    const missingWrap = document.getElementById('wallMissingAccounts');
+    if (!coveredWrap || !missingWrap) return;
+
+    const covered = rows.filter((row) => row.visible);
+    const missing = rows.filter((row) => !row.visible);
+
+    coveredWrap.innerHTML = covered.length
+        ? covered.map((row) => `<a href="/accounts/${Number(row.id || 0)}"><span class="pill"><strong>${escapeHtml(row.label || 'Account')}</strong>${Number(row.matched_window_count || 0) > 1 ? ` · ${Number(row.matched_window_count || 0)} windows` : ''}</span></a>`).join('')
+        : '<span class="muted">No accounts are currently matched to wall windows.</span>';
+
+    missingWrap.innerHTML = missing.length
+        ? missing.map((row) => `<a href="/accounts/${Number(row.id || 0)}"><span class="pill"><strong>${escapeHtml(row.label || 'Account')}</strong>${row.health_label ? ` · ${escapeHtml(row.health_label)}` : ''}</span></a>`).join('')
+        : '<span class="muted">Every account is currently represented on the wall.</span>';
+}
+
 async function refreshWallOpsSummary() {
     try {
         const [opsResp, wallResp, spreaderResp] = await Promise.all([
@@ -186,6 +229,8 @@ async function refreshWallOpsSummary() {
         setText('wallWindowCount', (wallData.windows || []).length);
         setText('matchedWindowCount', wallData.matched_count || 0);
         setText('unmatchedWindowCount', wallData.unmatched_count || 0);
+        setText('coveredAccountCount', wallData.covered_account_count || 0);
+        setText('missingAccountCount', wallData.missing_account_count || 0);
         setText('issueAccountCount', summary.accounts_with_issues || 0);
         setText('missingProxyCount', summary.missing_proxy || 0);
         setText('missingStatusCount', summary.missing_status || 0);
@@ -196,6 +241,7 @@ async function refreshWallOpsSummary() {
         setText('spreaderStatus', spreader.running ? 'Running' : 'Stopped');
         setText('watchdogStatus', appHealth.watchdog_running ? 'Running' : 'Stopped');
         renderWallWindows(wallData.windows || []);
+        renderWallCoverage(wallData.accounts || []);
 
         const topWrap = document.getElementById('wallTopAccounts');
         if (topWrap) {

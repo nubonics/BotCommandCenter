@@ -904,6 +904,7 @@ def _wall_window_snapshot(
 
     health_by_id = {int(row["account"].id): row for row in health_rows}
     window_rows: list[dict[str, object]] = []
+    matched_windows_by_account: dict[int, list[dict[str, object]]] = {}
     matched_count = 0
 
     for window in wall_manager.get_windows():
@@ -921,6 +922,13 @@ def _wall_window_snapshot(
         health = health_by_id.get(int(best_account.id)) if matched and best_account else None
         if matched:
             matched_count += 1
+            matched_windows_by_account.setdefault(int(best_account.id), []).append(
+                {
+                    "hwnd": int(window.get("hwnd") or 0),
+                    "title": str(window.get("title") or ""),
+                    "match_reason": best_reason,
+                }
+            )
 
         window_rows.append(
             {
@@ -944,11 +952,45 @@ def _wall_window_snapshot(
             }
         )
 
+    account_rows: list[dict[str, object]] = []
+    covered_account_count = 0
+    for account in accounts:
+        health = health_by_id.get(int(account.id))
+        matched_windows = matched_windows_by_account.get(int(account.id), [])
+        visible = bool(matched_windows)
+        if visible:
+            covered_account_count += 1
+        account_rows.append(
+            {
+                "id": int(account.id),
+                "label": account.label,
+                "rsn": account.rsn,
+                "wall_hint": account.wall_hint,
+                "visible": visible,
+                "matched_window_count": len(matched_windows),
+                "primary_window_title": matched_windows[0]["title"] if matched_windows else None,
+                "health_label": health.get("health_label") if health else None,
+                "issue_count": health.get("issue_count") if health else 0,
+            }
+        )
+
     window_rows.sort(key=lambda row: (0 if row["matched"] else 1, str(row["title"]).lower()))
+    account_rows.sort(
+        key=lambda row: (
+            0 if row["visible"] else 1,
+            -int(row["matched_window_count"]),
+            -int(row["issue_count"]),
+            str(row["label"]).lower(),
+        )
+    )
+
     return {
         "windows": window_rows,
+        "accounts": account_rows,
         "matched_count": matched_count,
         "unmatched_count": max(0, len(window_rows) - matched_count),
+        "covered_account_count": covered_account_count,
+        "missing_account_count": max(0, len(account_rows) - covered_account_count),
     }
 
 
