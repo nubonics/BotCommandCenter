@@ -89,9 +89,10 @@
     <div style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:12px;">
         <div>
             <h3 style="margin:0;">Detected Client Windows</h3>
-            <p class="muted" style="margin:6px 0 0;">Best-effort account matching based on RSN or account label in the window title.</p>
+            <p class="muted" style="margin:6px 0 0;">Best-effort account matching based on wall hint, RSN, or account label in the window title.</p>
         </div>
     </div>
+    <div id="wallAssignStatus" class="muted" style="margin-bottom:12px; min-height:20px;"></div>
     <div style="overflow:auto; max-height:280px; border:1px solid var(--border); border-radius:var(--radius);">
         <table style="margin:0;">
             <thead>
@@ -100,6 +101,7 @@
                     <th>Match</th>
                     <th>Health</th>
                     <th>Size</th>
+                    <th>Assign hint</th>
                     <th></th>
                 </tr>
             </thead>
@@ -124,10 +126,21 @@
                         {% else %}–{% endif %}
                     </td>
                     <td class="mono">{{ row.size }}</td>
+                    <td>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <select class="wall-assign-select" data-hwnd="{{ row.hwnd }}" style="min-width:180px;">
+                                <option value="">Choose account…</option>
+                                {% for account_row in wall_snapshot.accounts %}
+                                <option value="{{ account_row.id }}" {% if row.account and row.account.id == account_row.id %}selected{% endif %}>{{ account_row.label }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" class="secondary tiny-btn wall-assign-btn" data-hwnd="{{ row.hwnd }}">Save</button>
+                        </div>
+                    </td>
                     <td style="text-align:right;"><button type="button" class="secondary tiny-btn wall-focus-btn" data-hwnd="{{ row.hwnd }}">Focus</button></td>
                 </tr>
                 {% else %}
-                <tr><td colspan="5" class="muted" style="text-align:center; padding:28px 0;">No client windows detected.</td></tr>
+                <tr><td colspan="6" class="muted" style="text-align:center; padding:28px 0;">No client windows detected.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -156,12 +169,64 @@ async function focusWallWindow(hwnd) {
     }
 }
 
-function renderWallWindows(rows) {
+function accountOptions(rows, selectedId) {
+    const sorted = [...rows].sort((a, b) => String(a.label || '').localeCompare(String(b.label || '')));
+    return ['<option value="">Choose account…</option>']
+        .concat(sorted.map((row) => `<option value="${Number(row.id || 0)}"${Number(selectedId || 0) === Number(row.id || 0) ? ' selected' : ''}>${escapeHtml(row.label || 'Account')}</option>`))
+        .join('');
+}
+
+function setWallAssignStatus(message, isError = false) {
+    const el = document.getElementById('wallAssignStatus');
+    if (!el) return;
+    el.textContent = message || '';
+    el.style.color = isError ? 'var(--red)' : 'var(--muted)';
+}
+
+async function assignWallWindow(hwnd) {
+    const select = document.querySelector(`.wall-assign-select[data-hwnd="${Number(hwnd)}"]`);
+    if (!select || !select.value) {
+        setWallAssignStatus('Choose an account before saving.', true);
+        return;
+    }
+
+    const button = document.querySelector(`.wall-assign-btn[data-hwnd="${Number(hwnd)}"]`);
+    if (button) button.disabled = true;
+    setWallAssignStatus('Saving wall hint…');
+
+    try {
+        const body = new URLSearchParams();
+        body.set('account_id', String(select.value));
+        body.set('hwnd', String(Number(hwnd)));
+
+        const resp = await fetch('/api/ops/wall-assign', {
+            method: 'POST',
+            cache: 'no-store',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString(),
+        });
+
+        const data = await resp.json();
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Failed to save wall hint');
+        }
+
+        setWallAssignStatus(data.message || 'Wall hint saved.');
+        await refreshWallOpsSummary();
+    } catch (err) {
+        console.error(err);
+        setWallAssignStatus(err.message || 'Failed to save wall hint', true);
+    } finally {
+        if (button) button.disabled = false;
+    }
+}
+
+function renderWallWindows(rows, accounts) {
     const body = document.getElementById('wallWindowsTableBody');
     if (!body) return;
 
     if (!rows.length) {
-        body.innerHTML = '<tr><td colspan="5" class="muted" style="text-align:center; padding:28px 0;">No client windows detected.</td></tr>';
+        body.innerHTML = '<tr><td colspan="6" class="muted" style="text-align:center; padding:28px 0;">No client windows detected.</td></tr>';
         return;
     }
 
@@ -177,12 +242,17 @@ function renderWallWindows(rows) {
         const healthCell = account && account.health_label
             ? `<span class="pill"><strong>${escapeHtml(account.health_label)}</strong>${Number(account.issue_count || 0) ? ` · ${Number(account.issue_count || 0)}` : ''}</span>`
             : '–';
+        const assignCell = `<div style="display:flex; gap:8px; align-items:center;">
+            <select class="wall-assign-select" data-hwnd="${hwnd}" style="min-width:180px;">${accountOptions(accounts, account ? account.id : 0)}</select>
+            <button type="button" class="secondary tiny-btn wall-assign-btn" data-hwnd="${hwnd}">Save</button>
+        </div>`;
 
         return `<tr>
             <td><strong>${title}</strong><div class="muted" style="font-size:0.8rem;">${processName} · HWND ${hwnd}</div></td>
             <td>${matchCell}</td>
             <td>${healthCell}</td>
             <td class="mono">${size}</td>
+            <td>${assignCell}</td>
             <td style="text-align:right;"><button type="button" class="secondary tiny-btn wall-focus-btn" data-hwnd="${hwnd}">Focus</button></td>
         </tr>`;
     }).join('');
@@ -240,7 +310,7 @@ async function refreshWallOpsSummary() {
         setText('missingRevenueCount', summary.missing_revenue || 0);
         setText('spreaderStatus', spreader.running ? 'Running' : 'Stopped');
         setText('watchdogStatus', appHealth.watchdog_running ? 'Running' : 'Stopped');
-        renderWallWindows(wallData.windows || []);
+        renderWallWindows(wallData.windows || [], wallData.accounts || []);
         renderWallCoverage(wallData.accounts || []);
 
         const topWrap = document.getElementById('wallTopAccounts');
@@ -274,8 +344,15 @@ async function refreshWallOpsSummary() {
 
 document.addEventListener('click', (event) => {
     const button = event.target.closest('.wall-focus-btn');
-    if (!button) return;
-    focusWallWindow(button.dataset.hwnd);
+    if (button) {
+        focusWallWindow(button.dataset.hwnd);
+        return;
+    }
+
+    const assignButton = event.target.closest('.wall-assign-btn');
+    if (assignButton) {
+        assignWallWindow(assignButton.dataset.hwnd);
+    }
 });
 
 refreshWallOpsSummary();

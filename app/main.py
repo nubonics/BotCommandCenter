@@ -994,6 +994,18 @@ def _wall_window_snapshot(
     }
 
 
+def _find_wall_window(hwnd: int) -> dict[str, object] | None:
+    from .osclient_wall.router import manager as wall_manager
+
+    for window in wall_manager.get_windows():
+        try:
+            if int(window.get("hwnd") or 0) == int(hwnd):
+                return window
+        except Exception:
+            continue
+    return None
+
+
 def _add_global_expense(
     session: Session,
     *,
@@ -1171,6 +1183,38 @@ def ops_wall_windows(session: Session = Depends(get_session)) -> JSONResponse:
     accounts = session.scalars(select(Account).order_by(Account.label)).all()
     health_rows, _summary, _app_health = _account_health_snapshot(session, accounts)
     return JSONResponse(_wall_window_snapshot(session, accounts, health_rows))
+
+
+@app.post("/api/ops/wall-assign")
+def ops_wall_assign(
+    account_id: int = Form(...),
+    hwnd: int = Form(...),
+    session: Session = Depends(get_session),
+) -> JSONResponse:
+    account = session.get(Account, account_id)
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    window = _find_wall_window(hwnd)
+    if not window:
+        raise HTTPException(status_code=404, detail="Window not found")
+
+    window_title = str(window.get("title") or "").strip()
+    if not window_title:
+        raise HTTPException(status_code=400, detail="Window title is empty")
+
+    account.wall_hint = window_title
+    session.commit()
+
+    return JSONResponse(
+        {
+            "ok": True,
+            "account_id": int(account.id),
+            "hwnd": int(hwnd),
+            "wall_hint": window_title,
+            "message": f"Saved wall hint for {account.label}",
+        }
+    )
 
 
 # --- Main app ---
