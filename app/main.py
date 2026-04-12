@@ -5,9 +5,11 @@ import contextlib
 import os
 import time
 from contextlib import asynccontextmanager
+from decimal import Decimal
 from pathlib import Path
 import subprocess
 import threading
+import uuid
 
 import psutil
 
@@ -623,6 +625,18 @@ def format_usd(value) -> str:
 templates.env.filters["usd"] = format_usd
 
 
+def _split_usd_evenly(total_usd: Decimal, count: int) -> list[Decimal]:
+    if count <= 0:
+        return []
+
+    total_cents = int((total_usd * Decimal("100")).quantize(Decimal("1")))
+    base_cents, remainder = divmod(total_cents, count)
+    shares = [Decimal(base_cents) / Decimal("100") for _ in range(count)]
+    for i in range(remainder):
+        shares[i] += Decimal("0.01")
+    return shares
+
+
 # --- Back-compat redirects for earlier /planner/* routes ---
 @app.get("/planner")
 def planner_root_compat_redirect():
@@ -1111,6 +1125,7 @@ def add_account_expense(
     name: str = Form(...),
     amount_usd: str = Form("0"),
     kind: str = Form("one_time"),
+    allocation_scope: str = Form("account"),
     start_date: str = Form(""),
     notes: str = Form(""),
     session: Session = Depends(get_session),
@@ -1124,13 +1139,20 @@ def add_account_expense(
         raise HTTPException(status_code=400, detail="Name is required")
 
     try:
-        amt = round(float(str(amount_usd).strip() or "0"), 2)
+        total_amount = Decimal(str(amount_usd).strip() or "0").quantize(Decimal("0.01"))
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid amount")
+
+    if total_amount < 0:
+        raise HTTPException(status_code=400, detail="Amount must be non-negative")
 
     kind = (kind or "one_time").strip().lower()
     if kind not in {"one_time", "monthly"}:
         raise HTTPException(status_code=400, detail="Invalid kind")
+
+    allocation_scope = (allocation_scope or "account").strip().lower()
+    if allocation_scope not in {"account", "global"}:
+        raise HTTPException(status_code=400, detail="Invalid expense scope")
 
     parsed_date = None
     if start_date.strip():
@@ -1141,13 +1163,46 @@ def add_account_expense(
         except Exception:
             raise HTTPException(status_code=400, detail="Invalid start_date (use YYYY-MM-DD)")
 
+    cleaned_notes = notes.strip() or None
+
+    if allocation_scope == "global":
+        accounts = session.scalars(select(Account).order_by(Account.id)).all()
+        if not accounts:
+            raise HTTPException(status_code=400, detail="No accounts available for global split")
+
+        split_group = uuid.uuid4().hex
+        shares = _split_usd_evenly(total_amount, len(accounts))
+        for acct, share in zip(accounts, shares):
+            session.add(
+                AccountExpense(
+                    account_id=acct.id,
+                    name=cleaned_name,
+                    amount_usd=share,
+                    kind=kind,
+                    allocation_scope="global",
+                    allocation_group=split_group,
+                    source_amount_usd=total_amount,
+                    allocated_account_count=len(accounts),
+                    start_date=parsed_date,
+                    notes=cleaned_notes,
+                    is_active=True,
+                )
+            )
+        session.commit()
+
+        message = f"Global expense added across {len(accounts)} accounts (${float(total_amount):.2f} total)"
+        return RedirectResponse(url=f"/accounts/{account_id}?message={message}", status_code=303)
+
     row = AccountExpense(
         account_id=account_id,
         name=cleaned_name,
-        amount_usd=amt,
+        amount_usd=total_amount,
         kind=kind,
+        allocation_scope="account",
+        source_amount_usd=total_amount,
+        allocated_account_count=1,
         start_date=parsed_date,
-        notes=notes.strip() or None,
+        notes=cleaned_notes,
         is_active=True,
     )
     session.add(row)
@@ -1165,6 +1220,18 @@ def toggle_account_expense(
     row = session.get(AccountExpense, expense_id)
     if not row or row.account_id != account_id:
         raise HTTPException(status_code=404, detail="Expense not found")
+
+    if row.allocation_scope == "global" and row.allocation_group:
+        rows = session.scalars(
+            select(AccountExpense).where(AccountExpense.allocation_group == row.allocation_group)
+        ).all()
+        new_state = not bool(row.is_active)
+        for item in rows:
+            item.is_active = new_state
+        session.commit()
+        message = f"Global expense {'enabled' if new_state else 'disabled'} across {len(rows)} accounts"
+        return RedirectResponse(url=f"/accounts/{account_id}?message={message}", status_code=303)
+
     row.is_active = not bool(row.is_active)
     session.commit()
     return RedirectResponse(url=f"/accounts/{account_id}?message=Expense updated", status_code=303)
@@ -1179,6 +1246,20 @@ def delete_account_expense(
     row = session.get(AccountExpense, expense_id)
     if not row or row.account_id != account_id:
         raise HTTPException(status_code=404, detail="Expense not found")
+
+    if row.allocation_scope == "global" and row.allocation_group:
+        rows = session.scalars(
+            select(AccountExpense).where(AccountExpense.allocation_group == row.allocation_group)
+        ).all()
+        count = len(rows)
+        for item in rows:
+            session.delete(item)
+        session.commit()
+        return RedirectResponse(
+            url=f"/accounts/{account_id}?message=Global expense deleted across {count} accounts",
+            status_code=303,
+        )
+
     session.delete(row)
     session.commit()
     return RedirectResponse(url=f"/accounts/{account_id}?message=Expense deleted", status_code=303)

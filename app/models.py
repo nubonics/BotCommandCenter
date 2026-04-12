@@ -137,6 +137,7 @@ class AccountExpense(Base):
     __table_args__ = (
         Index("ix_account_expense_account_created", "account_id", "created_at"),
         Index("ix_account_expense_account_active", "account_id", "is_active"),
+        Index("ix_account_expense_allocation_group", "allocation_group"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -148,6 +149,11 @@ class AccountExpense(Base):
 
     # one_time or monthly
     kind: Mapped[str] = mapped_column(String(20), default="one_time")
+    # account or global
+    allocation_scope: Mapped[str] = mapped_column(String(20), default="account", server_default="account")
+    allocation_group: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    source_amount_usd: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
+    allocated_account_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     start_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
