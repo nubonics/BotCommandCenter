@@ -974,6 +974,49 @@ def _wall_window_snapshot(
             }
         )
 
+    alert_rows: list[dict[str, object]] = []
+
+    unmatched_windows = [row for row in window_rows if not row["matched"]]
+    for row in unmatched_windows:
+        alert_rows.append(
+            {
+                "kind": "unmatched_window",
+                "severity": "warn",
+                "label": "Unmatched window",
+                "detail": str(row["title"] or "Untitled window"),
+            }
+        )
+
+    duplicate_accounts = [row for row in account_rows if int(row["matched_window_count"]) > 1]
+    for row in duplicate_accounts:
+        alert_rows.append(
+            {
+                "kind": "duplicate_account_coverage",
+                "severity": "warn",
+                "label": "Multiple windows on one account",
+                "detail": f"{row['label']} has {row['matched_window_count']} matched windows",
+                "account_id": int(row["id"]),
+            }
+        )
+
+    hint_groups: dict[str, list[Account]] = {}
+    for account in accounts:
+        normalized_hint = _normalize_match_text(account.wall_hint)
+        if normalized_hint:
+            hint_groups.setdefault(normalized_hint, []).append(account)
+
+    duplicate_hint_groups = [group for group in hint_groups.values() if len(group) > 1]
+    for group in duplicate_hint_groups:
+        labels = ", ".join(str(account.label) for account in group)
+        alert_rows.append(
+            {
+                "kind": "duplicate_wall_hint",
+                "severity": "bad",
+                "label": "Duplicate wall hint",
+                "detail": labels,
+            }
+        )
+
     window_rows.sort(key=lambda row: (0 if row["matched"] else 1, str(row["title"]).lower()))
     account_rows.sort(
         key=lambda row: (
@@ -983,10 +1026,18 @@ def _wall_window_snapshot(
             str(row["label"]).lower(),
         )
     )
+    alert_rows.sort(key=lambda row: (0 if row["severity"] == "bad" else 1, str(row["detail"]).lower()))
 
     return {
         "windows": window_rows,
         "accounts": account_rows,
+        "alerts": alert_rows,
+        "alert_summary": {
+            "total": len(alert_rows),
+            "unmatched_windows": len(unmatched_windows),
+            "duplicate_accounts": len(duplicate_accounts),
+            "duplicate_wall_hints": len(duplicate_hint_groups),
+        },
         "matched_count": matched_count,
         "unmatched_count": max(0, len(window_rows) - matched_count),
         "covered_account_count": covered_account_count,
@@ -1142,6 +1193,7 @@ def planner_generate_compat_redirect():
 def action_center_page(request: Request, session: Session = Depends(get_session)):
     accounts = session.scalars(select(Account).order_by(Account.label)).all()
     rows, summary, app_health = _account_health_snapshot(session, accounts)
+    wall_snapshot = _wall_window_snapshot(session, accounts, rows)
 
     return templates.TemplateResponse(
         request,
@@ -1151,6 +1203,7 @@ def action_center_page(request: Request, session: Session = Depends(get_session)
             "rows": rows,
             "summary": summary,
             "app_health": app_health,
+            "wall_snapshot": wall_snapshot,
             "message": request.query_params.get("message"),
         },
     )
@@ -1159,6 +1212,7 @@ def action_center_page(request: Request, session: Session = Depends(get_session)
 @app.get("/api/ops/summary")
 def ops_summary(session: Session = Depends(get_session)) -> JSONResponse:
     rows, summary, app_health = _account_health_snapshot(session)
+    wall_snapshot = _wall_window_snapshot(session, [row["account"] for row in rows], rows)
     top_accounts = [
         {
             "id": row["account"].id,
@@ -1173,6 +1227,7 @@ def ops_summary(session: Session = Depends(get_session)) -> JSONResponse:
         {
             "summary": summary,
             "app_health": app_health,
+            "wall_alert_summary": wall_snapshot["alert_summary"],
             "top_accounts": top_accounts,
         }
     )

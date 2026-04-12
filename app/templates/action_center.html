@@ -47,6 +47,7 @@
             <span class="pill"><span>Money makers</span> <strong>{{ app_health.money_maker_count }}</strong></span>
             <span class="pill"><span>Global costs</span> <strong>{{ app_health.global_cost_group_count }}</strong></span>
             <span class="pill"><span>Wall windows</span> <strong>{{ app_health.wall_window_count }}</strong></span>
+            <span class="pill"><span>Wall alerts</span> <strong>{{ wall_snapshot.alert_summary.total }}</strong></span>
             <span class="pill"><span>Spreader</span> <strong>{% if app_health.spreader_running %}Running{% else %}Stopped{% endif %}</strong></span>
             <span class="pill"><span>Watchdog</span> <strong>{% if app_health.watchdog_running %}Running{% else %}Stopped{% endif %}</strong></span>
         </div>
@@ -62,6 +63,22 @@
             <a href="/window-spreader"><button type="button" class="secondary">Spreader</button></a>
             <a href="/watchdog"><button type="button" class="secondary">Watchdog</button></a>
         </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-top:0;">Wall Ops Alerts</h3>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+        <span class="pill"><span>Unmatched windows</span> <strong>{{ wall_snapshot.alert_summary.unmatched_windows }}</strong></span>
+        <span class="pill"><span>Duplicate coverage</span> <strong>{{ wall_snapshot.alert_summary.duplicate_accounts }}</strong></span>
+        <span class="pill"><span>Duplicate hints</span> <strong>{{ wall_snapshot.alert_summary.duplicate_wall_hints }}</strong></span>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        {% for alert in wall_snapshot.alerts[:10] %}
+        <span class="pill"><strong>{{ alert.label }}</strong> · {{ alert.detail }}</span>
+        {% else %}
+        <span class="muted">No wall alerts right now.</span>
+        {% endfor %}
     </div>
 </div>
 

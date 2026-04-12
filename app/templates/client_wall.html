@@ -41,6 +41,7 @@
             <span class="pill"><span>Watchdog</span> <strong id="watchdogStatus">{% if app_health.watchdog_running %}Running{% else %}Stopped{% endif %}</strong></span>
             <span class="pill"><span>Accounts on wall</span> <strong id="coveredAccountCount">{{ wall_snapshot.covered_account_count }}</strong></span>
             <span class="pill"><span>Accounts missing</span> <strong id="missingAccountCount">{{ wall_snapshot.missing_account_count }}</strong></span>
+            <span class="pill"><span>Wall alerts</span> <strong id="wallAlertCount">{{ wall_snapshot.alert_summary.total }}</strong></span>
             <span class="pill"><span>No status</span> <strong id="missingStatusCount">{{ summary.missing_status }}</strong></span>
             <span class="pill"><span>No progress</span> <strong id="missingProgressCount">{{ summary.missing_progress }}</strong></span>
             <span class="pill"><span>No goal</span> <strong id="missingGoalCount">{{ summary.missing_goal }}</strong></span>
@@ -58,6 +59,22 @@
             <span class="muted">No account issues right now.</span>
             {% endfor %}
         </div>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+    <h3 style="margin-top:0;">Wall alerts</h3>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+        <span class="pill"><span>Unmatched windows</span> <strong id="unmatchedWindowAlertCount">{{ wall_snapshot.alert_summary.unmatched_windows }}</strong></span>
+        <span class="pill"><span>Duplicate coverage</span> <strong id="duplicateCoverageCount">{{ wall_snapshot.alert_summary.duplicate_accounts }}</strong></span>
+        <span class="pill"><span>Duplicate hints</span> <strong id="duplicateHintCount">{{ wall_snapshot.alert_summary.duplicate_wall_hints }}</strong></span>
+    </div>
+    <div id="wallAlertsList" style="display:flex; gap:8px; flex-wrap:wrap;">
+        {% for alert in wall_snapshot.alerts[:12] %}
+        <span class="pill"><strong>{{ alert.label }}</strong> · {{ alert.detail }}</span>
+        {% else %}
+        <span class="muted">No wall alerts right now.</span>
+        {% endfor %}
     </div>
 </div>
 
@@ -275,6 +292,15 @@ function renderWallCoverage(rows) {
         : '<span class="muted">Every account is currently represented on the wall.</span>';
 }
 
+function renderWallAlerts(alerts) {
+    const wrap = document.getElementById('wallAlertsList');
+    if (!wrap) return;
+
+    wrap.innerHTML = alerts.length
+        ? alerts.slice(0, 12).map((alert) => `<span class="pill"><strong>${escapeHtml(alert.label || 'Alert')}</strong> · ${escapeHtml(alert.detail || '')}</span>`).join('')
+        : '<span class="muted">No wall alerts right now.</span>';
+}
+
 async function refreshWallOpsSummary() {
     try {
         const [opsResp, wallResp, spreaderResp] = await Promise.all([
@@ -289,6 +315,7 @@ async function refreshWallOpsSummary() {
 
         const summary = ops.summary || {};
         const appHealth = ops.app_health || {};
+        const wallAlertSummary = ops.wall_alert_summary || {};
         const topAccounts = ops.top_accounts || [];
 
         const setText = (id, value) => {
@@ -301,6 +328,10 @@ async function refreshWallOpsSummary() {
         setText('unmatchedWindowCount', wallData.unmatched_count || 0);
         setText('coveredAccountCount', wallData.covered_account_count || 0);
         setText('missingAccountCount', wallData.missing_account_count || 0);
+        setText('wallAlertCount', wallAlertSummary.total || 0);
+        setText('unmatchedWindowAlertCount', wallAlertSummary.unmatched_windows || 0);
+        setText('duplicateCoverageCount', wallAlertSummary.duplicate_accounts || 0);
+        setText('duplicateHintCount', wallAlertSummary.duplicate_wall_hints || 0);
         setText('issueAccountCount', summary.accounts_with_issues || 0);
         setText('missingProxyCount', summary.missing_proxy || 0);
         setText('missingStatusCount', summary.missing_status || 0);
@@ -312,6 +343,7 @@ async function refreshWallOpsSummary() {
         setText('watchdogStatus', appHealth.watchdog_running ? 'Running' : 'Stopped');
         renderWallWindows(wallData.windows || [], wallData.accounts || []);
         renderWallCoverage(wallData.accounts || []);
+        renderWallAlerts(wallData.alerts || []);
 
         const topWrap = document.getElementById('wallTopAccounts');
         if (topWrap) {
