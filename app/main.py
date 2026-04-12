@@ -20,7 +20,11 @@ from sqlalchemy.orm import Session
 
 from .planner import router as planner_router
 from .progression_web import router as progression_router
-from .osclient_wall.router import include_wall as include_osclient_wall
+from .osclient_wall.router import (
+    include_wall as include_osclient_wall,
+    start_wall as start_osclient_wall,
+    stop_wall as stop_osclient_wall,
+)
 from .watchdog import WATCHDOG_STATUS, WatchdogConfig, update_watchdog_config, watchdog_loop
 from . import models  # noqa: F401
 from .database import create_db_and_tables, get_session
@@ -351,6 +355,7 @@ def mask_secret(value: str | None) -> str:
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     create_db_and_tables()
+    start_osclient_wall()
 
     # Background watchdog: tails bot log files and kills osclient.exe when a
     # "stuck in withdraw loop" pattern is detected.
@@ -377,6 +382,8 @@ async def lifespan(_: FastAPI):
     try:
         yield
     finally:
+        with contextlib.suppress(Exception):
+            stop_osclient_wall()
         watchdog_task.cancel()
         with contextlib.suppress(Exception):
             await watchdog_task

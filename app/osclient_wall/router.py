@@ -945,25 +945,11 @@ def include_wall(app, prefix: str = "/wall"):
     """Install OSClient Wall into the main FastAPI app under `prefix`.
 
     The wall is part of the main app, not a separate service. This mounts
-    its static assets, includes its router, and registers shared lifecycle
-    hooks on the parent app.
+    its static assets and includes its router. Lifecycle is owned by the
+    parent app lifespan in app.main.
     """
     app.mount(f"{prefix}/static", StaticFiles(directory=STATIC_DIR), name="wall_static")
     app.include_router(router, prefix=prefix)
-
-    # FastAPI/Starlette lifecycle registration varies a bit across versions.
-    # Prefer add_event_handler when available, otherwise fall back to the
-    # underlying router startup/shutdown lists used by older installs.
-    if hasattr(app, "add_event_handler"):
-        app.add_event_handler("startup", start_wall)
-        app.add_event_handler("shutdown", stop_wall)
-    else:
-        startup_handlers = getattr(app.router, "on_startup", None)
-        shutdown_handlers = getattr(app.router, "on_shutdown", None)
-        if isinstance(startup_handlers, list) and start_wall not in startup_handlers:
-            startup_handlers.append(start_wall)
-        if isinstance(shutdown_handlers, list) and stop_wall not in shutdown_handlers:
-            shutdown_handlers.append(stop_wall)
 
 
 @router.get("/")
@@ -1048,4 +1034,3 @@ def stream_mjpg() -> StreamingResponse:
         media_type=f"multipart/x-mixed-replace; boundary={boundary}",
         headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache"},
     )
-
