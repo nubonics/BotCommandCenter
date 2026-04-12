@@ -25,6 +25,9 @@ TEMPLATES_DIR = BASE_DIR / "templates"
 STATIC_DIR = BASE_DIR / "static"
 
 TARGET_PROCESS = os.getenv("TARGET_PROCESS", "osclient.exe").lower()
+TARGET_WINDOW_TITLES = [
+    t.strip() for t in os.getenv("TARGET_WINDOW_TITLES", "Old School RuneScape").split("|") if t.strip()
+]
 BOARD_WIDTH = int(os.getenv("BOARD_WIDTH", "1920"))
 BOARD_HEIGHT = int(os.getenv("BOARD_HEIGHT", "1080"))
 CAPTURE_FPS = max(1, int(os.getenv("CAPTURE_FPS", "5")))
@@ -400,6 +403,7 @@ class CaptureManager:
         self._last_good_by_hwnd: Dict[int, Image.Image] = {}
         self._stats: Dict[str, object] = {
             "target_process": TARGET_PROCESS,
+            "target_window_titles": list(TARGET_WINDOW_TITLES),
             "target_fps": CAPTURE_FPS,
             "actual_fps": 0.0,
             "window_count": 0,
@@ -473,7 +477,7 @@ class CaptureManager:
 
     def _discover_loop(self) -> None:
         while not self._stop_event.is_set():
-            windows = enumerate_target_windows(TARGET_PROCESS)
+            windows = enumerate_target_windows(TARGET_PROCESS, TARGET_WINDOW_TITLES)
             current_hwnds = {w.hwnd for w in windows}
             with self._lock:
                 self._windows = windows
@@ -535,7 +539,10 @@ class CaptureManager:
         if not windows:
             board = Image.new("RGB", (BOARD_WIDTH, BOARD_HEIGHT), (8, 8, 8))
             draw = ImageDraw.Draw(board)
-            draw.text((20, 20), f"No visible {TARGET_PROCESS} windows found.", fill=(220, 220, 220), font=self._font)
+            target_label = TARGET_PROCESS
+            if TARGET_WINDOW_TITLES:
+                target_label += f" / {' | '.join(TARGET_WINDOW_TITLES)}"
+            draw.text((20, 20), f"No visible {target_label} windows found.", fill=(220, 220, 220), font=self._font)
             draw.text((20, 48), "Windows must be visible and not minimized.", fill=(180, 180, 180), font=self._font)
             return board, layout
 
@@ -690,9 +697,10 @@ def is_probably_blank(img: Image.Image) -> bool:
         return False
 
 
-def enumerate_target_windows(target_process: str) -> List[WindowInfo]:
+def enumerate_target_windows(target_process: str, exact_titles: Optional[List[str]] = None) -> List[WindowInfo]:
     windows: List[WindowInfo] = []
     pid_name_cache: Dict[int, str] = {}
+    title_set = {t.strip() for t in (exact_titles or []) if t and t.strip()}
 
     @EnumWindowsProc
     def callback(hwnd: int, _lparam: int) -> bool:
@@ -707,6 +715,8 @@ def enumerate_target_windows(target_process: str) -> List[WindowInfo]:
             if pid <= 0:
                 return True
 
+            title = get_window_text(hwnd)
+
             process_name = pid_name_cache.get(pid)
             if process_name is None:
                 try:
@@ -714,7 +724,9 @@ def enumerate_target_windows(target_process: str) -> List[WindowInfo]:
                 except Exception:
                     process_name = ""
                 pid_name_cache[pid] = process_name
-            if process_name != target_process:
+            matches_process = process_name == target_process
+            matches_title = bool(title) and title in title_set
+            if not matches_process and not matches_title:
                 return True
 
             rect = get_window_rect(hwnd)
@@ -733,7 +745,7 @@ def enumerate_target_windows(target_process: str) -> List[WindowInfo]:
                 WindowInfo(
                     hwnd=int(hwnd),
                     pid=pid,
-                    title=get_window_text(hwnd),
+                    title=title,
                     process_name=process_name,
                     left=left,
                     top=top,
