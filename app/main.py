@@ -678,6 +678,22 @@ def _all_account_tags(accounts: list[Account]) -> list[str]:
     return sorted(tags)
 
 
+def _merge_tags(existing_tags: str | None, add_tags: str | None = None, remove_tags: str | None = None) -> str | None:
+    current = _split_tags(existing_tags)
+    current_set = set(current)
+
+    for tag in _split_tags(add_tags):
+        if tag not in current_set:
+            current.append(tag)
+            current_set.add(tag)
+
+    remove_set = set(_split_tags(remove_tags))
+    if remove_set:
+        current = [tag for tag in current if tag not in remove_set]
+
+    return ", ".join(current) or None
+
+
 def _add_global_expense(
     session: Session,
     *,
@@ -1222,6 +1238,70 @@ def import_accounts_from_botting_hub(
         f"Created {result['created']}, updated {result['updated']}, total {result['total']}."
     )
     return RedirectResponse(url=f"/accounts?message={message}", status_code=303)
+
+
+@app.post("/accounts/bulk-update")
+def bulk_update_accounts(
+    account_ids: list[int] = Form([]),
+    bulk_status: str = Form(""),
+    bulk_tags_add: str = Form(""),
+    bulk_tags_remove: str = Form(""),
+    banned_state: str = Form("keep"),
+    q: str = Form(""),
+    tag: str = Form(""),
+    session: Session = Depends(get_session),
+):
+    ids = sorted({int(account_id) for account_id in account_ids})
+    if not ids:
+        raise HTTPException(status_code=400, detail="No accounts selected")
+
+    accounts = session.scalars(select(Account).where(Account.id.in_(ids))).all()
+    if not accounts:
+        raise HTTPException(status_code=404, detail="No matching accounts found")
+
+    cleaned_status = (bulk_status or "").strip()
+    add_tags = bulk_tags_add or ""
+    remove_tags = bulk_tags_remove or ""
+
+    changed = 0
+    for account in accounts:
+        touched = False
+
+        if cleaned_status:
+            new_status = None if cleaned_status == "__clear__" else cleaned_status
+            if account.status != new_status:
+                account.status = new_status
+                touched = True
+
+        if banned_state == "banned" and not account.banned:
+            account.banned = True
+            touched = True
+        elif banned_state == "not_banned" and account.banned:
+            account.banned = False
+            touched = True
+
+        merged_tags = _merge_tags(account.tags, add_tags=add_tags, remove_tags=remove_tags)
+        if merged_tags != account.tags:
+            account.tags = merged_tags
+            touched = True
+
+        if touched:
+            changed += 1
+
+    if changed == 0:
+        message = f"No bulk changes applied across {len(accounts)} selected accounts"
+    else:
+        session.commit()
+        message = f"Updated {changed} of {len(accounts)} selected accounts"
+
+    params = []
+    if q.strip():
+        params.append(f"q={quote_plus(q.strip())}")
+    if tag.strip():
+        params.append(f"tag={quote_plus(tag.strip())}")
+    params.append(f"message={quote_plus(message)}")
+    query = "?" + "&".join(params) if params else ""
+    return RedirectResponse(url=f"/accounts{query}", status_code=303)
 
 
 @app.get("/accounts/new", response_class=HTMLResponse)

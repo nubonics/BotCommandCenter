@@ -44,10 +44,64 @@
 </div>
 {% endif %}
 
+<form id="bulkAccountsForm" action="/accounts/bulk-update" method="post">
+    <input type="hidden" name="q" value="{{ q }}">
+    <input type="hidden" name="tag" value="{{ selected_tag }}">
+
+<div class="card">
+    <div class="grid-2" style="align-items:end; gap:16px;">
+        <div>
+            <h3 style="margin-top:0; margin-bottom:6px;">Bulk Actions</h3>
+            <p class="muted" style="margin:0;">Select visible accounts, then update status, banned state, or tags in one shot.</p>
+        </div>
+        <div style="text-align:right;">
+            <span id="selectedCount" class="pill"><span>Selected</span> <strong>0</strong></span>
+        </div>
+    </div>
+
+    <div class="form-grid" style="margin-top:16px;">
+        <div class="form-group">
+            <label>Status</label>
+            <select name="bulk_status">
+                <option value="">Keep current</option>
+                <option value="__clear__">Clear status</option>
+                <option value="active">active</option>
+                <option value="queued">queued</option>
+                <option value="training">training</option>
+                <option value="paused">paused</option>
+                <option value="review">review</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Banned</label>
+            <select name="banned_state">
+                <option value="keep">Keep current</option>
+                <option value="not_banned">Set not banned</option>
+                <option value="banned">Set banned</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Add tags</label>
+            <input type="text" name="bulk_tags_add" placeholder="fresh, proxy-a">
+        </div>
+        <div class="form-group">
+            <label>Remove tags</label>
+            <input type="text" name="bulk_tags_remove" placeholder="stale, risky">
+        </div>
+    </div>
+
+    <div class="actions" style="margin-top:16px;">
+        <button type="submit">Apply to Selected</button>
+        <button type="button" class="secondary" onclick="toggleVisibleAccounts(true)">Select visible</button>
+        <button type="button" class="secondary" onclick="toggleVisibleAccounts(false)">Clear selection</button>
+    </div>
+</div>
+
 <div class="card" style="padding:0; overflow:hidden;">
     <table>
         <thead>
             <tr>
+                <th style="width:44px;"><input type="checkbox" id="selectAllVisible" onclick="toggleVisibleAccounts(this.checked)"></th>
                 <th>Label</th>
                 <th>RSN</th>
                 <th>Tags</th>
@@ -60,6 +114,7 @@
         <tbody>
             {% for account in accounts %}
             <tr>
+                <td><input type="checkbox" name="account_ids" value="{{ account.id }}" class="bulk-account-checkbox" onchange="refreshSelectedCount()"></td>
                 <td><a href="/accounts/{{ account.id }}"><strong>{{ account.label }}</strong></a></td>
                 <td class="mono" style="color:var(--text-2);">{{ account.rsn or "–" }}</td>
                 <td>
@@ -86,10 +141,46 @@
                 </td>
             </tr>
             {% else %}
-            <tr><td colspan="7" class="muted" style="text-align:center; padding:40px 0;">No accounts yet.</td></tr>
+            <tr><td colspan="8" class="muted" style="text-align:center; padding:40px 0;">No accounts yet.</td></tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+</form>
+
+<script>
+function bulkCheckboxes() {
+    return Array.from(document.querySelectorAll('.bulk-account-checkbox'));
+}
+
+function refreshSelectedCount() {
+    const count = bulkCheckboxes().filter(cb => cb.checked).length;
+    const el = document.getElementById('selectedCount');
+    if (el) el.innerHTML = `<span>Selected</span> <strong>${count}</strong>`;
+    const all = document.getElementById('selectAllVisible');
+    if (all) {
+        const boxes = bulkCheckboxes();
+        all.checked = boxes.length > 0 && boxes.every(cb => cb.checked);
+    }
+}
+
+function toggleVisibleAccounts(checked) {
+    bulkCheckboxes().forEach(cb => { cb.checked = !!checked; });
+    refreshSelectedCount();
+}
+
+const bulkForm = document.getElementById('bulkAccountsForm');
+if (bulkForm) {
+    bulkForm.addEventListener('submit', (event) => {
+        if (bulkCheckboxes().filter(cb => cb.checked).length === 0) {
+            event.preventDefault();
+            alert('Select at least one account first.');
+        }
+    });
+}
+
+refreshSelectedCount();
+</script>
 
 {% endblock %}
