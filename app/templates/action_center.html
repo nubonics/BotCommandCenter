@@ -8,6 +8,34 @@
     </div>
 </div>
 
+<div class="card" style="padding: 14px 18px;">
+    <form method="get" action="/action-center" class="inline-form">
+        <input type="text" name="q" value="{{ q }}" placeholder="Search label, RSN, status, proxy, tags..." style="flex:1; min-width:240px;">
+        <select name="health" style="min-width:180px;">
+            <option value="">All health states</option>
+            <option value="clean" {% if selected_health == 'clean' %}selected{% endif %}>Clean</option>
+            <option value="watch" {% if selected_health == 'watch' %}selected{% endif %}>Watch</option>
+            <option value="needs work" {% if selected_health == 'needs work' %}selected{% endif %}>Needs work</option>
+            <option value="banned" {% if selected_health == 'banned' %}selected{% endif %}>Banned</option>
+        </select>
+        <select name="issue" style="min-width:200px;">
+            <option value="">All issues</option>
+            <option value="missing rsn" {% if selected_issue == 'missing rsn' %}selected{% endif %}>Missing RSN</option>
+            <option value="missing proxy" {% if selected_issue == 'missing proxy' %}selected{% endif %}>Missing proxy</option>
+            <option value="no progress state" {% if selected_issue == 'no progress state' %}selected{% endif %}>No progress state</option>
+            <option value="no active goal" {% if selected_issue == 'no active goal' %}selected{% endif %}>No active goal</option>
+            <option value="no costs tracked" {% if selected_issue == 'no costs tracked' %}selected{% endif %}>No costs tracked</option>
+            <option value="no revenue tracked" {% if selected_issue == 'no revenue tracked' %}selected{% endif %}>No revenue tracked</option>
+            <option value="no status" {% if selected_issue == 'no status' %}selected{% endif %}>No status</option>
+            <option value="banned" {% if selected_issue == 'banned' %}selected{% endif %}>Banned</option>
+        </select>
+        <button type="submit" class="secondary">Filter</button>
+        {% if q or selected_health or selected_issue %}
+        <a href="/action-center"><button type="button" class="secondary">Clear</button></a>
+        {% endif %}
+    </form>
+</div>
+
 <div class="grid-3">
     <div class="stat-card">
         <h3>Accounts with issues</h3>
@@ -124,6 +152,10 @@
                         <a href="/accounts/{{ row.account.id }}/progress"><button type="button" class="secondary tiny-btn">Progress</button></a>
                     </div>
                 </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="muted" style="text-align:center; padding:40px 0;">No accounts match the current filters.</td>
             </tr>
             {% endfor %}
         </tbody>

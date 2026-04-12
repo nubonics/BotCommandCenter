@@ -1240,10 +1240,46 @@ def planner_generate_compat_redirect():
 
 
 @app.get("/action-center", response_class=HTMLResponse)
-def action_center_page(request: Request, session: Session = Depends(get_session)):
+def action_center_page(
+    request: Request,
+    q: str = "",
+    health: str = "",
+    issue: str = "",
+    session: Session = Depends(get_session),
+):
     accounts = session.scalars(select(Account).order_by(Account.label)).all()
     rows, summary, app_health = _account_health_snapshot(session, accounts)
     wall_snapshot = _wall_window_snapshot(session, accounts, rows)
+
+    selected_health = (health or "").strip().lower()
+    selected_issue = (issue or "").strip().lower()
+    search = (q or "").strip().lower()
+
+    if search:
+        filtered_rows = []
+        for row in rows:
+            account = row["account"]
+            haystack = " ".join(
+                [
+                    str(account.label or ""),
+                    str(account.rsn or ""),
+                    str(account.status or ""),
+                    str(account.proxy_ip or ""),
+                    str(account.tags or ""),
+                ]
+            ).lower()
+            if search in haystack:
+                filtered_rows.append(row)
+        rows = filtered_rows
+
+    if selected_health:
+        rows = [row for row in rows if str(row.get("health_label") or "").strip().lower() == selected_health]
+
+    if selected_issue:
+        rows = [
+            row for row in rows
+            if any(str(entry or "").strip().lower() == selected_issue for entry in row.get("issues", []))
+        ]
 
     return templates.TemplateResponse(
         request,
@@ -1254,6 +1290,9 @@ def action_center_page(request: Request, session: Session = Depends(get_session)
             "summary": summary,
             "app_health": app_health,
             "wall_snapshot": wall_snapshot,
+            "selected_health": selected_health,
+            "selected_issue": selected_issue,
+            "q": q,
             "message": request.query_params.get("message"),
         },
     )
