@@ -151,6 +151,22 @@ async function focusAccountWall(accountId) {
     }
 }
 
+async function focusWallHwnd(hwnd) {
+    try {
+        const resp = await fetch(`/api/focus/${Number(hwnd)}`, {
+            method: 'POST',
+            cache: 'no-store',
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Failed to focus wall window');
+        }
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Failed to focus wall window');
+    }
+}
+
 async function clearAccountWallHint(accountId) {
     if (!confirm('Clear the saved wall hint for this account?')) return;
     try {
@@ -179,9 +195,46 @@ document.addEventListener('click', (event) => {
     const clearButton = event.target.closest('#clearAccountWallHintBtn');
     if (clearButton) {
         clearAccountWallHint(clearButton.dataset.accountId);
+        return;
+    }
+
+    const hwndButton = event.target.closest('.focusWallHwndBtn');
+    if (hwndButton) {
+        focusWallHwnd(hwndButton.dataset.hwnd);
     }
 });
 </script>
+
+{% if wall_status.matched_windows and wall_status.matched_windows|length > 0 %}
+<div class="card">
+    <h3 style="margin-top:0;">Matched Wall Windows</h3>
+    <div style="overflow:auto; border:1px solid var(--border); border-radius:var(--radius);">
+        <table style="margin:0;">
+            <thead>
+                <tr>
+                    <th>Window</th>
+                    <th>Reason</th>
+                    <th>Size</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for win in wall_status.matched_windows %}
+                <tr>
+                    <td>
+                        <strong>{{ win.title or 'Untitled window' }}</strong>
+                        <div class="muted" style="font-size:0.8rem;">{{ win.process_name or 'Unknown process' }} · HWND {{ win.hwnd }}</div>
+                    </td>
+                    <td>{% if win.match_reason %}<span class="pill">{{ win.match_reason }}</span>{% else %}–{% endif %}</td>
+                    <td class="mono">{{ win.size }}</td>
+                    <td style="text-align:right;"><button type="button" class="secondary tiny-btn focusWallHwndBtn" data-hwnd="{{ win.hwnd }}">Focus</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
 
 <div class="grid-3" style="margin-bottom:20px;">
     <div class="stat-card">

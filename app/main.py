@@ -926,6 +926,8 @@ def _wall_window_snapshot(
                 {
                     "hwnd": int(window.get("hwnd") or 0),
                     "title": str(window.get("title") or ""),
+                    "process_name": str(window.get("process_name") or ""),
+                    "size": f"{int(window.get('width') or 0)}×{int(window.get('height') or 0)}",
                     "match_reason": best_reason,
                 }
             )
@@ -968,6 +970,7 @@ def _wall_window_snapshot(
                 "wall_hint": account.wall_hint,
                 "visible": visible,
                 "matched_window_count": len(matched_windows),
+                "matched_windows": matched_windows,
                 "primary_hwnd": matched_windows[0]["hwnd"] if matched_windows else None,
                 "primary_window_title": matched_windows[0]["title"] if matched_windows else None,
                 "health_label": health.get("health_label") if health else None,
