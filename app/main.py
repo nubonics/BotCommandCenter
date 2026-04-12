@@ -1779,6 +1779,10 @@ def list_accounts(request: Request, q: str = "", tag: str = "", wall: str = "", 
                 filtered_accounts.append(account)
         accounts = filtered_accounts
 
+    current_list_url = "/accounts"
+    if request.url.query:
+        current_list_url += f"?{request.url.query}"
+
     return templates.TemplateResponse(
         request,
         "accounts.html",
@@ -1793,6 +1797,7 @@ def list_accounts(request: Request, q: str = "", tag: str = "", wall: str = "", 
             "selected_tag": selected_tag,
             "selected_wall": selected_wall,
             "selected_health": selected_health,
+            "current_list_url": current_list_url,
             "message": request.query_params.get("message"),
         },
     )
