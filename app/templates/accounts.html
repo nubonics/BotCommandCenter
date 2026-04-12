@@ -222,7 +222,7 @@
             {% for account in accounts %}
             <tr>
                 <td><input type="checkbox" name="account_ids" value="{{ account.id }}" class="bulk-account-checkbox" onchange="refreshSelectedCount()"></td>
-                <td><a href="/accounts/{{ account.id }}"><strong>{{ account.label }}</strong></a></td>
+                <td><a href="/accounts/{{ account.id }}?next=/accounts{% if request.url.query %}%3F{{ request.url.query | urlencode }}{% endif %}"><strong>{{ account.label }}</strong></a></td>
                 <td class="mono" style="color:var(--text-2);">{{ account.rsn or "–" }}</td>
                 <td>
                     {% if account.tags %}
@@ -269,7 +269,7 @@
                         {% if account.wall_hint %}
                         <button type="button" class="secondary tiny-btn account-wall-clear-btn" data-account-id="{{ account.id }}">Clear hint</button>
                         {% endif %}
-                        <a href="/accounts/{{ account.id }}/edit"><button type="button" class="secondary tiny-btn">Edit</button></a>
+                        <a href="/accounts/{{ account.id }}/edit?next=/accounts{% if request.url.query %}%3F{{ request.url.query | urlencode }}{% endif %}"><button type="button" class="secondary tiny-btn">Edit</button></a>
                         <form action="/accounts/{{ account.id }}/delete" method="post" style="margin:0;" onsubmit="return confirm('Delete this account?');">
                             <button type="submit" class="danger tiny-btn">Del</button>
                         </form>

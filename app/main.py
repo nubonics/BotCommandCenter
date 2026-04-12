@@ -1966,6 +1966,7 @@ def new_account_form(request: Request):
         {
             "request": request,
             "account": None,
+            "next_url": request.query_params.get("next") or "/accounts",
             "message": request.query_params.get("message"),
         },
     )
@@ -1987,6 +1988,7 @@ def create_account(
     wall_hint: str = Form(""),
     banned: str = Form("false"),
     notes: str = Form(""),
+    next_url: str = Form("/accounts"),
     session: Session = Depends(get_session),
 ):
     cleaned_label = label.strip()
@@ -2013,7 +2015,7 @@ def create_account(
     session.commit()
     session.refresh(account)
 
-    return RedirectResponse(url=f"/accounts/{account.id}?message=Account created", status_code=303)
+    return RedirectResponse(url=f"/accounts/{account.id}?next={quote_plus(next_url)}&message=Account created", status_code=303)
 
 
 @app.get("/accounts/{account_id}", response_class=HTMLResponse)
@@ -2046,6 +2048,7 @@ def account_detail(request: Request, account_id: int, session: Session = Depends
             "account": account,
             "account_tags": _split_tags(account.tags),
             "all_tags": _all_account_tags(session.scalars(select(Account).order_by(Account.label)).all()),
+            "next_url": request.query_params.get("next") or "/accounts",
             "message": request.query_params.get("message"),
             "expenses": expenses,
             "revenues": revenues,
@@ -2397,6 +2400,7 @@ def edit_account_form(request: Request, account_id: int, session: Session = Depe
         {
             "request": request,
             "account": account,
+            "next_url": request.query_params.get("next") or f"/accounts/{account.id}",
             "message": request.query_params.get("message"),
         },
     )
@@ -2419,6 +2423,7 @@ def update_account(
     wall_hint: str = Form(""),
     banned: str = Form("false"),
     notes: str = Form(""),
+    next_url: str = Form(""),
     session: Session = Depends(get_session),
 ):
     account = session.get(Account, account_id)
@@ -2446,7 +2451,9 @@ def update_account(
 
     session.commit()
 
-    return RedirectResponse(url=f"/accounts/{account.id}?message=Account updated", status_code=303)
+    target_url = next_url.strip() or f"/accounts/{account.id}"
+    separator = "&" if "?" in target_url else "?"
+    return RedirectResponse(url=f"{target_url}{separator}message=Account updated", status_code=303)
 
 
 @app.post("/accounts/{account_id}/delete")

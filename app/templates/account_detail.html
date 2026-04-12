@@ -14,8 +14,9 @@
         {% endif %}
     </div>
     <div class="actions">
+        <a href="{{ next_url }}"><button type="button" class="secondary">Back to Accounts</button></a>
         <a href="/accounts/{{ account.id }}/progress"><button type="button" class="secondary">Progress</button></a>
-        <a href="/accounts/{{ account.id }}/edit"><button type="button" class="secondary">Edit</button></a>
+        <a href="/accounts/{{ account.id }}/edit?next={{ next_url | urlencode }}"><button type="button" class="secondary">Edit</button></a>
         <form action="/accounts/{{ account.id }}/delete" method="post" style="margin:0;" onsubmit="return confirm('Delete this account?');">
             <button type="submit" class="danger">Delete</button>
         </form>

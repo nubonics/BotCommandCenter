@@ -12,6 +12,7 @@
 
 <div class="card" style="max-width: 900px;">
     <form action="{% if editing %}/accounts/{{ account.id }}/edit{% else %}/accounts/new{% endif %}" method="post">
+        <input type="hidden" name="next_url" value="{{ next_url or '/accounts' }}">
         <div class="form-grid">
             <div class="form-group form-group-full">
                 <label>Label</label>
@@ -49,7 +50,7 @@
         </div>
 
         <div class="actions" style="margin-top:20px;">
-            <a href="/accounts"><button type="button" class="secondary">Cancel</button></a>
+            <a href="{{ next_url or '/accounts' }}"><button type="button" class="secondary">Cancel</button></a>
             <button type="submit">{% if editing %}Save Changes{% else %}Create Account{% endif %}</button>
         </div>
     </form>
