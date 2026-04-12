@@ -1251,6 +1251,7 @@ def action_center_page(
     accounts = session.scalars(select(Account).order_by(Account.label)).all()
     rows, summary, app_health = _account_health_snapshot(session, accounts)
     wall_snapshot = _wall_window_snapshot(session, accounts, rows)
+    full_rows = list(rows)
 
     selected_health = (health or "").strip().lower()
     selected_issue = (issue or "").strip().lower()
@@ -1275,7 +1276,13 @@ def action_center_page(
         rows = filtered_rows
 
     if selected_health:
-        rows = [row for row in rows if str(row.get("health_label") or "").strip().lower() == selected_health]
+        if selected_health == "issues":
+            rows = [
+                row for row in rows
+                if str(row.get("health_label") or "").strip().lower() in {"watch", "needs work", "banned"}
+            ]
+        else:
+            rows = [row for row in rows if str(row.get("health_label") or "").strip().lower() == selected_health]
 
     if selected_issue:
         rows = [
@@ -1295,6 +1302,7 @@ def action_center_page(
         {
             "request": request,
             "rows": rows,
+            "full_rows": full_rows,
             "summary": summary,
             "app_health": app_health,
             "wall_snapshot": wall_snapshot,

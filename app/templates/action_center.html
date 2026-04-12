@@ -13,6 +13,7 @@
         <input type="text" name="q" value="{{ q }}" placeholder="Search label, RSN, status, proxy, tags..." style="flex:1; min-width:240px;">
         <select name="health" style="min-width:180px;">
             <option value="">All health states</option>
+            <option value="issues" {% if selected_health == 'issues' %}selected{% endif %}>Any issue</option>
             <option value="clean" {% if selected_health == 'clean' %}selected{% endif %}>Clean</option>
             <option value="watch" {% if selected_health == 'watch' %}selected{% endif %}>Watch</option>
             <option value="needs work" {% if selected_health == 'needs work' %}selected{% endif %}>Needs work</option>
@@ -43,9 +44,13 @@
 </div>
 
 <div class="grid-3">
-    <a class="stat-card" href="/action-center?health=watch">
+    <a class="stat-card" href="/action-center?health=issues">
         <h3>Accounts with issues</h3>
         <div class="big-number">{{ summary.accounts_with_issues }}</div>
+    </a>
+    <a class="stat-card" href="/action-center?health=needs+work">
+        <h3>Needs work</h3>
+        <div class="big-number">{{ full_rows | selectattr('health_label', 'equalto', 'Needs work') | list | length }}</div>
     </a>
     <a class="stat-card" href="/action-center?issue=missing+proxy">
         <h3>Missing proxy</h3>
