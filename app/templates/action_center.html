@@ -103,14 +103,24 @@
 <div class="card">
     <h3 style="margin-top:0;">Wall Ops Alerts</h3>
     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
-        <span class="pill"><span>Unmatched windows</span> <strong>{{ wall_snapshot.alert_summary.unmatched_windows }}</strong></span>
-        <span class="pill"><span>Duplicate coverage</span> <strong>{{ wall_snapshot.alert_summary.duplicate_accounts }}</strong></span>
-        <span class="pill"><span>Stale hints</span> <strong>{{ wall_snapshot.alert_summary.stale_wall_hints }}</strong></span>
-        <span class="pill"><span>Duplicate hints</span> <strong>{{ wall_snapshot.alert_summary.duplicate_wall_hints }}</strong></span>
+        <a class="pill" href="/client-wall"><span>Unmatched windows</span> <strong>{{ wall_snapshot.alert_summary.unmatched_windows }}</strong></a>
+        <a class="pill" href="/accounts?wall=alerts"><span>Duplicate coverage</span> <strong>{{ wall_snapshot.alert_summary.duplicate_accounts }}</strong></a>
+        <a class="pill" href="/accounts?wall=stale"><span>Stale hints</span> <strong>{{ wall_snapshot.alert_summary.stale_wall_hints }}</strong></a>
+        <a class="pill" href="/accounts?wall=alerts"><span>Duplicate hints</span> <strong>{{ wall_snapshot.alert_summary.duplicate_wall_hints }}</strong></a>
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
         {% for alert in wall_snapshot.alerts[:10] %}
+        {% if alert.kind == 'stale_wall_hint' and alert.account_id %}
+        <a class="pill" href="/accounts?wall=stale"><strong>{{ alert.label }}</strong> · {{ alert.detail }}</a>
+        {% elif alert.kind == 'duplicate_account_coverage' and alert.account_id %}
+        <a class="pill" href="/accounts?wall=alerts"><strong>{{ alert.label }}</strong> · {{ alert.detail }}</a>
+        {% elif alert.kind == 'duplicate_wall_hint' %}
+        <a class="pill" href="/accounts?wall=alerts"><strong>{{ alert.label }}</strong> · {{ alert.detail }}</a>
+        {% elif alert.kind == 'unmatched_window' %}
+        <a class="pill" href="/client-wall"><strong>{{ alert.label }}</strong> · {{ alert.detail }}</a>
+        {% else %}
         <span class="pill"><strong>{{ alert.label }}</strong> · {{ alert.detail }}</span>
+        {% endif %}
         {% else %}
         <span class="muted">No wall alerts right now.</span>
         {% endfor %}
