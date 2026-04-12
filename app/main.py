@@ -31,7 +31,7 @@ from .window_spreader import get_spreader
 from .watchdog import WATCHDOG_STATUS, WatchdogConfig, update_watchdog_config, watchdog_loop
 from . import models  # noqa: F401
 from .database import create_db_and_tables, get_session
-from .models import Account, AccountExpense, Item, MoneyMaker, MoneyMakerComponent
+from .models import Account, AccountExpense, AccountGoal, AccountProgress, Item, MoneyMaker, MoneyMakerComponent
 from .services import (
     ensure_item_catalog,
     evaluate_money_maker,
@@ -773,6 +773,86 @@ def planner_assignments_compat_redirect():
 @app.get("/planner/generate")
 def planner_generate_compat_redirect():
     return RedirectResponse(url="/planner_core/generate", status_code=307)
+
+
+@app.get("/action-center", response_class=HTMLResponse)
+def action_center_page(request: Request, session: Session = Depends(get_session)):
+    accounts = session.scalars(select(Account).order_by(Account.label)).all()
+    progress_account_ids = set(session.scalars(select(AccountProgress.account_id)).all())
+    active_goal_account_ids = set(
+        session.scalars(select(AccountGoal.account_id).where(AccountGoal.is_active.is_(True))).all()
+    )
+    expense_account_ids = set(session.scalars(select(AccountExpense.account_id)).all())
+    money_maker_count = len(session.scalars(select(MoneyMaker.id)).all())
+    global_cost_group_count = len(_global_expense_groups(session))
+
+    rows: list[dict[str, object]] = []
+    summary = {
+        "accounts_with_issues": 0,
+        "missing_rsn": 0,
+        "missing_proxy": 0,
+        "missing_progress": 0,
+        "missing_goal": 0,
+        "missing_costs": 0,
+        "missing_status": 0,
+        "banned": 0,
+    }
+
+    for account in accounts:
+        issues: list[str] = []
+        if not (account.rsn or "").strip():
+            issues.append("Missing RSN")
+            summary["missing_rsn"] += 1
+        if not (account.proxy_ip or "").strip():
+            issues.append("Missing proxy")
+            summary["missing_proxy"] += 1
+        if account.id not in progress_account_ids:
+            issues.append("No progress state")
+            summary["missing_progress"] += 1
+        if account.id not in active_goal_account_ids:
+            issues.append("No active goal")
+            summary["missing_goal"] += 1
+        if account.id not in expense_account_ids:
+            issues.append("No costs tracked")
+            summary["missing_costs"] += 1
+        if not (account.status or "").strip():
+            issues.append("No status")
+            summary["missing_status"] += 1
+        if account.banned:
+            issues.append("Banned")
+            summary["banned"] += 1
+
+        if issues:
+            summary["accounts_with_issues"] += 1
+
+        rows.append(
+            {
+                "account": account,
+                "issues": issues,
+            }
+        )
+
+    rows.sort(key=lambda row: (-len(row["issues"]), str(row["account"].label).lower()))
+
+    app_health = {
+        "account_count": len(accounts),
+        "money_maker_count": money_maker_count,
+        "global_cost_group_count": global_cost_group_count,
+        "spreader_running": get_spreader().is_running(),
+        "watchdog_running": bool(WATCHDOG_STATUS.running),
+    }
+
+    return templates.TemplateResponse(
+        request,
+        "action_center.html",
+        {
+            "request": request,
+            "rows": rows,
+            "summary": summary,
+            "app_health": app_health,
+            "message": request.query_params.get("message"),
+        },
+    )
 
 
 # --- Main app ---
