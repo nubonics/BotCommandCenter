@@ -115,9 +115,18 @@
                     <div class="form-group"><label>Amount (USD)</label><input type="number" step="0.01" name="amount_usd" value="0" required></div>
                     <div class="form-group"><label>Type</label><select name="kind"><option value="one_time">One-time</option><option value="monthly">Monthly</option></select></div>
                     <div class="form-group"><label>Scope</label><select name="allocation_scope"><option value="account">This account only</option><option value="global">Split across all accounts</option></select></div>
+                    <div class="form-group">
+                        <label>Global target tag</label>
+                        <select name="allocation_tag">
+                            <option value="">All accounts</option>
+                            {% for tag in all_tags %}
+                            <option value="{{ tag }}">Tag: {{ tag }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                     <div class="form-group"><label>Start date</label><input type="date" name="start_date"></div>
                 </div>
-                <p class="muted" style="margin:-4px 0 12px; font-size:0.9rem;">Global split treats the entered amount as the total, then allocates it across every account.</p>
+                <p class="muted" style="margin:-4px 0 12px; font-size:0.9rem;">Global split treats the entered amount as the total, then allocates it across every account or only accounts with the chosen tag.</p>
                 <div class="form-group" style="margin-bottom:14px;"><label>Notes</label><input type="text" name="notes" placeholder="Optional"></div>
                 <button type="submit" class="secondary">Add Expense</button>
             </form>
@@ -137,6 +146,9 @@
                     <span class="pill">Global split</span>
                     {% if e.source_amount_usd and e.allocated_account_count %}
                     <div class="muted" style="font-size:0.85rem; margin-top:4px;">${{ '%.2f'|format(e.source_amount_usd or 0) }} total / {{ e.allocated_account_count }} accts</div>
+                    {% endif %}
+                    {% if e.allocation_tag %}
+                    <div class="muted" style="font-size:0.85rem; margin-top:4px;">Tag: {{ e.allocation_tag }}</div>
                     {% endif %}
                     {% else %}
                     <span class="pill">Account</span>

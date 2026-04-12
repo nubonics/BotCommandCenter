@@ -153,6 +153,7 @@ class AccountExpense(Base):
     # account or global
     allocation_scope: Mapped[str] = mapped_column(String(20), default="account", server_default="account")
     allocation_group: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    allocation_tag: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     source_amount_usd: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
     allocated_account_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     start_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)

@@ -694,6 +694,14 @@ def _merge_tags(existing_tags: str | None, add_tags: str | None = None, remove_t
     return ", ".join(current) or None
 
 
+def _accounts_for_global_allocation(session: Session, allocation_tag: str | None = None) -> list[Account]:
+    accounts = session.scalars(select(Account).order_by(Account.id)).all()
+    normalized_tag = (allocation_tag or "").strip().lower()
+    if normalized_tag:
+        accounts = [account for account in accounts if normalized_tag in _split_tags(account.tags)]
+    return accounts
+
+
 def _add_global_expense(
     session: Session,
     *,
@@ -702,9 +710,13 @@ def _add_global_expense(
     kind: str,
     start_date,
     notes: str | None,
+    allocation_tag: str | None = None,
 ) -> tuple[str, int]:
-    accounts = session.scalars(select(Account).order_by(Account.id)).all()
+    normalized_tag = (allocation_tag or "").strip().lower() or None
+    accounts = _accounts_for_global_allocation(session, normalized_tag)
     if not accounts:
+        if normalized_tag:
+            raise HTTPException(status_code=400, detail=f"No accounts found with tag '{normalized_tag}'")
         raise HTTPException(status_code=400, detail="No accounts available for global split")
 
     split_group = uuid.uuid4().hex
@@ -718,6 +730,7 @@ def _add_global_expense(
                 kind=kind,
                 allocation_scope="global",
                 allocation_group=split_group,
+                allocation_tag=normalized_tag,
                 source_amount_usd=total_amount,
                 allocated_account_count=len(accounts),
                 start_date=start_date,
@@ -762,6 +775,7 @@ def _global_expense_groups(session: Session) -> list[dict[str, object]]:
                 "start_date": row.start_date,
                 "notes": row.notes,
                 "account_count": int(row.allocated_account_count or 0),
+                "allocation_tag": row.allocation_tag,
                 "source_amount_usd": source_amount,
                 "per_account_amount_usd": per_account_amount,
             }
@@ -1396,6 +1410,7 @@ def account_detail(request: Request, account_id: int, session: Session = Depends
             "request": request,
             "account": account,
             "account_tags": _split_tags(account.tags),
+            "all_tags": _all_account_tags(session.scalars(select(Account).order_by(Account.label)).all()),
             "message": request.query_params.get("message"),
             "expenses": expenses,
             "total_spent_all_time": total_spent_all_time,
@@ -1411,6 +1426,7 @@ def add_account_expense(
     amount_usd: str = Form("0"),
     kind: str = Form("one_time"),
     allocation_scope: str = Form("account"),
+    allocation_tag: str = Form(""),
     start_date: str = Form(""),
     notes: str = Form(""),
     session: Session = Depends(get_session),
@@ -1451,8 +1467,13 @@ def add_account_expense(
             kind=kind,
             start_date=parsed_date,
             notes=cleaned_notes,
+            allocation_tag=allocation_tag,
         )
-        message = f"Global expense added across {account_count} accounts (${float(total_amount):.2f} total)"
+        target = (allocation_tag or "").strip().lower()
+        if target:
+            message = f"Global expense added across {account_count} '{target}' accounts (${float(total_amount):.2f} total)"
+        else:
+            message = f"Global expense added across {account_count} accounts (${float(total_amount):.2f} total)"
         return RedirectResponse(url=f"/accounts/{account_id}?message={message}", status_code=303)
 
     row = AccountExpense(
@@ -1530,6 +1551,7 @@ def delete_account_expense(
 @app.get("/expenses/global", response_class=HTMLResponse)
 def global_expenses_page(request: Request, session: Session = Depends(get_session)):
     groups = _global_expense_groups(session)
+    all_accounts = session.scalars(select(Account).order_by(Account.label)).all()
 
     total_one_time = 0.0
     monthly_burn = 0.0
@@ -1555,6 +1577,7 @@ def global_expenses_page(request: Request, session: Session = Depends(get_sessio
             "request": request,
             "message": request.query_params.get("message"),
             "groups": groups,
+            "all_tags": _all_account_tags(all_accounts),
             "global_total_spent": total_one_time + sum(
                 float(g.get("source_amount_usd") or 0) for g in groups if g.get("kind") == "monthly"
             ),
@@ -1572,6 +1595,7 @@ def add_global_expense(
     name: str = Form(...),
     amount_usd: str = Form("0"),
     kind: str = Form("one_time"),
+    allocation_tag: str = Form(""),
     start_date: str = Form(""),
     notes: str = Form(""),
     session: Session = Depends(get_session),
@@ -1600,8 +1624,13 @@ def add_global_expense(
         kind=kind,
         start_date=parsed_date,
         notes=notes.strip() or None,
+        allocation_tag=allocation_tag,
     )
-    message = f"Global expense added across {account_count} accounts (${float(total_amount):.2f} total)"
+    target = (allocation_tag or "").strip().lower()
+    if target:
+        message = f"Global expense added across {account_count} '{target}' accounts (${float(total_amount):.2f} total)"
+    else:
+        message = f"Global expense added across {account_count} accounts (${float(total_amount):.2f} total)"
     return RedirectResponse(url=f"/expenses/global?message={message}", status_code=303)
 
 

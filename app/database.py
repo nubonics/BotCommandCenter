@@ -74,6 +74,10 @@ def _ensure_account_expense_schema() -> None:
             conn.exec_driver_sql(
                 "ALTER TABLE account_expense ADD COLUMN allocation_group VARCHAR(64)"
             )
+        if "allocation_tag" not in columns:
+            conn.exec_driver_sql(
+                "ALTER TABLE account_expense ADD COLUMN allocation_tag VARCHAR(255)"
+            )
         if "source_amount_usd" not in columns:
             conn.exec_driver_sql(
                 "ALTER TABLE account_expense ADD COLUMN source_amount_usd NUMERIC(10, 2)"
