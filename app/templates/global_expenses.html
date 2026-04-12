@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Global Costs</h2>
+        <p>Manage shared expenses that get split across all accounts.</p>
+    </div>
+</div>
+
+<div class="grid-3">
+    <div class="stat-card">
+        <h3>One-time total</h3>
+        <div class="big-number">{{ global_one_time_total | usd }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Monthly burn</h3>
+        <div class="big-number">{{ global_monthly_burn | usd }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>All-time tracked</h3>
+        <div class="big-number">{{ global_total_spent | usd }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-top:0;">Add Global Cost</h3>
+    <p class="muted" style="margin:0 0 12px;">Enter the full amount. It will be spread across every account automatically.</p>
+    <form action="/expenses/global/new" method="post">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div class="form-group"><label>Name</label><input type="text" name="name" placeholder="Proxy pool / VPN / etc" required></div>
+            <div class="form-group"><label>Total Amount (USD)</label><input type="number" step="0.01" name="amount_usd" value="0" required></div>
+            <div class="form-group"><label>Type</label><select name="kind"><option value="one_time">One-time</option><option value="monthly">Monthly</option></select></div>
+            <div class="form-group"><label>Start date</label><input type="date" name="start_date"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:14px;"><label>Notes</label><input type="text" name="notes" placeholder="Optional"></div>
+        <button type="submit" class="secondary">Add Global Cost</button>
+    </form>
+</div>
+
+<div class="card">
+    <h3 style="margin-top:0;">Shared Expense Groups</h3>
+    {% if groups and groups|length > 0 %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th style="text-align:right;">Total</th>
+                <th style="text-align:right;">Per Account</th>
+                <th>Accounts</th>
+                <th>Active</th>
+                <th>Created</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for g in groups %}
+            <tr>
+                <td>
+                    <strong>{{ g.name }}</strong>
+                    {% if g.notes %}<div class="muted" style="font-size:0.85rem;">{{ g.notes }}</div>{% endif %}
+                </td>
+                <td><span class="pill">{{ 'Monthly' if g.kind == 'monthly' else 'One-time' }}</span></td>
+                <td class="mono" style="text-align:right;">{{ (g.source_amount_usd or 0) | usd }}</td>
+                <td class="mono" style="text-align:right;">{{ (g.per_account_amount_usd or 0) | usd }}</td>
+                <td>{{ g.account_count or 0 }}</td>
+                <td>
+                    <form action="/expenses/global/{{ g.group_key }}/toggle" method="post" style="margin:0;">
+                        <button type="submit" class="secondary tiny-btn">{% if g.is_active %}On{% else %}Off{% endif %}</button>
+                    </form>
+                </td>
+                <td class="muted" style="font-size:0.85rem;">{{ g.created_at }}</td>
+                <td>
+                    <form action="/expenses/global/{{ g.group_key }}/delete" method="post" style="margin:0;" onsubmit="return confirm('Delete this shared cost from all accounts?');">
+                        <button type="submit" class="danger tiny-btn">Del</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted" style="margin:0;">No global costs yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

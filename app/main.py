@@ -637,6 +637,93 @@ def _split_usd_evenly(total_usd: Decimal, count: int) -> list[Decimal]:
     return shares
 
 
+def _parse_optional_date(start_date: str):
+    parsed_date = None
+    if (start_date or "").strip():
+        try:
+            from datetime import datetime
+
+            parsed_date = datetime.strptime(start_date.strip(), "%Y-%m-%d").date()
+        except Exception:
+            raise HTTPException(status_code=400, detail="Invalid start_date (use YYYY-MM-DD)")
+    return parsed_date
+
+
+def _add_global_expense(
+    session: Session,
+    *,
+    name: str,
+    total_amount: Decimal,
+    kind: str,
+    start_date,
+    notes: str | None,
+) -> tuple[str, int]:
+    accounts = session.scalars(select(Account).order_by(Account.id)).all()
+    if not accounts:
+        raise HTTPException(status_code=400, detail="No accounts available for global split")
+
+    split_group = uuid.uuid4().hex
+    shares = _split_usd_evenly(total_amount, len(accounts))
+    for acct, share in zip(accounts, shares):
+        session.add(
+            AccountExpense(
+                account_id=acct.id,
+                name=name,
+                amount_usd=share,
+                kind=kind,
+                allocation_scope="global",
+                allocation_group=split_group,
+                source_amount_usd=total_amount,
+                allocated_account_count=len(accounts),
+                start_date=start_date,
+                notes=notes,
+                is_active=True,
+            )
+        )
+    session.commit()
+    return split_group, len(accounts)
+
+
+def _global_expense_groups(session: Session) -> list[dict[str, object]]:
+    rows = session.scalars(
+        select(AccountExpense)
+        .where(AccountExpense.allocation_scope == "global")
+        .order_by(AccountExpense.created_at.desc(), AccountExpense.id.desc())
+    ).all()
+
+    groups: dict[str, dict[str, object]] = {}
+    ordered_keys: list[str] = []
+    for row in rows:
+        key = row.allocation_group or f"legacy-{row.id}"
+        if key not in groups:
+            ordered_keys.append(key)
+            per_account_amount = 0.0
+            try:
+                per_account_amount = float(row.amount_usd or 0)
+            except Exception:
+                pass
+            source_amount = None
+            try:
+                source_amount = float(row.source_amount_usd) if row.source_amount_usd is not None else None
+            except Exception:
+                source_amount = None
+            groups[key] = {
+                "group_key": key,
+                "expense_id": row.id,
+                "name": row.name,
+                "kind": row.kind,
+                "is_active": bool(row.is_active),
+                "created_at": row.created_at,
+                "start_date": row.start_date,
+                "notes": row.notes,
+                "account_count": int(row.allocated_account_count or 0),
+                "source_amount_usd": source_amount,
+                "per_account_amount_usd": per_account_amount,
+            }
+
+    return [groups[key] for key in ordered_keys]
+
+
 # --- Back-compat redirects for earlier /planner/* routes ---
 @app.get("/planner")
 def planner_root_compat_redirect():
@@ -1154,43 +1241,20 @@ def add_account_expense(
     if allocation_scope not in {"account", "global"}:
         raise HTTPException(status_code=400, detail="Invalid expense scope")
 
-    parsed_date = None
-    if start_date.strip():
-        try:
-            from datetime import datetime
-
-            parsed_date = datetime.strptime(start_date.strip(), "%Y-%m-%d").date()
-        except Exception:
-            raise HTTPException(status_code=400, detail="Invalid start_date (use YYYY-MM-DD)")
+    parsed_date = _parse_optional_date(start_date)
 
     cleaned_notes = notes.strip() or None
 
     if allocation_scope == "global":
-        accounts = session.scalars(select(Account).order_by(Account.id)).all()
-        if not accounts:
-            raise HTTPException(status_code=400, detail="No accounts available for global split")
-
-        split_group = uuid.uuid4().hex
-        shares = _split_usd_evenly(total_amount, len(accounts))
-        for acct, share in zip(accounts, shares):
-            session.add(
-                AccountExpense(
-                    account_id=acct.id,
-                    name=cleaned_name,
-                    amount_usd=share,
-                    kind=kind,
-                    allocation_scope="global",
-                    allocation_group=split_group,
-                    source_amount_usd=total_amount,
-                    allocated_account_count=len(accounts),
-                    start_date=parsed_date,
-                    notes=cleaned_notes,
-                    is_active=True,
-                )
-            )
-        session.commit()
-
-        message = f"Global expense added across {len(accounts)} accounts (${float(total_amount):.2f} total)"
+        _split_group, account_count = _add_global_expense(
+            session,
+            name=cleaned_name,
+            total_amount=total_amount,
+            kind=kind,
+            start_date=parsed_date,
+            notes=cleaned_notes,
+        )
+        message = f"Global expense added across {account_count} accounts (${float(total_amount):.2f} total)"
         return RedirectResponse(url=f"/accounts/{account_id}?message={message}", status_code=303)
 
     row = AccountExpense(
@@ -1263,6 +1327,114 @@ def delete_account_expense(
     session.delete(row)
     session.commit()
     return RedirectResponse(url=f"/accounts/{account_id}?message=Expense deleted", status_code=303)
+
+
+@app.get("/expenses/global", response_class=HTMLResponse)
+def global_expenses_page(request: Request, session: Session = Depends(get_session)):
+    groups = _global_expense_groups(session)
+
+    total_one_time = 0.0
+    monthly_burn = 0.0
+    for g in groups:
+        amount = float(g.get("source_amount_usd") or 0)
+        if g.get("kind") == "monthly":
+            if g.get("is_active"):
+                monthly_burn += amount
+        else:
+            total_one_time += amount
+
+    return templates.TemplateResponse(
+        request,
+        "global_expenses.html",
+        {
+            "request": request,
+            "message": request.query_params.get("message"),
+            "groups": groups,
+            "global_total_spent": total_one_time + sum(
+                float(g.get("source_amount_usd") or 0) for g in groups if g.get("kind") == "monthly"
+            ),
+            "global_monthly_burn": monthly_burn,
+            "global_one_time_total": total_one_time,
+        },
+    )
+
+
+@app.post("/expenses/global/new")
+def add_global_expense(
+    name: str = Form(...),
+    amount_usd: str = Form("0"),
+    kind: str = Form("one_time"),
+    start_date: str = Form(""),
+    notes: str = Form(""),
+    session: Session = Depends(get_session),
+):
+    cleaned_name = (name or "").strip()
+    if not cleaned_name:
+        raise HTTPException(status_code=400, detail="Name is required")
+
+    try:
+        total_amount = Decimal(str(amount_usd).strip() or "0").quantize(Decimal("0.01"))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid amount")
+
+    if total_amount < 0:
+        raise HTTPException(status_code=400, detail="Amount must be non-negative")
+
+    kind = (kind or "one_time").strip().lower()
+    if kind not in {"one_time", "monthly"}:
+        raise HTTPException(status_code=400, detail="Invalid kind")
+
+    parsed_date = _parse_optional_date(start_date)
+    _group_key, account_count = _add_global_expense(
+        session,
+        name=cleaned_name,
+        total_amount=total_amount,
+        kind=kind,
+        start_date=parsed_date,
+        notes=notes.strip() or None,
+    )
+    message = f"Global expense added across {account_count} accounts (${float(total_amount):.2f} total)"
+    return RedirectResponse(url=f"/expenses/global?message={message}", status_code=303)
+
+
+@app.post("/expenses/global/{group_key}/toggle")
+def toggle_global_expense(group_key: str, session: Session = Depends(get_session)):
+    rows = session.scalars(
+        select(AccountExpense).where(
+            AccountExpense.allocation_scope == "global",
+            AccountExpense.allocation_group == group_key,
+        )
+    ).all()
+    if not rows:
+        raise HTTPException(status_code=404, detail="Global expense not found")
+
+    new_state = not bool(rows[0].is_active)
+    for row in rows:
+        row.is_active = new_state
+    session.commit()
+    message = f"Global expense {'enabled' if new_state else 'disabled'} across {len(rows)} accounts"
+    return RedirectResponse(url=f"/expenses/global?message={message}", status_code=303)
+
+
+@app.post("/expenses/global/{group_key}/delete")
+def delete_global_expense(group_key: str, session: Session = Depends(get_session)):
+    rows = session.scalars(
+        select(AccountExpense).where(
+            AccountExpense.allocation_scope == "global",
+            AccountExpense.allocation_group == group_key,
+        )
+    ).all()
+    if not rows:
+        raise HTTPException(status_code=404, detail="Global expense not found")
+
+    count = len(rows)
+    for row in rows:
+        session.delete(row)
+    session.commit()
+    return RedirectResponse(
+        url=f"/expenses/global?message=Global expense deleted across {count} accounts",
+        status_code=303,
+    )
 
 
 @app.get("/accounts/{account_id}/edit", response_class=HTMLResponse)
