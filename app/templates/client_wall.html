@@ -10,10 +10,18 @@
     </div>
 </div>
 
-<div class="grid-3" style="margin-bottom:20px;">
+<div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:20px; margin-bottom:20px;">
     <div class="stat-card">
         <h3>Detected windows</h3>
         <div class="big-number" id="wallWindowCount">{{ app_health.wall_window_count }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Matched windows</h3>
+        <div class="big-number" id="matchedWindowCount">{{ wall_snapshot.matched_count }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Unmatched windows</h3>
+        <div class="big-number" id="unmatchedWindowCount">{{ wall_snapshot.unmatched_count }}</div>
     </div>
     <div class="stat-card">
         <h3>Accounts with issues</h3>
@@ -51,21 +59,119 @@
     </div>
 </div>
 
+<div class="card" style="margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:12px;">
+        <div>
+            <h3 style="margin:0;">Detected Client Windows</h3>
+            <p class="muted" style="margin:6px 0 0;">Best-effort account matching based on RSN or account label in the window title.</p>
+        </div>
+    </div>
+    <div style="overflow:auto; max-height:280px; border:1px solid var(--border); border-radius:var(--radius);">
+        <table style="margin:0;">
+            <thead>
+                <tr>
+                    <th>Window</th>
+                    <th>Match</th>
+                    <th>Health</th>
+                    <th>Size</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="wallWindowsTableBody">
+                {% for row in wall_snapshot.windows %}
+                <tr>
+                    <td>
+                        <strong>{{ row.title or 'Untitled window' }}</strong>
+                        <div class="muted" style="font-size:0.8rem;">{{ row.process_name }} · HWND {{ row.hwnd }}</div>
+                    </td>
+                    <td>
+                        {% if row.account %}
+                        <a href="/accounts/{{ row.account.id }}"><span class="pill"><strong>{{ row.account.label }}</strong></span></a>
+                        {% if row.match_reason %}<div class="muted" style="font-size:0.8rem; margin-top:4px;">{{ row.match_reason }}</div>{% endif %}
+                        {% else %}
+                        <span class="pill">Unmatched</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.account and row.account.health_label %}
+                        <span class="pill"><strong>{{ row.account.health_label }}</strong>{% if row.account.issue_count %} · {{ row.account.issue_count }}{% endif %}</span>
+                        {% else %}–{% endif %}
+                    </td>
+                    <td class="mono">{{ row.size }}</td>
+                    <td style="text-align:right;"><button type="button" class="secondary tiny-btn wall-focus-btn" data-hwnd="{{ row.hwnd }}">Focus</button></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="muted" style="text-align:center; padding:28px 0;">No client windows detected.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="card" style="padding:0; overflow:hidden; height:calc(100vh - 340px); min-height:560px; border-radius:var(--radius-lg);">
     <iframe id="wallFrame" src="/wall/" style="width:100%; height:100%; border:0; display:block;" referrerpolicy="no-referrer"></iframe>
 </div>
 
 <script>
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
+
+async function focusWallWindow(hwnd) {
+    try {
+        await fetch(`/api/focus/${Number(hwnd)}`, { method: 'POST', cache: 'no-store' });
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+function renderWallWindows(rows) {
+    const body = document.getElementById('wallWindowsTableBody');
+    if (!body) return;
+
+    if (!rows.length) {
+        body.innerHTML = '<tr><td colspan="5" class="muted" style="text-align:center; padding:28px 0;">No client windows detected.</td></tr>';
+        return;
+    }
+
+    body.innerHTML = rows.map((row) => {
+        const title = escapeHtml(row.title || 'Untitled window');
+        const processName = escapeHtml(row.process_name || '');
+        const hwnd = Number(row.hwnd || 0);
+        const size = escapeHtml(row.size || '0×0');
+        const account = row.account || null;
+        const matchCell = account
+            ? `<a href="/accounts/${Number(account.id || 0)}"><span class="pill"><strong>${escapeHtml(account.label || 'Account')}</strong></span></a>${row.match_reason ? `<div class="muted" style="font-size:0.8rem; margin-top:4px;">${escapeHtml(row.match_reason)}</div>` : ''}`
+            : '<span class="pill">Unmatched</span>';
+        const healthCell = account && account.health_label
+            ? `<span class="pill"><strong>${escapeHtml(account.health_label)}</strong>${Number(account.issue_count || 0) ? ` · ${Number(account.issue_count || 0)}` : ''}</span>`
+            : '–';
+
+        return `<tr>
+            <td><strong>${title}</strong><div class="muted" style="font-size:0.8rem;">${processName} · HWND ${hwnd}</div></td>
+            <td>${matchCell}</td>
+            <td>${healthCell}</td>
+            <td class="mono">${size}</td>
+            <td style="text-align:right;"><button type="button" class="secondary tiny-btn wall-focus-btn" data-hwnd="${hwnd}">Focus</button></td>
+        </tr>`;
+    }).join('');
+}
+
 async function refreshWallOpsSummary() {
     try {
-        const [opsResp, windowsResp, spreaderResp] = await Promise.all([
+        const [opsResp, wallResp, spreaderResp] = await Promise.all([
             fetch('/api/ops/summary', { cache: 'no-store' }),
-            fetch('/api/windows', { cache: 'no-store' }),
+            fetch('/api/ops/wall-windows', { cache: 'no-store' }),
             fetch('/api/window-spreader/status', { cache: 'no-store' }),
         ]);
 
         const ops = await opsResp.json();
-        const windowsData = await windowsResp.json();
+        const wallData = await wallResp.json();
         const spreader = await spreaderResp.json();
 
         const summary = ops.summary || {};
@@ -77,7 +183,9 @@ async function refreshWallOpsSummary() {
             if (el) el.textContent = String(value);
         };
 
-        setText('wallWindowCount', (windowsData || []).length);
+        setText('wallWindowCount', (wallData.windows || []).length);
+        setText('matchedWindowCount', wallData.matched_count || 0);
+        setText('unmatchedWindowCount', wallData.unmatched_count || 0);
         setText('issueAccountCount', summary.accounts_with_issues || 0);
         setText('missingProxyCount', summary.missing_proxy || 0);
         setText('missingStatusCount', summary.missing_status || 0);
@@ -87,6 +195,7 @@ async function refreshWallOpsSummary() {
         setText('missingRevenueCount', summary.missing_revenue || 0);
         setText('spreaderStatus', spreader.running ? 'Running' : 'Stopped');
         setText('watchdogStatus', appHealth.watchdog_running ? 'Running' : 'Stopped');
+        renderWallWindows(wallData.windows || []);
 
         const topWrap = document.getElementById('wallTopAccounts');
         if (topWrap) {
@@ -116,6 +225,12 @@ async function refreshWallOpsSummary() {
         console.error(err);
     }
 }
+
+document.addEventListener('click', (event) => {
+    const button = event.target.closest('.wall-focus-btn');
+    if (!button) return;
+    focusWallWindow(button.dataset.hwnd);
+});
 
 refreshWallOpsSummary();
 setInterval(refreshWallOpsSummary, 3000);

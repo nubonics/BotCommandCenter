@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import os
+import re
 import time
 from contextlib import asynccontextmanager
 from decimal import Decimal
@@ -474,6 +475,11 @@ def wall_api_set_cols(payload: dict) -> JSONResponse:
 @app.get("/client-wall", response_class=HTMLResponse)
 def client_wall_page(request: Request, session: Session = Depends(get_session)):
     rows, summary, app_health = _account_health_snapshot(session)
+    wall_snapshot = _wall_window_snapshot(
+        session,
+        [row["account"] for row in rows],
+        rows,
+    )
     return templates.TemplateResponse(
         request,
         "client_wall.html",
@@ -482,6 +488,7 @@ def client_wall_page(request: Request, session: Session = Depends(get_session)):
             "summary": summary,
             "app_health": app_health,
             "top_accounts": rows[:6],
+            "wall_snapshot": wall_snapshot,
         },
     )
 
@@ -840,6 +847,102 @@ def _financial_summary(expenses: list[AccountExpense], revenues: list[AccountRev
     }
 
 
+def _normalize_match_text(value: str | None) -> str:
+    text = re.sub(r"[^a-z0-9]+", " ", str(value or "").lower())
+    return " ".join(text.split())
+
+
+def _score_window_account_match(window_title: str, account: Account) -> tuple[int, str | None]:
+    raw_title = str(window_title or "").strip().lower()
+    norm_title = _normalize_match_text(window_title)
+    best_score = 0
+    best_reason: str | None = None
+
+    rsn = (account.rsn or "").strip().lower()
+    norm_rsn = _normalize_match_text(account.rsn)
+    if rsn and len(rsn) >= 3:
+        if raw_title == rsn or norm_title == norm_rsn:
+            return 120, "RSN exact"
+        if rsn in raw_title or (norm_rsn and norm_rsn in norm_title):
+            best_score = 100 + min(len(rsn), 20)
+            best_reason = "RSN match"
+
+    label = (account.label or "").strip().lower()
+    norm_label = _normalize_match_text(account.label)
+    if label and len(label) >= 4:
+        if raw_title == label or norm_title == norm_label:
+            return max(best_score, 95), "Label exact"
+        if label in raw_title or (norm_label and norm_label in norm_title):
+            score = 70 + min(len(label), 20)
+            if score > best_score:
+                best_score = score
+                best_reason = "Label match"
+
+    return best_score, best_reason
+
+
+def _wall_window_snapshot(
+    session: Session,
+    accounts: list[Account] | None = None,
+    health_rows: list[dict[str, object]] | None = None,
+) -> dict[str, object]:
+    if accounts is None:
+        accounts = session.scalars(select(Account).order_by(Account.label)).all()
+    if health_rows is None:
+        health_rows, _summary, _app_health = _account_health_snapshot(session, accounts)
+
+    from .osclient_wall.router import manager as wall_manager
+
+    health_by_id = {int(row["account"].id): row for row in health_rows}
+    window_rows: list[dict[str, object]] = []
+    matched_count = 0
+
+    for window in wall_manager.get_windows():
+        best_account = None
+        best_reason = None
+        best_score = 0
+        for account in accounts:
+            score, reason = _score_window_account_match(str(window.get("title") or ""), account)
+            if score > best_score:
+                best_score = score
+                best_reason = reason
+                best_account = account
+
+        matched = best_account is not None and best_score >= 80
+        health = health_by_id.get(int(best_account.id)) if matched and best_account else None
+        if matched:
+            matched_count += 1
+
+        window_rows.append(
+            {
+                "hwnd": int(window.get("hwnd") or 0),
+                "title": str(window.get("title") or ""),
+                "process_name": str(window.get("process_name") or ""),
+                "size": f"{int(window.get('width') or 0)}×{int(window.get('height') or 0)}",
+                "matched": matched,
+                "match_reason": best_reason if matched else None,
+                "account": (
+                    {
+                        "id": int(best_account.id),
+                        "label": best_account.label,
+                        "rsn": best_account.rsn,
+                        "health_label": health.get("health_label") if health else None,
+                        "issue_count": health.get("issue_count") if health else 0,
+                    }
+                    if matched and best_account
+                    else None
+                ),
+            }
+        )
+
+    window_rows.sort(key=lambda row: (0 if row["matched"] else 1, str(row["title"]).lower()))
+    return {
+        "windows": window_rows,
+        "matched_count": matched_count,
+        "unmatched_count": max(0, len(window_rows) - matched_count),
+    }
+
+
 def _add_global_expense(
     session: Session,
     *,
@@ -1010,6 +1113,13 @@ def ops_summary(session: Session = Depends(get_session)) -> JSONResponse:
             "top_accounts": top_accounts,
         }
     )
+
+
+@app.get("/api/ops/wall-windows")
+def ops_wall_windows(session: Session = Depends(get_session)) -> JSONResponse:
+    accounts = session.scalars(select(Account).order_by(Account.label)).all()
+    health_rows, _summary, _app_health = _account_health_snapshot(session, accounts)
+    return JSONResponse(_wall_window_snapshot(session, accounts, health_rows))
 
 
 # --- Main app ---
