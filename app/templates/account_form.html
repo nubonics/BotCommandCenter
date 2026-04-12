@@ -33,6 +33,11 @@
                 <select name="banned"><option value="false" {% if bv == 'false' %}selected{% endif %}>No</option><option value="true" {% if bv == 'true' %}selected{% endif %}>Yes</option></select>
             </div>
             <div class="form-group form-group-full">
+                <label>Tags</label>
+                <input type="text" name="tags" value="{{ account.tags if editing and account.tags else '' }}" placeholder="proxy-a, fresh, p2p, farm-1">
+                <div class="muted" style="font-size:0.85rem; margin-top:6px;">Comma-separated tags for filtering and grouping.</div>
+            </div>
+            <div class="form-group form-group-full">
                 <label>Notes</label>
                 <textarea name="notes" rows="4" placeholder="Optional notes">{{ account.notes if editing and account.notes else '' }}</textarea>
             </div>

@@ -26,7 +26,26 @@ def get_session():
 
 def create_db_and_tables():
     Base.metadata.create_all(bind=engine)
+    _ensure_account_schema()
     _ensure_account_expense_schema()
+
+
+def _ensure_account_schema() -> None:
+    with engine.begin() as conn:
+        try:
+            rows = conn.exec_driver_sql("PRAGMA table_info(account)").mappings().all()
+        except Exception:
+            return
+
+        if not rows:
+            return
+
+        columns = {str(row.get("name")) for row in rows}
+
+        if "tags" not in columns:
+            conn.exec_driver_sql(
+                "ALTER TABLE account ADD COLUMN tags VARCHAR(500)"
+            )
 
 
 def _ensure_account_expense_schema() -> None:

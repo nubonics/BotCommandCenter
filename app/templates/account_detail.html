@@ -5,6 +5,13 @@
     <div>
         <h2>{{ account.label }}</h2>
         <p>Created {{ account.created_at }} · Updated {{ account.updated_at }}</p>
+        {% if account_tags %}
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;">
+            {% for tag in account_tags %}
+            <a href="/accounts?tag={{ tag | urlencode }}"><span class="pill">{{ tag }}</span></a>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
     <div class="actions">
         <a href="/accounts/{{ account.id }}/progress"><button type="button" class="secondary">Progress</button></a>

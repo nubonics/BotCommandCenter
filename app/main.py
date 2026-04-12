@@ -10,6 +10,7 @@ from pathlib import Path
 import subprocess
 import threading
 import uuid
+from urllib.parse import quote_plus
 
 import psutil
 
@@ -623,6 +624,7 @@ def format_usd(value) -> str:
 
 
 templates.env.filters["usd"] = format_usd
+templates.env.filters["urlencode"] = lambda value: quote_plus(str(value or ""))
 
 
 def _split_usd_evenly(total_usd: Decimal, count: int) -> list[Decimal]:
@@ -647,6 +649,33 @@ def _parse_optional_date(start_date: str):
         except Exception:
             raise HTTPException(status_code=400, detail="Invalid start_date (use YYYY-MM-DD)")
     return parsed_date
+
+
+def _split_tags(raw_tags: str | None) -> list[str]:
+    if not raw_tags:
+        return []
+
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for part in str(raw_tags).replace("\n", ",").split(","):
+        tag = part.strip().lower()
+        if not tag or tag in seen:
+            continue
+        seen.add(tag)
+        ordered.append(tag)
+    return ordered
+
+
+def _normalize_tags_text(raw_tags: str | None) -> str | None:
+    tags = _split_tags(raw_tags)
+    return ", ".join(tags) or None
+
+
+def _all_account_tags(accounts: list[Account]) -> list[str]:
+    tags: set[str] = set()
+    for account in accounts:
+        tags.update(_split_tags(account.tags))
+    return sorted(tags)
 
 
 def _add_global_expense(
@@ -1146,7 +1175,7 @@ def delete_component(component_id: int, session: Session = Depends(get_session))
 
 
 @app.get("/accounts", response_class=HTMLResponse)
-def list_accounts(request: Request, q: str = "", session: Session = Depends(get_session)):
+def list_accounts(request: Request, q: str = "", tag: str = "", session: Session = Depends(get_session)):
     statement = select(Account).order_by(Account.label)
     if q.strip():
         like = f"%{q.strip()}%"
@@ -1164,13 +1193,19 @@ def list_accounts(request: Request, q: str = "", session: Session = Depends(get_
         )
 
     accounts = session.scalars(statement).all()
+    selected_tag = (tag or "").strip().lower()
+    if selected_tag:
+        accounts = [account for account in accounts if selected_tag in _split_tags(account.tags)]
+
     return templates.TemplateResponse(
         request,
         "accounts.html",
         {
             "request": request,
             "accounts": accounts,
+            "all_tags": _all_account_tags(session.scalars(select(Account).order_by(Account.label)).all()),
             "q": q,
+            "selected_tag": selected_tag,
             "message": request.query_params.get("message"),
         },
     )
@@ -1214,6 +1249,7 @@ def create_account(
     proxy_port: str = Form(""),
     proxy_username: str = Form(""),
     proxy_password: str = Form(""),
+    tags: str = Form(""),
     banned: str = Form("false"),
     notes: str = Form(""),
     session: Session = Depends(get_session),
@@ -1233,6 +1269,7 @@ def create_account(
         proxy_port=proxy_port.strip() or None,
         proxy_username=proxy_username.strip() or None,
         proxy_password=proxy_password.strip() or None,
+        tags=_normalize_tags_text(tags),
         banned=(banned == "true"),
         notes=notes.strip() or None,
     )
@@ -1278,6 +1315,7 @@ def account_detail(request: Request, account_id: int, session: Session = Depends
         {
             "request": request,
             "account": account,
+            "account_tags": _split_tags(account.tags),
             "message": request.query_params.get("message"),
             "expenses": expenses,
             "total_spent_all_time": total_spent_all_time,
@@ -1557,6 +1595,7 @@ def update_account(
     proxy_port: str = Form(""),
     proxy_username: str = Form(""),
     proxy_password: str = Form(""),
+    tags: str = Form(""),
     banned: str = Form("false"),
     notes: str = Form(""),
     session: Session = Depends(get_session),
@@ -1579,6 +1618,7 @@ def update_account(
     account.proxy_port = proxy_port.strip() or None
     account.proxy_username = proxy_username.strip() or None
     account.proxy_password = proxy_password.strip() or None
+    account.tags = _normalize_tags_text(tags)
     account.banned = (banned == "true")
     account.notes = notes.strip() or None
 

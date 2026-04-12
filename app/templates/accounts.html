@@ -23,9 +23,26 @@
 <div class="card" style="padding: 14px 18px;">
     <form method="get" action="/accounts" class="inline-form">
         <input type="text" name="q" value="{{ q }}" placeholder="Search label, email, proxy IP, RSN…" style="flex:1; min-width:200px;">
+        {% if selected_tag %}<input type="hidden" name="tag" value="{{ selected_tag }}">{% endif %}
         <button type="submit" class="secondary">Search</button>
     </form>
 </div>
+
+{% if all_tags and all_tags|length > 0 %}
+<div class="card" style="padding: 12px 16px;">
+    <div class="inline-form" style="align-items:center; gap:8px; flex-wrap:wrap;">
+        <span class="muted" style="font-size:0.85rem; font-weight:600;">Tags</span>
+        <a href="/accounts{% if q %}?q={{ q | urlencode }}{% endif %}">
+            <button type="button" class="tiny-btn {% if selected_tag %}secondary{% endif %}">All</button>
+        </a>
+        {% for tag in all_tags %}
+        <a href="/accounts?tag={{ tag | urlencode }}{% if q %}&q={{ q | urlencode }}{% endif %}">
+            <button type="button" class="tiny-btn {% if selected_tag != tag %}secondary{% endif %}">{{ tag }}</button>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 
 <div class="card" style="padding:0; overflow:hidden;">
     <table>
@@ -33,6 +50,7 @@
             <tr>
                 <th>Label</th>
                 <th>RSN</th>
+                <th>Tags</th>
                 <th>Proxy</th>
                 <th>Status</th>
                 <th>Banned</th>
@@ -44,6 +62,15 @@
             <tr>
                 <td><a href="/accounts/{{ account.id }}"><strong>{{ account.label }}</strong></a></td>
                 <td class="mono" style="color:var(--text-2);">{{ account.rsn or "–" }}</td>
+                <td>
+                    {% if account.tags %}
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        {% for tag in account.tags.split(',') %}
+                        <a href="/accounts?tag={{ tag.strip() | urlencode }}"><span class="pill">{{ tag.strip() }}</span></a>
+                        {% endfor %}
+                    </div>
+                    {% else %}–{% endif %}
+                </td>
                 <td class="mono" style="color:var(--muted); font-size:0.85em;">
                     {% if account.proxy_ip %}{{ account.proxy_ip }}{% if account.proxy_port %}:{{ account.proxy_port }}{% endif %}{% else %}–{% endif %}
                 </td>
@@ -59,7 +86,7 @@
                 </td>
             </tr>
             {% else %}
-            <tr><td colspan="6" class="muted" style="text-align:center; padding:40px 0;">No accounts yet.</td></tr>
+            <tr><td colspan="7" class="muted" style="text-align:center; padding:40px 0;">No accounts yet.</td></tr>
             {% endfor %}
         </tbody>
     </table>
