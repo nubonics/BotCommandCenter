@@ -948,6 +948,7 @@ async def set_goal(
     quest_weight: float = Form(0.0),
     allow_manual: str = Form("false"),
     top_k: int = Form(60),
+    next_url: str = Form(""),
     session: Session = Depends(get_session),
 ):
     account = session.get(Account, account_id)
@@ -1001,11 +1002,17 @@ async def set_goal(
     session.add(goal)
     session.commit()
 
-    return RedirectResponse(url=f"/accounts/{account_id}/progress?message=Goal saved", status_code=303)
+    target_url = next_url.strip() or f"/accounts/{account_id}/progress"
+    separator = "&" if "?" in target_url else "?"
+    return RedirectResponse(url=f"{target_url}{separator}message=Goal saved", status_code=303)
 
 
 @router.post("/accounts/{account_id}/progress/push-plan")
-def push_plan(account_id: int, session: Session = Depends(get_session)):
+def push_plan(
+    account_id: int,
+    next_url: str = Form(""),
+    session: Session = Depends(get_session),
+):
     account = session.get(Account, account_id)
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
