@@ -29,6 +29,33 @@
     </form>
 </div>
 
+<div class="grid-3" style="margin-bottom:20px;">
+    <div class="stat-card">
+        <h3>On wall</h3>
+        <div class="big-number">{{ wall_snapshot.covered_account_count }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Missing</h3>
+        <div class="big-number">{{ wall_snapshot.missing_account_count }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Wall alerts</h3>
+        <div class="big-number">{{ wall_snapshot.alert_summary.total }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Stale hints</h3>
+        <div class="big-number">{{ wall_snapshot.alert_summary.stale_wall_hints }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Duplicate coverage</h3>
+        <div class="big-number">{{ wall_snapshot.alert_summary.duplicate_accounts }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Unmatched windows</h3>
+        <div class="big-number">{{ wall_snapshot.alert_summary.unmatched_windows }}</div>
+    </div>
+</div>
+
 {% if all_tags and all_tags|length > 0 %}
 <div class="card" style="padding: 12px 16px;">
     <div class="inline-form" style="align-items:center; gap:8px; flex-wrap:wrap;">
