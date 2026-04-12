@@ -1335,13 +1335,20 @@ def global_expenses_page(request: Request, session: Session = Depends(get_sessio
 
     total_one_time = 0.0
     monthly_burn = 0.0
+    avg_per_account_total = 0.0
+    avg_per_account_monthly = 0.0
+    avg_per_account_one_time = 0.0
     for g in groups:
         amount = float(g.get("source_amount_usd") or 0)
+        per_account_amount = float(g.get("per_account_amount_usd") or 0)
         if g.get("kind") == "monthly":
             if g.get("is_active"):
                 monthly_burn += amount
+                avg_per_account_monthly += per_account_amount
         else:
             total_one_time += amount
+            avg_per_account_one_time += per_account_amount
+        avg_per_account_total += per_account_amount
 
     return templates.TemplateResponse(
         request,
@@ -1355,6 +1362,9 @@ def global_expenses_page(request: Request, session: Session = Depends(get_sessio
             ),
             "global_monthly_burn": monthly_burn,
             "global_one_time_total": total_one_time,
+            "avg_per_account_total": avg_per_account_total,
+            "avg_per_account_monthly": avg_per_account_monthly,
+            "avg_per_account_one_time": avg_per_account_one_time,
         },
     )
 

@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<div class="grid-3">
+<div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; margin-bottom:20px;">
     <div class="stat-card">
         <h3>One-time total</h3>
         <div class="big-number">{{ global_one_time_total | usd }}</div>
@@ -20,6 +20,11 @@
     <div class="stat-card">
         <h3>All-time tracked</h3>
         <div class="big-number">{{ global_total_spent | usd }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Average per account</h3>
+        <div class="big-number">{{ avg_per_account_total | usd }}</div>
+        <div class="muted" style="margin-top:6px; font-size:0.85rem;">One-time {{ avg_per_account_one_time | usd }} · Monthly {{ avg_per_account_monthly | usd }}</div>
     </div>
 </div>
 
