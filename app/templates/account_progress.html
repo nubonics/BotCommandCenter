@@ -188,23 +188,23 @@
                 </div>
 
                 <div id="questChecklist" class="grid-2" style="gap:12px;">
-                    <div style="border:1px solid var(--border); border-radius:var(--radius); padding:10px; max-height:240px; overflow:auto; background:var(--bg-input);">
-                        <div class="muted" style="font-weight:800; margin:0 0 6px; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Quests</div>
+                    <div class="quest-panel">
+                        <div class="quest-panel-title">Quests</div>
                         {% for row in quest_rows if not row.is_miniquest %}
                         {% set q = row.name %}{% set qid = 'cq_q_' ~ loop.index %}
-                        <div class="quest-row" data-kind="quest" data-membership="{{ row.membership }}" data-qp="{{ row.qp }}" data-unmet="{{ 1 if row.unmet and (row.unmet|length) > 0 else 0 }}" style="display:flex; gap:8px; align-items:flex-start; padding:4px 2px; border-bottom:1px solid rgba(255,255,255,0.04);">
-                            <input id="{{ qid }}" type="checkbox" name="completed_quests" value="{{ q }}" style="margin-top:3px; flex:0 0 auto;" onchange="updateQuestPoints()" {% if q in completed_set %}checked{% endif %}>
-                            <label for="{{ qid }}" class="quest-name" style="cursor:pointer; font-size:0.85rem; line-height:1.3;">{{ q }}</label>
+                        <div class="quest-row" data-kind="quest" data-membership="{{ row.membership }}" data-qp="{{ row.qp }}" data-unmet="{{ 1 if row.unmet and (row.unmet|length) > 0 else 0 }}">
+                            <input id="{{ qid }}" type="checkbox" name="completed_quests" value="{{ q }}" onchange="updateQuestPoints()" {% if q in completed_set %}checked{% endif %}>
+                            <label for="{{ qid }}" class="quest-name">{{ q }}</label>
                         </div>
                         {% endfor %}
                     </div>
-                    <div style="border:1px solid var(--border); border-radius:var(--radius); padding:10px; max-height:240px; overflow:auto; background:var(--bg-input);">
-                        <div class="muted" style="font-weight:800; margin:0 0 6px; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Miniquests</div>
+                    <div class="quest-panel">
+                        <div class="quest-panel-title">Miniquests</div>
                         {% for row in quest_rows if row.is_miniquest %}
                         {% set q = row.name %}{% set qid = 'cq_mq_' ~ loop.index %}
-                        <div class="quest-row" data-kind="miniquest" data-membership="{{ row.membership }}" data-qp="{{ row.qp }}" data-unmet="{{ 1 if row.unmet and (row.unmet|length) > 0 else 0 }}" style="display:flex; gap:8px; align-items:flex-start; padding:4px 2px; border-bottom:1px solid rgba(255,255,255,0.04);">
-                            <input id="{{ qid }}" type="checkbox" name="completed_quests" value="{{ q }}" style="margin-top:3px; flex:0 0 auto;" onchange="updateQuestPoints()" {% if q in completed_set %}checked{% endif %}>
-                            <label for="{{ qid }}" class="quest-name" style="cursor:pointer; font-size:0.85rem; line-height:1.3;">{{ q }}</label>
+                        <div class="quest-row" data-kind="miniquest" data-membership="{{ row.membership }}" data-qp="{{ row.qp }}" data-unmet="{{ 1 if row.unmet and (row.unmet|length) > 0 else 0 }}">
+                            <input id="{{ qid }}" type="checkbox" name="completed_quests" value="{{ q }}" onchange="updateQuestPoints()" {% if q in completed_set %}checked{% endif %}>
+                            <label for="{{ qid }}" class="quest-name">{{ q }}</label>
                         </div>
                         {% endfor %}
                     </div>
@@ -255,12 +255,12 @@
 
             <div class="form-group" style="margin-bottom:14px;">
                 <label>Target Quests</label>
-                <div style="max-height:200px; overflow:auto; border:1px solid var(--border); border-radius:var(--radius); padding:10px; background:var(--bg-input);">
+                <div class="quest-panel" style="max-height:200px;">
                     {% for row in quests_rows %}
                     {% set q = row.name %}{% set qid = 'gq_' ~ loop.index %}
-                    <div style="display:flex; gap:8px; align-items:flex-start; padding:4px 2px; border-bottom:1px solid rgba(255,255,255,0.04);">
-                        <input id="{{ qid }}" type="checkbox" name="target_quests" value="{{ q }}" style="margin-top:3px;" {% if q in goal_target_quests %}checked{% endif %}>
-                        <label for="{{ qid }}" style="cursor:pointer; font-size:0.85rem; line-height:1.3;">{{ q }}</label>
+                    <div class="quest-row">
+                        <input id="{{ qid }}" type="checkbox" name="target_quests" value="{{ q }}" {% if q in goal_target_quests %}checked{% endif %}>
+                        <label for="{{ qid }}" class="quest-name">{{ q }}</label>
                     </div>
                     {% endfor %}
                 </div>
@@ -295,6 +295,46 @@
         </form>
     </div>
 </div>
+
+<style>
+.quest-panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px;
+    max-height: 240px;
+    overflow: auto;
+    background: var(--bg-input);
+}
+
+.quest-panel-title {
+    color: var(--muted);
+    font-weight: 800;
+    margin: 0 0 6px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.quest-row {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+    padding: 6px 2px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.quest-row input[type="checkbox"] {
+    margin-top: 2px;
+}
+
+.quest-name {
+    cursor: pointer;
+    font-size: 0.85rem;
+    line-height: 1.35;
+    word-break: break-word;
+}
+</style>
 
 <script>
 function filterQuests() {
