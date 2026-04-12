@@ -1718,7 +1718,7 @@ def delete_component(component_id: int, session: Session = Depends(get_session))
 
 
 @app.get("/accounts", response_class=HTMLResponse)
-def list_accounts(request: Request, q: str = "", tag: str = "", wall: str = "", session: Session = Depends(get_session)):
+def list_accounts(request: Request, q: str = "", tag: str = "", wall: str = "", health: str = "", session: Session = Depends(get_session)):
     statement = select(Account).order_by(Account.label)
     if q.strip():
         like = f"%{q.strip()}%"
@@ -1745,6 +1745,19 @@ def list_accounts(request: Request, q: str = "", tag: str = "", wall: str = "", 
     filtered_health_rows = [health_by_id[int(account.id)] for account in accounts if int(account.id) in health_by_id]
     wall_snapshot = _wall_window_snapshot(session, accounts, filtered_health_rows)
     wall_by_id = _wall_account_status_by_id(wall_snapshot)
+    selected_health = (health or "").strip().lower()
+    if selected_health:
+        if selected_health == "issues":
+            accounts = [
+                account for account in accounts
+                if str((health_by_id.get(int(account.id)) or {}).get("health_label") or "").strip().lower() in {"watch", "needs work", "banned"}
+            ]
+        else:
+            accounts = [
+                account for account in accounts
+                if str((health_by_id.get(int(account.id)) or {}).get("health_label") or "").strip().lower() == selected_health
+            ]
+
     selected_wall = (wall or "").strip().lower()
     if selected_wall:
         filtered_accounts: list[Account] = []
@@ -1779,6 +1792,7 @@ def list_accounts(request: Request, q: str = "", tag: str = "", wall: str = "", 
             "q": q,
             "selected_tag": selected_tag,
             "selected_wall": selected_wall,
+            "selected_health": selected_health,
             "message": request.query_params.get("message"),
         },
     )
