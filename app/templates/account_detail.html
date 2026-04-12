@@ -111,6 +111,9 @@
         <span class="pill"><span>Hint</span> <strong>{{ account.wall_hint or '–' }}</strong></span>
     </div>
     <div class="actions" style="margin-bottom:12px;">
+        {% if wall_status.visible and wall_status.primary_hwnd %}
+        <button type="button" class="secondary tiny-btn" id="focusAccountWallBtn" data-account-id="{{ account.id }}">Focus matched window</button>
+        {% endif %}
         <a href="/accounts?wall={% if wall_status.visible %}on{% else %}missing{% endif %}"><button type="button" class="secondary tiny-btn">View {% if wall_status.visible %}on-wall{% else %}missing{% endif %} accounts</button></a>
         {% if wall_status.alerts %}
         <a href="/accounts?wall=alerts"><button type="button" class="secondary tiny-btn">View wall alerts</button></a>
@@ -127,6 +130,30 @@
         {% endfor %}
     </div>
 </div>
+
+<script>
+async function focusAccountWall(accountId) {
+    try {
+        const resp = await fetch(`/api/ops/accounts/${Number(accountId)}/focus-wall`, {
+            method: 'POST',
+            cache: 'no-store',
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Failed to focus wall window');
+        }
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Failed to focus wall window');
+    }
+}
+
+document.addEventListener('click', (event) => {
+    const button = event.target.closest('#focusAccountWallBtn');
+    if (!button) return;
+    focusAccountWall(button.dataset.accountId);
+});
+</script>
 
 <div class="grid-3" style="margin-bottom:20px;">
     <div class="stat-card">

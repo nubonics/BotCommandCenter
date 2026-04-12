@@ -968,6 +968,7 @@ def _wall_window_snapshot(
                 "wall_hint": account.wall_hint,
                 "visible": visible,
                 "matched_window_count": len(matched_windows),
+                "primary_hwnd": matched_windows[0]["hwnd"] if matched_windows else None,
                 "primary_window_title": matched_windows[0]["title"] if matched_windows else None,
                 "health_label": health.get("health_label") if health else None,
                 "issue_count": health.get("issue_count") if health else 0,
@@ -1299,6 +1300,34 @@ def ops_wall_assign(
             "hwnd": int(hwnd),
             "wall_hint": window_title,
             "message": f"Saved wall hint for {account.label}",
+        }
+    )
+
+
+@app.post("/api/ops/accounts/{account_id}/focus-wall")
+def ops_focus_account_wall(account_id: int, session: Session = Depends(get_session)) -> JSONResponse:
+    account = session.get(Account, account_id)
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    health_rows, _summary, _app_health = _account_health_snapshot(session, [account])
+    wall_snapshot = _wall_window_snapshot(session, [account], health_rows)
+    wall_status = _wall_account_status_by_id(wall_snapshot).get(int(account.id), {})
+    hwnd = wall_status.get("primary_hwnd")
+    if not hwnd:
+        raise HTTPException(status_code=404, detail="No matched wall window for this account")
+
+    from .osclient_wall.router import focus_window, flash_manager
+
+    hwnd = int(hwnd)
+    ok = focus_window(hwnd)
+    flash_manager.request_flash(hwnd)
+    return JSONResponse(
+        {
+            "ok": bool(ok),
+            "account_id": int(account.id),
+            "hwnd": hwnd,
+            "message": f"Focused wall window for {account.label}",
         }
     )
 

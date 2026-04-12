@@ -181,6 +181,9 @@
                 <td>{% if account.banned %}<span style="color:var(--red);">Yes</span>{% else %}No{% endif %}</td>
                 <td>
                     <div class="actions" style="justify-content:flex-end;">
+                        {% if wall and wall.visible and wall.primary_hwnd %}
+                        <button type="button" class="secondary tiny-btn account-wall-focus-btn" data-account-id="{{ account.id }}">Focus</button>
+                        {% endif %}
                         <a href="/accounts/{{ account.id }}/edit"><button type="button" class="secondary tiny-btn">Edit</button></a>
                         <form action="/accounts/{{ account.id }}/delete" method="post" style="margin:0;" onsubmit="return confirm('Delete this account?');">
                             <button type="submit" class="danger tiny-btn">Del</button>
@@ -198,6 +201,22 @@
 </form>
 
 <script>
+async function focusAccountWall(accountId) {
+    try {
+        const resp = await fetch(`/api/ops/accounts/${Number(accountId)}/focus-wall`, {
+            method: 'POST',
+            cache: 'no-store',
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Failed to focus wall window');
+        }
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Failed to focus wall window');
+    }
+}
+
 function bulkCheckboxes() {
     return Array.from(document.querySelectorAll('.bulk-account-checkbox'));
 }
@@ -229,6 +248,12 @@ if (bulkForm) {
 }
 
 refreshSelectedCount();
+
+document.addEventListener('click', (event) => {
+    const button = event.target.closest('.account-wall-focus-btn');
+    if (!button) return;
+    focusAccountWall(button.dataset.accountId);
+});
 </script>
 
 {% endblock %}
