@@ -61,11 +61,11 @@
 <div class="card" style="padding: 12px 16px;">
     <div class="inline-form" style="align-items:center; gap:8px; flex-wrap:wrap;">
         <span class="muted" style="font-size:0.85rem; font-weight:600;">Tags</span>
-        <a href="/accounts{% if q or selected_wall %}?{% if q %}q={{ q | urlencode }}{% endif %}{% if q and selected_wall %}&{% endif %}{% if selected_wall %}wall={{ selected_wall | urlencode }}{% endif %}{% endif %}">
+        <a href="/accounts{% if q or selected_wall or selected_health %}?{% if q %}q={{ q | urlencode }}{% endif %}{% if q and (selected_wall or selected_health) %}&{% endif %}{% if selected_wall %}wall={{ selected_wall | urlencode }}{% endif %}{% if selected_wall and selected_health %}&{% endif %}{% if selected_health %}health={{ selected_health | urlencode }}{% endif %}{% endif %}">
             <button type="button" class="tiny-btn {% if selected_tag %}secondary{% endif %}">All</button>
         </a>
         {% for tag in all_tags %}
-        <a href="/accounts?tag={{ tag | urlencode }}{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_wall %}&wall={{ selected_wall | urlencode }}{% endif %}">
+        <a href="/accounts?tag={{ tag | urlencode }}{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_wall %}&wall={{ selected_wall | urlencode }}{% endif %}{% if selected_health %}&health={{ selected_health | urlencode }}{% endif %}">
             <button type="button" class="tiny-btn {% if selected_tag != tag %}secondary{% endif %}">{{ tag }}</button>
         </a>
         {% endfor %}
