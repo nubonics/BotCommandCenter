@@ -8,6 +8,28 @@
     </div>
 </div>
 
+<div class="card" style="padding: 14px 18px;">
+    <form method="get" action="/accounts/pnl" class="inline-form">
+        <select name="health" style="min-width:180px;">
+            <option value="">All health states</option>
+            <option value="clean" {% if selected_health == 'clean' %}selected{% endif %}>Clean</option>
+            <option value="watch" {% if selected_health == 'watch' %}selected{% endif %}>Watch</option>
+            <option value="needs work" {% if selected_health == 'needs work' %}selected{% endif %}>Needs work</option>
+            <option value="banned" {% if selected_health == 'banned' %}selected{% endif %}>Banned</option>
+        </select>
+        <select name="tag" style="min-width:180px;">
+            <option value="">All tags</option>
+            {% for tag in all_tags %}
+            <option value="{{ tag }}" {% if selected_tag == tag %}selected{% endif %}>{{ tag }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="secondary">Filter</button>
+        {% if selected_tag or selected_health %}
+        <a href="/accounts/pnl"><button type="button" class="secondary">Clear</button></a>
+        {% endif %}
+    </form>
+</div>
+
 <div class="grid-3" style="margin-bottom:20px;">
     <div class="stat-card">
         <h3>Tracked revenue</h3>
@@ -76,7 +98,7 @@
                 <td class="mono {% if row.financials.monthly_net >= 0 %}positive{% else %}negative{% endif %}" style="text-align:right; font-weight:700;">{{ row.financials.monthly_net | usd }}</td>
             </tr>
             {% else %}
-            <tr><td colspan="9" class="muted" style="text-align:center; padding:40px 0;">No accounts yet.</td></tr>
+            <tr><td colspan="9" class="muted" style="text-align:center; padding:40px 0;">No accounts match the current filters.</td></tr>
             {% endfor %}
         </tbody>
     </table>

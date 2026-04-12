@@ -1728,12 +1728,29 @@ def list_accounts(request: Request, q: str = "", tag: str = "", wall: str = "", 
 
 
 @app.get("/accounts/pnl", response_class=HTMLResponse)
-def accounts_pnl_page(request: Request, session: Session = Depends(get_session)):
+def accounts_pnl_page(
+    request: Request,
+    tag: str = "",
+    health: str = "",
+    session: Session = Depends(get_session),
+):
     accounts = session.scalars(select(Account).order_by(Account.label)).all()
     expenses = session.scalars(select(AccountExpense).order_by(AccountExpense.created_at)).all()
     revenues = session.scalars(select(AccountRevenue).order_by(AccountRevenue.created_at)).all()
     health_rows, _summary, _app_health = _account_health_snapshot(session, accounts)
     health_by_id = {int(row["account"].id): row for row in health_rows}
+
+    selected_tag = (tag or "").strip().lower()
+    if selected_tag:
+        accounts = [account for account in accounts if selected_tag in _split_tags(account.tags)]
+
+    selected_health = (health or "").strip().lower()
+    if selected_health:
+        def _matches_health(account: Account) -> bool:
+            health_row = health_by_id.get(int(account.id)) or {}
+            label = str(health_row.get("health_label") or "").strip().lower()
+            return label == selected_health
+        accounts = [account for account in accounts if _matches_health(account)]
 
     expenses_by_account: dict[int, list[AccountExpense]] = {}
     for row in expenses:
@@ -1776,6 +1793,9 @@ def accounts_pnl_page(request: Request, session: Session = Depends(get_session))
             "request": request,
             "rows": rows,
             "totals": totals,
+            "all_tags": _all_account_tags(session.scalars(select(Account).order_by(Account.label)).all()),
+            "selected_tag": selected_tag,
+            "selected_health": selected_health,
             "message": request.query_params.get("message"),
         },
     )
