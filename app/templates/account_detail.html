@@ -110,6 +110,12 @@
         <span class="pill"><span>Matched windows</span> <strong>{{ wall_status.matched_window_count or 0 }}</strong></span>
         <span class="pill"><span>Hint</span> <strong>{{ account.wall_hint or '–' }}</strong></span>
     </div>
+    <div class="actions" style="margin-bottom:12px;">
+        <a href="/accounts?wall={% if wall_status.visible %}on{% else %}missing{% endif %}"><button type="button" class="secondary tiny-btn">View {% if wall_status.visible %}on-wall{% else %}missing{% endif %} accounts</button></a>
+        {% if wall_status.alerts %}
+        <a href="/accounts?wall=alerts"><button type="button" class="secondary tiny-btn">View wall alerts</button></a>
+        {% endif %}
+    </div>
     {% if wall_status.primary_window_title %}
     <div class="muted" style="margin-bottom:10px;">Current window: <span class="mono">{{ wall_status.primary_window_title }}</span></div>
     {% endif %}

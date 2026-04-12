@@ -24,6 +24,7 @@
     <form method="get" action="/accounts" class="inline-form">
         <input type="text" name="q" value="{{ q }}" placeholder="Search label, email, proxy IP, RSN…" style="flex:1; min-width:200px;">
         {% if selected_tag %}<input type="hidden" name="tag" value="{{ selected_tag }}">{% endif %}
+        {% if selected_wall %}<input type="hidden" name="wall" value="{{ selected_wall }}">{% endif %}
         <button type="submit" class="secondary">Search</button>
     </form>
 </div>
@@ -32,11 +33,11 @@
 <div class="card" style="padding: 12px 16px;">
     <div class="inline-form" style="align-items:center; gap:8px; flex-wrap:wrap;">
         <span class="muted" style="font-size:0.85rem; font-weight:600;">Tags</span>
-        <a href="/accounts{% if q %}?q={{ q | urlencode }}{% endif %}">
+        <a href="/accounts{% if q or selected_wall %}?{% if q %}q={{ q | urlencode }}{% endif %}{% if q and selected_wall %}&{% endif %}{% if selected_wall %}wall={{ selected_wall | urlencode }}{% endif %}{% endif %}">
             <button type="button" class="tiny-btn {% if selected_tag %}secondary{% endif %}">All</button>
         </a>
         {% for tag in all_tags %}
-        <a href="/accounts?tag={{ tag | urlencode }}{% if q %}&q={{ q | urlencode }}{% endif %}">
+        <a href="/accounts?tag={{ tag | urlencode }}{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_wall %}&wall={{ selected_wall | urlencode }}{% endif %}">
             <button type="button" class="tiny-btn {% if selected_tag != tag %}secondary{% endif %}">{{ tag }}</button>
         </a>
         {% endfor %}
@@ -44,9 +45,31 @@
 </div>
 {% endif %}
 
+<div class="card" style="padding: 12px 16px;">
+    <div class="inline-form" style="align-items:center; gap:8px; flex-wrap:wrap;">
+        <span class="muted" style="font-size:0.85rem; font-weight:600;">Wall</span>
+        <a href="/accounts{% if q or selected_tag %}?{% if q %}q={{ q | urlencode }}{% endif %}{% if q and selected_tag %}&{% endif %}{% if selected_tag %}tag={{ selected_tag | urlencode }}{% endif %}{% endif %}">
+            <button type="button" class="tiny-btn {% if selected_wall %}secondary{% endif %}">All</button>
+        </a>
+        <a href="/accounts?wall=on{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}">
+            <button type="button" class="tiny-btn {% if selected_wall != 'on' %}secondary{% endif %}">On wall</button>
+        </a>
+        <a href="/accounts?wall=missing{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}">
+            <button type="button" class="tiny-btn {% if selected_wall != 'missing' %}secondary{% endif %}">Missing</button>
+        </a>
+        <a href="/accounts?wall=alerts{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}">
+            <button type="button" class="tiny-btn {% if selected_wall != 'alerts' %}secondary{% endif %}">Alerts</button>
+        </a>
+        <a href="/accounts?wall=hinted{% if q %}&q={{ q | urlencode }}{% endif %}{% if selected_tag %}&tag={{ selected_tag | urlencode }}{% endif %}">
+            <button type="button" class="tiny-btn {% if selected_wall != 'hinted' %}secondary{% endif %}">Has hint</button>
+        </a>
+    </div>
+</div>
+
 <form id="bulkAccountsForm" action="/accounts/bulk-update" method="post">
     <input type="hidden" name="q" value="{{ q }}">
     <input type="hidden" name="tag" value="{{ selected_tag }}">
+    <input type="hidden" name="wall" value="{{ selected_wall }}">
 
 <div class="card">
     <div class="grid-2" style="align-items:end; gap:16px;">

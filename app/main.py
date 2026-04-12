@@ -1594,7 +1594,7 @@ def delete_component(component_id: int, session: Session = Depends(get_session))
 
 
 @app.get("/accounts", response_class=HTMLResponse)
-def list_accounts(request: Request, q: str = "", tag: str = "", session: Session = Depends(get_session)):
+def list_accounts(request: Request, q: str = "", tag: str = "", wall: str = "", session: Session = Depends(get_session)):
     statement = select(Account).order_by(Account.label)
     if q.strip():
         like = f"%{q.strip()}%"
@@ -1621,6 +1621,24 @@ def list_accounts(request: Request, q: str = "", tag: str = "", session: Session
     filtered_health_rows = [health_by_id[int(account.id)] for account in accounts if int(account.id) in health_by_id]
     wall_snapshot = _wall_window_snapshot(session, accounts, filtered_health_rows)
     wall_by_id = _wall_account_status_by_id(wall_snapshot)
+    selected_wall = (wall or "").strip().lower()
+    if selected_wall:
+        filtered_accounts: list[Account] = []
+        for account in accounts:
+            wall_row = wall_by_id.get(int(account.id), {})
+            alerts = wall_row.get("alerts") or []
+            include = False
+            if selected_wall == "on":
+                include = bool(wall_row.get("visible"))
+            elif selected_wall == "missing":
+                include = not bool(wall_row.get("visible"))
+            elif selected_wall == "alerts":
+                include = bool(alerts)
+            elif selected_wall == "hinted":
+                include = bool((account.wall_hint or "").strip())
+            if include:
+                filtered_accounts.append(account)
+        accounts = filtered_accounts
 
     return templates.TemplateResponse(
         request,
@@ -1633,6 +1651,7 @@ def list_accounts(request: Request, q: str = "", tag: str = "", session: Session
             "all_tags": _all_account_tags(session.scalars(select(Account).order_by(Account.label)).all()),
             "q": q,
             "selected_tag": selected_tag,
+            "selected_wall": selected_wall,
             "message": request.query_params.get("message"),
         },
     )
@@ -1714,6 +1733,7 @@ def bulk_update_accounts(
     banned_state: str = Form("keep"),
     q: str = Form(""),
     tag: str = Form(""),
+    wall: str = Form(""),
     session: Session = Depends(get_session),
 ):
     ids = sorted({int(account_id) for account_id in account_ids})
@@ -1764,6 +1784,8 @@ def bulk_update_accounts(
         params.append(f"q={quote_plus(q.strip())}")
     if tag.strip():
         params.append(f"tag={quote_plus(tag.strip())}")
+    if wall.strip():
+        params.append(f"wall={quote_plus(wall.strip())}")
     params.append(f"message={quote_plus(message)}")
     query = "?" + "&".join(params) if params else ""
     return RedirectResponse(url=f"/accounts{query}", status_code=303)
