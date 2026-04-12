@@ -180,6 +180,19 @@
         <button type="button" class="secondary" onclick="toggleVisibleAccounts(true)">Select visible</button>
         <button type="button" class="secondary" onclick="toggleVisibleAccounts(false)">Clear selection</button>
     </div>
+
+    <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
+        <div class="muted" style="font-size:0.85rem; font-weight:600; margin-bottom:8px;">Quick presets</div>
+        <div class="actions">
+            <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('review')">Set review</button>
+            <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('paused')">Set paused</button>
+            <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('queued')">Set queued</button>
+            <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('clearHints')">Clear wall hints</button>
+            <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('markBanned')">Mark banned</button>
+            <button type="button" class="secondary tiny-btn" onclick="applyBulkPreset('markNotBanned')">Mark not banned</button>
+            <span id="bulkPresetHint" class="muted" style="font-size:0.82rem;"></span>
+        </div>
+    </div>
 </div>
 
 <div class="card" style="padding:0; overflow:hidden;">
@@ -279,6 +292,46 @@ async function focusAccountWall(accountId) {
     } catch (err) {
         console.error(err);
         alert(err.message || 'Failed to focus wall window');
+    }
+}
+
+function applyBulkPreset(preset) {
+    const form = document.getElementById('bulkAccountsForm');
+    if (!form) return;
+
+    const statusField = form.querySelector('select[name="bulk_status"]');
+    const bannedField = form.querySelector('select[name="banned_state"]');
+    const wallHintField = form.querySelector('select[name="bulk_wall_hint_action"]');
+    const hint = document.getElementById('bulkPresetHint');
+
+    if (statusField) statusField.value = '';
+    if (bannedField) bannedField.value = 'keep';
+    if (wallHintField) wallHintField.value = '';
+    if (hint) hint.textContent = '';
+
+    if (preset === 'review' && statusField) {
+        statusField.value = 'review';
+        if (hint) hint.textContent = 'Preset loaded: set status to review';
+    }
+    if (preset === 'paused' && statusField) {
+        statusField.value = 'paused';
+        if (hint) hint.textContent = 'Preset loaded: set status to paused';
+    }
+    if (preset === 'queued' && statusField) {
+        statusField.value = 'queued';
+        if (hint) hint.textContent = 'Preset loaded: set status to queued';
+    }
+    if (preset === 'clearHints' && wallHintField) {
+        wallHintField.value = 'clear';
+        if (hint) hint.textContent = 'Preset loaded: clear wall hints';
+    }
+    if (preset === 'markBanned' && bannedField) {
+        bannedField.value = 'banned';
+        if (hint) hint.textContent = 'Preset loaded: mark selected accounts as banned';
+    }
+    if (preset === 'markNotBanned' && bannedField) {
+        bannedField.value = 'not_banned';
+        if (hint) hint.textContent = 'Preset loaded: mark selected accounts as not banned';
     }
 }
 
