@@ -1057,6 +1057,37 @@ def _find_wall_window(hwnd: int) -> dict[str, object] | None:
     return None
 
 
+def _wall_account_status_by_id(wall_snapshot: dict[str, object]) -> dict[int, dict[str, object]]:
+    statuses: dict[int, dict[str, object]] = {}
+    for row in wall_snapshot.get("accounts", []):
+        try:
+            account_id = int(row.get("id") or 0)
+        except Exception:
+            continue
+        if account_id:
+            statuses[account_id] = dict(row)
+
+    for alert in wall_snapshot.get("alerts", []):
+        kind = str(alert.get("kind") or "")
+        account_id = alert.get("account_id")
+        if account_id is not None:
+            try:
+                account_id = int(account_id)
+            except Exception:
+                account_id = None
+        if account_id and account_id in statuses:
+            statuses[account_id].setdefault("alerts", []).append(dict(alert))
+
+        if kind == "duplicate_wall_hint":
+            detail = str(alert.get("detail") or "")
+            labels = {part.strip().lower() for part in detail.split(",") if part.strip()}
+            for row in statuses.values():
+                if str(row.get("label") or "").strip().lower() in labels:
+                    row.setdefault("alerts", []).append(dict(alert))
+
+    return statuses
+
+
 def _add_global_expense(
     session: Session,
     *,
@@ -1587,6 +1618,10 @@ def list_accounts(request: Request, q: str = "", tag: str = "", session: Session
     if selected_tag:
         accounts = [account for account in accounts if selected_tag in _split_tags(account.tags)]
 
+    filtered_health_rows = [health_by_id[int(account.id)] for account in accounts if int(account.id) in health_by_id]
+    wall_snapshot = _wall_window_snapshot(session, accounts, filtered_health_rows)
+    wall_by_id = _wall_account_status_by_id(wall_snapshot)
+
     return templates.TemplateResponse(
         request,
         "accounts.html",
@@ -1594,6 +1629,7 @@ def list_accounts(request: Request, q: str = "", tag: str = "", session: Session
             "request": request,
             "accounts": accounts,
             "health_by_id": health_by_id,
+            "wall_by_id": wall_by_id,
             "all_tags": _all_account_tags(session.scalars(select(Account).order_by(Account.label)).all()),
             "q": q,
             "selected_tag": selected_tag,
@@ -1809,6 +1845,9 @@ def account_detail(request: Request, account_id: int, session: Session = Depends
     ).all()
 
     financials = _financial_summary(expenses, revenues)
+    health_rows, _summary, _app_health = _account_health_snapshot(session, [account])
+    wall_snapshot = _wall_window_snapshot(session, [account], health_rows)
+    wall_status = _wall_account_status_by_id(wall_snapshot).get(int(account.id), {})
 
     return templates.TemplateResponse(
         request,
@@ -1822,6 +1861,7 @@ def account_detail(request: Request, account_id: int, session: Session = Depends
             "expenses": expenses,
             "revenues": revenues,
             "financials": financials,
+            "wall_status": wall_status,
         },
     )
 

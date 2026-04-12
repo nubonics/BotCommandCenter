@@ -97,6 +97,31 @@
     <p style="white-space:pre-line; color:var(--text-2);">{{ account.notes or "No notes yet." }}</p>
 </div>
 
+<div class="card">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:start;">
+        <div>
+            <h3 style="margin-top:0;">Wall Status</h3>
+            <p class="muted" style="margin:0 0 12px;">How this account currently maps onto the live client wall.</p>
+        </div>
+        <a href="/client-wall"><button type="button" class="secondary tiny-btn">Open Client Wall</button></a>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+        <span class="pill"><span>Presence</span> <strong>{% if wall_status.visible %}On wall{% else %}Missing{% endif %}</strong></span>
+        <span class="pill"><span>Matched windows</span> <strong>{{ wall_status.matched_window_count or 0 }}</strong></span>
+        <span class="pill"><span>Hint</span> <strong>{{ account.wall_hint or '–' }}</strong></span>
+    </div>
+    {% if wall_status.primary_window_title %}
+    <div class="muted" style="margin-bottom:10px;">Current window: <span class="mono">{{ wall_status.primary_window_title }}</span></div>
+    {% endif %}
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        {% for alert in wall_status.alerts or [] %}
+        <span class="pill"><strong>{{ alert.label }}</strong> · {{ alert.detail }}</span>
+        {% else %}
+        <span class="muted">No wall-specific alerts for this account right now.</span>
+        {% endfor %}
+    </div>
+</div>
+
 <div class="grid-3" style="margin-bottom:20px;">
     <div class="stat-card">
         <h3>Tracked revenue</h3>
