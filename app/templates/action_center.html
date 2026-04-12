@@ -148,7 +148,7 @@
         <tbody>
             {% for row in rows %}
             <tr>
-                <td><a href="/accounts/{{ row.account.id }}"><strong>{{ row.account.label }}</strong></a></td>
+                <td><a href="/accounts/{{ row.account.id }}?next={{ current_action_center_url | urlencode }}"><strong>{{ row.account.label }}</strong></a></td>
                 <td class="mono" style="color:var(--text-2);">{{ row.account.rsn or '–' }}</td>
                 <td class="mono" style="color:var(--muted); font-size:0.85em;">
                     {% if row.account.proxy_ip %}{{ row.account.proxy_ip }}{% if row.account.proxy_port %}:{{ row.account.proxy_port }}{% endif %}{% else %}–{% endif %}
@@ -168,9 +168,9 @@
                 </td>
                 <td>
                     <div class="actions" style="justify-content:flex-end;">
-                        <a href="/accounts/{{ row.account.id }}"><button type="button" class="secondary tiny-btn">View</button></a>
-                        <a href="/accounts/{{ row.account.id }}/edit"><button type="button" class="secondary tiny-btn">Edit</button></a>
-                        <a href="/accounts/{{ row.account.id }}/progress"><button type="button" class="secondary tiny-btn">Progress</button></a>
+                        <a href="/accounts/{{ row.account.id }}?next={{ current_action_center_url | urlencode }}"><button type="button" class="secondary tiny-btn">View</button></a>
+                        <a href="/accounts/{{ row.account.id }}/edit?next={{ current_action_center_url | urlencode }}"><button type="button" class="secondary tiny-btn">Edit</button></a>
+                        <a href="/accounts/{{ row.account.id }}/progress?next={{ current_action_center_url | urlencode }}"><button type="button" class="secondary tiny-btn">Progress</button></a>
                     </div>
                 </td>
             </tr>

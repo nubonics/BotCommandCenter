@@ -1296,6 +1296,10 @@ def action_center_page(
             if selected_tag in _split_tags(getattr(row.get("account"), "tags", None))
         ]
 
+    current_action_center_url = "/action-center"
+    if request.url.query:
+        current_action_center_url += f"?{request.url.query}"
+
     return templates.TemplateResponse(
         request,
         "action_center.html",
@@ -1311,6 +1315,7 @@ def action_center_page(
             "selected_tag": selected_tag,
             "all_tags": _all_account_tags(accounts),
             "q": q,
+            "current_action_center_url": current_action_center_url,
             "message": request.query_params.get("message"),
         },
     )
