@@ -55,6 +55,7 @@
                 {% else %}–{% endif %}
             </dd>
             <dt>RSN</dt><dd class="mono">{{ account.rsn or "–" }}</dd>
+            <dt>Wall hint</dt><dd class="mono">{{ account.wall_hint or "–" }}</dd>
             <dt>Banned</dt><dd>{% if account.banned %}<span style="color:var(--red);">Yes</span>{% else %}No{% endif %}</dd>
         </dl>
     </div>

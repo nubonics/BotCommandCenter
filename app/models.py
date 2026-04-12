@@ -98,6 +98,7 @@ class Account(Base):
     world: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     status: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     tags: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    wall_hint: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     banned: Mapped[bool] = mapped_column(default=False, server_default="0")
 
     created_at: Mapped[datetime] = mapped_column(

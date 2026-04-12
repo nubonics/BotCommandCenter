@@ -38,6 +38,11 @@
                 <div class="muted" style="font-size:0.85rem; margin-top:6px;">Comma-separated tags for filtering and grouping.</div>
             </div>
             <div class="form-group form-group-full">
+                <label>Wall Match Hint</label>
+                <input type="text" name="wall_hint" value="{{ account.wall_hint if editing and account.wall_hint else '' }}" placeholder="Optional title fragment shown in the OSClient window">
+                <div class="muted" style="font-size:0.85rem; margin-top:6px;">Used by Client Wall matching before RSN or account label. Example: the profile name or custom title segment shown in the client window.</div>
+            </div>
+            <div class="form-group form-group-full">
                 <label>Notes</label>
                 <textarea name="notes" rows="4" placeholder="Optional notes">{{ account.notes if editing and account.notes else '' }}</textarea>
             </div>

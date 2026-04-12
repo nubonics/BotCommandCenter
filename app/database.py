@@ -47,6 +47,10 @@ def _ensure_account_schema() -> None:
             conn.exec_driver_sql(
                 "ALTER TABLE account ADD COLUMN tags VARCHAR(500)"
             )
+        if "wall_hint" not in columns:
+            conn.exec_driver_sql(
+                "ALTER TABLE account ADD COLUMN wall_hint VARCHAR(255)"
+            )
 
 
 def _ensure_account_expense_schema() -> None:

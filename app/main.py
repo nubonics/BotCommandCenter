@@ -858,6 +858,15 @@ def _score_window_account_match(window_title: str, account: Account) -> tuple[in
     best_score = 0
     best_reason: str | None = None
 
+    wall_hint = (account.wall_hint or "").strip().lower()
+    norm_wall_hint = _normalize_match_text(account.wall_hint)
+    if wall_hint and len(wall_hint) >= 3:
+        if raw_title == wall_hint or norm_title == norm_wall_hint:
+            return 140, "Wall hint exact"
+        if wall_hint in raw_title or (norm_wall_hint and norm_wall_hint in norm_title):
+            best_score = 125 + min(len(wall_hint), 15)
+            best_reason = "Wall hint"
+
     rsn = (account.rsn or "").strip().lower()
     norm_rsn = _normalize_match_text(account.rsn)
     if rsn and len(rsn) >= 3:
@@ -1609,6 +1618,7 @@ def create_account(
     proxy_username: str = Form(""),
     proxy_password: str = Form(""),
     tags: str = Form(""),
+    wall_hint: str = Form(""),
     banned: str = Form("false"),
     notes: str = Form(""),
     session: Session = Depends(get_session),
@@ -1629,6 +1639,7 @@ def create_account(
         proxy_username=proxy_username.strip() or None,
         proxy_password=proxy_password.strip() or None,
         tags=_normalize_tags_text(tags),
+        wall_hint=wall_hint.strip() or None,
         banned=(banned == "true"),
         notes=notes.strip() or None,
     )
@@ -2035,6 +2046,7 @@ def update_account(
     proxy_username: str = Form(""),
     proxy_password: str = Form(""),
     tags: str = Form(""),
+    wall_hint: str = Form(""),
     banned: str = Form("false"),
     notes: str = Form(""),
     session: Session = Depends(get_session),
@@ -2058,6 +2070,7 @@ def update_account(
     account.proxy_username = proxy_username.strip() or None
     account.proxy_password = proxy_password.strip() or None
     account.tags = _normalize_tags_text(tags)
+    account.wall_hint = wall_hint.strip() or None
     account.banned = (banned == "true")
     account.notes = notes.strip() or None
 
