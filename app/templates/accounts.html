@@ -105,6 +105,7 @@
                 <th>Label</th>
                 <th>RSN</th>
                 <th>Tags</th>
+                <th>Health</th>
                 <th>Proxy</th>
                 <th>Status</th>
                 <th>Banned</th>
@@ -126,6 +127,15 @@
                     </div>
                     {% else %}–{% endif %}
                 </td>
+                {% set health = health_by_id.get(account.id) %}
+                <td>
+                    {% if health %}
+                    <span class="pill"><strong>{{ health.health_label }}</strong>{% if health.issue_count %} · {{ health.issue_count }}{% endif %}</span>
+                    {% if health.issues %}
+                    <div class="muted" style="font-size:0.8rem; margin-top:4px;">{{ health.issues[:2] | join(', ') }}{% if health.issue_count > 2 %} +{{ health.issue_count - 2 }} more{% endif %}</div>
+                    {% endif %}
+                    {% else %}–{% endif %}
+                </td>
                 <td class="mono" style="color:var(--muted); font-size:0.85em;">
                     {% if account.proxy_ip %}{{ account.proxy_ip }}{% if account.proxy_port %}:{{ account.proxy_port }}{% endif %}{% else %}–{% endif %}
                 </td>
@@ -141,7 +151,7 @@
                 </td>
             </tr>
             {% else %}
-            <tr><td colspan="8" class="muted" style="text-align:center; padding:40px 0;">No accounts yet.</td></tr>
+            <tr><td colspan="9" class="muted" style="text-align:center; padding:40px 0;">No accounts yet.</td></tr>
             {% endfor %}
         </tbody>
     </table>

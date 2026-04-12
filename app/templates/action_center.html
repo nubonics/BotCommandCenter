@@ -42,6 +42,7 @@
             <span class="pill"><span>Accounts</span> <strong>{{ app_health.account_count }}</strong></span>
             <span class="pill"><span>Money makers</span> <strong>{{ app_health.money_maker_count }}</strong></span>
             <span class="pill"><span>Global costs</span> <strong>{{ app_health.global_cost_group_count }}</strong></span>
+            <span class="pill"><span>Wall windows</span> <strong>{{ app_health.wall_window_count }}</strong></span>
             <span class="pill"><span>Spreader</span> <strong>{% if app_health.spreader_running %}Running{% else %}Stopped{% endif %}</strong></span>
             <span class="pill"><span>Watchdog</span> <strong>{% if app_health.watchdog_running %}Running{% else %}Stopped{% endif %}</strong></span>
         </div>
@@ -67,6 +68,7 @@
                 <th>RSN</th>
                 <th>Proxy</th>
                 <th>Status</th>
+                <th>Health</th>
                 <th>Issues</th>
                 <th></th>
             </tr>
@@ -80,6 +82,7 @@
                     {% if row.account.proxy_ip %}{{ row.account.proxy_ip }}{% if row.account.proxy_port %}:{{ row.account.proxy_port }}{% endif %}{% else %}–{% endif %}
                 </td>
                 <td>{{ row.account.status or '–' }}</td>
+                <td><span class="pill"><strong>{{ row.health_label }}</strong>{% if row.issue_count %} · {{ row.issue_count }}{% endif %}</span></td>
                 <td>
                     {% if row.issues %}
                     <div style="display:flex; gap:6px; flex-wrap:wrap;">

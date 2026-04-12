@@ -472,12 +472,16 @@ def wall_api_set_cols(payload: dict) -> JSONResponse:
 
 
 @app.get("/client-wall", response_class=HTMLResponse)
-def client_wall_page(request: Request):
+def client_wall_page(request: Request, session: Session = Depends(get_session)):
+    rows, summary, app_health = _account_health_snapshot(session)
     return templates.TemplateResponse(
         request,
         "client_wall.html",
         {
             "request": request,
+            "summary": summary,
+            "app_health": app_health,
+            "top_accounts": rows[:6],
         },
     )
 
@@ -702,6 +706,96 @@ def _accounts_for_global_allocation(session: Session, allocation_tag: str | None
     return accounts
 
 
+def _account_health_snapshot(
+    session: Session,
+    accounts: list[Account] | None = None,
+) -> tuple[list[dict[str, object]], dict[str, int], dict[str, object]]:
+    if accounts is None:
+        accounts = session.scalars(select(Account).order_by(Account.label)).all()
+
+    progress_account_ids = set(session.scalars(select(AccountProgress.account_id)).all())
+    active_goal_account_ids = set(
+        session.scalars(select(AccountGoal.account_id).where(AccountGoal.is_active.is_(True))).all()
+    )
+    expense_account_ids = set(session.scalars(select(AccountExpense.account_id)).all())
+    money_maker_count = len(session.scalars(select(MoneyMaker.id)).all())
+    global_cost_group_count = len(_global_expense_groups(session))
+
+    from .osclient_wall.router import manager as wall_manager
+
+    rows: list[dict[str, object]] = []
+    summary = {
+        "accounts_with_issues": 0,
+        "missing_rsn": 0,
+        "missing_proxy": 0,
+        "missing_progress": 0,
+        "missing_goal": 0,
+        "missing_costs": 0,
+        "missing_status": 0,
+        "banned": 0,
+    }
+
+    for account in accounts:
+        issues: list[str] = []
+        if not (account.rsn or "").strip():
+            issues.append("Missing RSN")
+            summary["missing_rsn"] += 1
+        if not (account.proxy_ip or "").strip():
+            issues.append("Missing proxy")
+            summary["missing_proxy"] += 1
+        if account.id not in progress_account_ids:
+            issues.append("No progress state")
+            summary["missing_progress"] += 1
+        if account.id not in active_goal_account_ids:
+            issues.append("No active goal")
+            summary["missing_goal"] += 1
+        if account.id not in expense_account_ids:
+            issues.append("No costs tracked")
+            summary["missing_costs"] += 1
+        if not (account.status or "").strip():
+            issues.append("No status")
+            summary["missing_status"] += 1
+        if account.banned:
+            issues.append("Banned")
+            summary["banned"] += 1
+
+        issue_count = len(issues)
+        if issue_count:
+            summary["accounts_with_issues"] += 1
+
+        if account.banned:
+            health_label = "Banned"
+        elif issue_count == 0:
+            health_label = "Clean"
+        elif issue_count <= 2:
+            health_label = "Watch"
+        else:
+            health_label = "Needs work"
+
+        rows.append(
+            {
+                "account": account,
+                "issues": issues,
+                "issue_count": issue_count,
+                "health_label": health_label,
+            }
+        )
+
+    rows.sort(key=lambda row: (-int(row["issue_count"]), str(row["account"].label).lower()))
+
+    wall_windows = wall_manager.get_windows()
+    app_health = {
+        "account_count": len(accounts),
+        "money_maker_count": money_maker_count,
+        "global_cost_group_count": global_cost_group_count,
+        "wall_window_count": len(wall_windows),
+        "spreader_running": get_spreader().is_running(),
+        "watchdog_running": bool(WATCHDOG_STATUS.running),
+    }
+
+    return rows, summary, app_health
+
+
 def _add_global_expense(
     session: Session,
     *,
@@ -837,69 +931,7 @@ def planner_generate_compat_redirect():
 @app.get("/action-center", response_class=HTMLResponse)
 def action_center_page(request: Request, session: Session = Depends(get_session)):
     accounts = session.scalars(select(Account).order_by(Account.label)).all()
-    progress_account_ids = set(session.scalars(select(AccountProgress.account_id)).all())
-    active_goal_account_ids = set(
-        session.scalars(select(AccountGoal.account_id).where(AccountGoal.is_active.is_(True))).all()
-    )
-    expense_account_ids = set(session.scalars(select(AccountExpense.account_id)).all())
-    money_maker_count = len(session.scalars(select(MoneyMaker.id)).all())
-    global_cost_group_count = len(_global_expense_groups(session))
-
-    rows: list[dict[str, object]] = []
-    summary = {
-        "accounts_with_issues": 0,
-        "missing_rsn": 0,
-        "missing_proxy": 0,
-        "missing_progress": 0,
-        "missing_goal": 0,
-        "missing_costs": 0,
-        "missing_status": 0,
-        "banned": 0,
-    }
-
-    for account in accounts:
-        issues: list[str] = []
-        if not (account.rsn or "").strip():
-            issues.append("Missing RSN")
-            summary["missing_rsn"] += 1
-        if not (account.proxy_ip or "").strip():
-            issues.append("Missing proxy")
-            summary["missing_proxy"] += 1
-        if account.id not in progress_account_ids:
-            issues.append("No progress state")
-            summary["missing_progress"] += 1
-        if account.id not in active_goal_account_ids:
-            issues.append("No active goal")
-            summary["missing_goal"] += 1
-        if account.id not in expense_account_ids:
-            issues.append("No costs tracked")
-            summary["missing_costs"] += 1
-        if not (account.status or "").strip():
-            issues.append("No status")
-            summary["missing_status"] += 1
-        if account.banned:
-            issues.append("Banned")
-            summary["banned"] += 1
-
-        if issues:
-            summary["accounts_with_issues"] += 1
-
-        rows.append(
-            {
-                "account": account,
-                "issues": issues,
-            }
-        )
-
-    rows.sort(key=lambda row: (-len(row["issues"]), str(row["account"].label).lower()))
-
-    app_health = {
-        "account_count": len(accounts),
-        "money_maker_count": money_maker_count,
-        "global_cost_group_count": global_cost_group_count,
-        "spreader_running": get_spreader().is_running(),
-        "watchdog_running": bool(WATCHDOG_STATUS.running),
-    }
+    rows, summary, app_health = _account_health_snapshot(session, accounts)
 
     return templates.TemplateResponse(
         request,
@@ -911,6 +943,28 @@ def action_center_page(request: Request, session: Session = Depends(get_session)
             "app_health": app_health,
             "message": request.query_params.get("message"),
         },
+    )
+
+
+@app.get("/api/ops/summary")
+def ops_summary(session: Session = Depends(get_session)) -> JSONResponse:
+    rows, summary, app_health = _account_health_snapshot(session)
+    top_accounts = [
+        {
+            "id": row["account"].id,
+            "label": row["account"].label,
+            "issue_count": row["issue_count"],
+            "health_label": row["health_label"],
+            "issues": row["issues"],
+        }
+        for row in rows[:6]
+    ]
+    return JSONResponse(
+        {
+            "summary": summary,
+            "app_health": app_health,
+            "top_accounts": top_accounts,
+        }
     )
 
 
@@ -1223,6 +1277,8 @@ def list_accounts(request: Request, q: str = "", tag: str = "", session: Session
         )
 
     accounts = session.scalars(statement).all()
+    health_rows, _summary, _app_health = _account_health_snapshot(session, accounts)
+    health_by_id = {int(row["account"].id): row for row in health_rows}
     selected_tag = (tag or "").strip().lower()
     if selected_tag:
         accounts = [account for account in accounts if selected_tag in _split_tags(account.tags)]
@@ -1233,6 +1289,7 @@ def list_accounts(request: Request, q: str = "", tag: str = "", session: Session
         {
             "request": request,
             "accounts": accounts,
+            "health_by_id": health_by_id,
             "all_tags": _all_account_tags(session.scalars(select(Account).order_by(Account.label)).all()),
             "q": q,
             "selected_tag": selected_tag,

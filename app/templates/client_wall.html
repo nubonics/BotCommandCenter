@@ -3,7 +3,119 @@
 {% block body_class %}wall-max{% endblock %}
 
 {% block content %}
-<div class="card" style="padding:0; overflow:hidden; height:calc(100vh - 120px); min-height:600px; border-radius:var(--radius-lg);">
+<div class="page-header">
+    <div>
+        <h2>Client Wall</h2>
+        <p>Live wall plus farm-health context, so you can see what needs attention without leaving the page.</p>
+    </div>
+</div>
+
+<div class="grid-3" style="margin-bottom:20px;">
+    <div class="stat-card">
+        <h3>Detected windows</h3>
+        <div class="big-number" id="wallWindowCount">{{ app_health.wall_window_count }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Accounts with issues</h3>
+        <div class="big-number" id="issueAccountCount">{{ summary.accounts_with_issues }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Missing proxy</h3>
+        <div class="big-number" id="missingProxyCount">{{ summary.missing_proxy }}</div>
+    </div>
+</div>
+
+<div class="grid-2" style="margin-bottom:20px; align-items:start;">
+    <div class="card">
+        <h3 style="margin-top:0;">Wall Health</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <span class="pill"><span>Spreader</span> <strong id="spreaderStatus">{% if app_health.spreader_running %}Running{% else %}Stopped{% endif %}</strong></span>
+            <span class="pill"><span>Watchdog</span> <strong id="watchdogStatus">{% if app_health.watchdog_running %}Running{% else %}Stopped{% endif %}</strong></span>
+            <span class="pill"><span>No status</span> <strong id="missingStatusCount">{{ summary.missing_status }}</strong></span>
+            <span class="pill"><span>No progress</span> <strong id="missingProgressCount">{{ summary.missing_progress }}</strong></span>
+            <span class="pill"><span>No goal</span> <strong id="missingGoalCount">{{ summary.missing_goal }}</strong></span>
+            <span class="pill"><span>No costs</span> <strong id="missingCostsCount">{{ summary.missing_costs }}</strong></span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0;">Needs attention</h3>
+        <div id="wallTopAccounts" style="display:flex; gap:8px; flex-wrap:wrap;">
+            {% for row in top_accounts %}
+            <a href="/accounts/{{ row.account.id }}"><span class="pill"><strong>{{ row.account.label }}</strong> · {{ row.issue_count }}</span></a>
+            {% else %}
+            <span class="muted">No account issues right now.</span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="card" style="padding:0; overflow:hidden; height:calc(100vh - 340px); min-height:560px; border-radius:var(--radius-lg);">
     <iframe id="wallFrame" src="/wall/" style="width:100%; height:100%; border:0; display:block;" referrerpolicy="no-referrer"></iframe>
 </div>
+
+<script>
+async function refreshWallOpsSummary() {
+    try {
+        const [opsResp, windowsResp, spreaderResp] = await Promise.all([
+            fetch('/api/ops/summary', { cache: 'no-store' }),
+            fetch('/api/windows', { cache: 'no-store' }),
+            fetch('/api/window-spreader/status', { cache: 'no-store' }),
+        ]);
+
+        const ops = await opsResp.json();
+        const windowsData = await windowsResp.json();
+        const spreader = await spreaderResp.json();
+
+        const summary = ops.summary || {};
+        const appHealth = ops.app_health || {};
+        const topAccounts = ops.top_accounts || [];
+
+        const setText = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = String(value);
+        };
+
+        setText('wallWindowCount', (windowsData || []).length);
+        setText('issueAccountCount', summary.accounts_with_issues || 0);
+        setText('missingProxyCount', summary.missing_proxy || 0);
+        setText('missingStatusCount', summary.missing_status || 0);
+        setText('missingProgressCount', summary.missing_progress || 0);
+        setText('missingGoalCount', summary.missing_goal || 0);
+        setText('missingCostsCount', summary.missing_costs || 0);
+        setText('spreaderStatus', spreader.running ? 'Running' : 'Stopped');
+        setText('watchdogStatus', appHealth.watchdog_running ? 'Running' : 'Stopped');
+
+        const topWrap = document.getElementById('wallTopAccounts');
+        if (topWrap) {
+            topWrap.innerHTML = '';
+            if (!topAccounts.length) {
+                const empty = document.createElement('span');
+                empty.className = 'muted';
+                empty.textContent = 'No account issues right now.';
+                topWrap.appendChild(empty);
+            } else {
+                topAccounts.forEach((row) => {
+                    const label = String(row.label || 'Account');
+                    const id = Number(row.id || 0);
+                    const count = Number(row.issue_count || 0);
+                    const link = document.createElement('a');
+                    link.href = `/accounts/${id}`;
+                    const pill = document.createElement('span');
+                    pill.className = 'pill';
+                    pill.innerHTML = `<strong></strong> · ${count}`;
+                    pill.querySelector('strong').textContent = label;
+                    link.appendChild(pill);
+                    topWrap.appendChild(link);
+                });
+            }
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+refreshWallOpsSummary();
+setInterval(refreshWallOpsSummary, 3000);
+</script>
 {% endblock %}
