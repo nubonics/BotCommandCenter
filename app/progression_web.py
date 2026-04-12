@@ -459,6 +459,7 @@ def progress_page(request: Request, account_id: int, session: Session = Depends(
             "plan_blockers": plan_blockers,
             "plan_step_debug": plan_step_debug,
             "active_assignment": active_assignment,
+            "next_url": request.query_params.get("next") or f"/accounts/{account.id}",
             "message": request.query_params.get("message"),
         },
     )
@@ -680,6 +681,7 @@ def simulate_progress_plan(request: Request, account_id: int, session: Session =
             "total_hours": t,
             "steps_count": len(plan.steps),
             "final_state": state,
+            "next_url": request.query_params.get("next") or f"/accounts/{account.id}/progress",
             "message": request.query_params.get("message"),
         },
     )
@@ -924,7 +926,10 @@ async def update_state(
     progress.quest_points = quest_points
     session.commit()
 
-    return RedirectResponse(url=f"/accounts/{account_id}/progress?message=Progress state updated", status_code=303)
+    next_url = str(form.get("next_url") or "").strip()
+    target_url = next_url or f"/accounts/{account_id}/progress"
+    separator = "&" if "?" in target_url else "?"
+    return RedirectResponse(url=f"{target_url}{separator}message=Progress state updated", status_code=303)
 
 
 @router.post("/accounts/{account_id}/progress/goal")

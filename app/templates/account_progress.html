@@ -9,9 +9,9 @@
         </p>
     </div>
     <div class="actions">
-        <a href="/accounts/{{ account.id }}"><button type="button" class="secondary">Back</button></a>
+        <a href="{{ next_url }}"><button type="button" class="secondary">Back</button></a>
         {% if goal and plan and plan.steps %}
-        <a href="/accounts/{{ account.id }}/progress/simulate"><button type="button" class="secondary">Simulate</button></a>
+        <a href="/accounts/{{ account.id }}/progress/simulate?next={{ request.url.path | urlencode }}{% if request.url.query %}%3F{{ request.url.query | urlencode }}{% endif %}"><button type="button" class="secondary">Simulate</button></a>
         <form action="/accounts/{{ account.id }}/progress/push-plan" method="post" style="margin:0;" onsubmit="return confirm('Push plan to planner?');">
             <button type="submit">Push Plan</button>
         </form>
@@ -78,7 +78,7 @@
 <div class="card">
     <h3 style="margin-top:0;">Plan Preview</h3>
     <p class="muted">Generate on demand (can be slow for large goals).</p>
-    <a href="/accounts/{{ account.id }}/progress?plan=1"><button type="button" class="secondary">Generate Preview</button></a>
+    <a href="/accounts/{{ account.id }}/progress?plan=1&next={{ next_url | urlencode }}"><button type="button" class="secondary">Generate Preview</button></a>
 </div>
 {% elif plan %}
 <div class="card" style="padding:0; overflow:hidden;">
@@ -141,6 +141,7 @@
     <div class="card">
         <h3 style="margin-top:0;">Update Current State</h3>
         <form action="/accounts/{{ account.id }}/progress/state" method="post">
+            <input type="hidden" name="next_url" value="{{ request.url.path }}?next={{ next_url | urlencode }}{% if show_plan %}&plan=1{% endif %}">
             <div class="form-group" style="margin-bottom:14px;">
                 <label>GP</label>
                 <input type="number" name="gp" value="{{ progress.gp or 0 }}">
