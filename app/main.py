@@ -1245,6 +1245,7 @@ def action_center_page(
     q: str = "",
     health: str = "",
     issue: str = "",
+    tag: str = "",
     session: Session = Depends(get_session),
 ):
     accounts = session.scalars(select(Account).order_by(Account.label)).all()
@@ -1253,6 +1254,7 @@ def action_center_page(
 
     selected_health = (health or "").strip().lower()
     selected_issue = (issue or "").strip().lower()
+    selected_tag = (tag or "").strip().lower()
     search = (q or "").strip().lower()
 
     if search:
@@ -1281,6 +1283,12 @@ def action_center_page(
             if any(str(entry or "").strip().lower() == selected_issue for entry in row.get("issues", []))
         ]
 
+    if selected_tag:
+        rows = [
+            row for row in rows
+            if selected_tag in _split_tags(getattr(row.get("account"), "tags", None))
+        ]
+
     return templates.TemplateResponse(
         request,
         "action_center.html",
@@ -1292,6 +1300,8 @@ def action_center_page(
             "wall_snapshot": wall_snapshot,
             "selected_health": selected_health,
             "selected_issue": selected_issue,
+            "selected_tag": selected_tag,
+            "all_tags": _all_account_tags(accounts),
             "q": q,
             "message": request.query_params.get("message"),
         },

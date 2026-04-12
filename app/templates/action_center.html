@@ -29,8 +29,14 @@
             <option value="no status" {% if selected_issue == 'no status' %}selected{% endif %}>No status</option>
             <option value="banned" {% if selected_issue == 'banned' %}selected{% endif %}>Banned</option>
         </select>
+        <select name="tag" style="min-width:180px;">
+            <option value="">All tags</option>
+            {% for tag in all_tags %}
+            <option value="{{ tag }}" {% if selected_tag == tag %}selected{% endif %}>{{ tag }}</option>
+            {% endfor %}
+        </select>
         <button type="submit" class="secondary">Filter</button>
-        {% if q or selected_health or selected_issue %}
+        {% if q or selected_health or selected_issue or selected_tag %}
         <a href="/action-center"><button type="button" class="secondary">Clear</button></a>
         {% endif %}
     </form>
