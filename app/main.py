@@ -1796,6 +1796,7 @@ def bulk_update_accounts(
     bulk_status: str = Form(""),
     bulk_tags_add: str = Form(""),
     bulk_tags_remove: str = Form(""),
+    bulk_wall_hint_action: str = Form(""),
     banned_state: str = Form("keep"),
     q: str = Form(""),
     tag: str = Form(""),
@@ -1813,6 +1814,7 @@ def bulk_update_accounts(
     cleaned_status = (bulk_status or "").strip()
     add_tags = bulk_tags_add or ""
     remove_tags = bulk_tags_remove or ""
+    wall_hint_action = (bulk_wall_hint_action or "").strip().lower()
 
     changed = 0
     for account in accounts:
@@ -1834,6 +1836,10 @@ def bulk_update_accounts(
         merged_tags = _merge_tags(account.tags, add_tags=add_tags, remove_tags=remove_tags)
         if merged_tags != account.tags:
             account.tags = merged_tags
+            touched = True
+
+        if wall_hint_action == "clear" and account.wall_hint is not None:
+            account.wall_hint = None
             touched = True
 
         if touched:
